@@ -19,7 +19,10 @@ spec:
         - name: POSTGRES_USER
           value: {{ .Values.postgres.user | default "kong" }}
         - name: POSTGRES_PASSWORD
-          value: {{ .Values.postgres.password | default "kong" }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql
+              key: password
         - name: POSTGRES_DATABASE
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
