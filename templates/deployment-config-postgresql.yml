@@ -47,10 +47,6 @@ spec:
         resources:
           limits:
             memory: {{ .Values.postgres.resources.limits.memory }}
-        securityContext:
-          capabilities: {}
-          privileged: false
-          supplementalGroups: [65534]
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
