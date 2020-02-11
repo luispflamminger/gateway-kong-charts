@@ -19,11 +19,9 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
 {{- define "postgresql.selector" -}}
-matchLabels:
-  app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
 {{- define "kong.selector" -}}
-matchLabels:
-  app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}

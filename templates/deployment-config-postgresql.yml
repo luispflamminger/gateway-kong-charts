@@ -5,7 +5,8 @@ metadata:
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
   replicas: {{ .Values.postgres.replicas | default 1 }}
-  selector: {{ include "postgresql.selector" $ | nindent 4 }}
+  selector:
+    matchLabels: {{ include "postgresql.selector" $ | nindent 6 }}
   template:
     metadata:
       labels: {{ include "postgresql.labels" $ | nindent 4 }}

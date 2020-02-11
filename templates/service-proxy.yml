@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-proxy
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
+  selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
   - name: kong-proxy
     port: 8000
@@ -13,4 +14,3 @@ spec:
     port: 8443
     targetPort: 8443
     protocol: TCP
-  selector: {{ include "kong.selector" $ | nindent 4 }}
