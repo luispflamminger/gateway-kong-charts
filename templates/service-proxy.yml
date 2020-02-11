@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-proxy
+spec:
+  ports:
+  - name: kong-proxy
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  - name: kong-proxy-ssl
+    port: 8443
+    targetPort: 8443
+    protocol: TCP
+  selector:
+    name: {{ .Release.Name }}

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgresql
+  labels: {{ include "postgresql.labels" $ | nindent 4 }}
+spec:
+  replicas: {{ .Values.postgres.replicas | default 1 }}
+  selector:
+    name: {{ .Release.Name }}-postgresql
+  template:
+    metadata:
+      labels: {{ include "postgresql.labels" $ | nindent 4 }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-postgresql
+        image: '{{ .Values.postgres.image.repository | default "postgres" }}:{{ .Values.postgres.image.tag | default "9.5" }}'
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: POSTGRES_USER
+          value: {{ .Values.postgres.user | default "kong" }}
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.postgres.password | default "kong" }}
+        - name: POSTGRES_DATABASE
+          value: {{ .Values.postgres.database | default "kong" }}
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5432
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - pg_isready
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            memory: {{ .Values.postgres.resources.limits.memory }}
+        securityContext:
+          capabilities: {}
+          privileged: false
+          supplementalGroups: [65534]
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: {{ .Release.Name }}-postgresql-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: {{ .Release.Name }}-postgresql-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-database-pvc

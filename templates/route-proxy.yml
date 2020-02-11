@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-proxy
+spec:
+  host: kong-proxy-{{ .Values.global.domain.internal.url }}
+  port:
+    targetPort: kong-proxy
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-proxy
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge

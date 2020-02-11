@@ -1,0 +1,24 @@
+global:
+  project_prefix: "tif-"
+  storageclass: "cns"
+  domain:
+    internal:
+      url: "changeme-internal.tif.telekom.de"
+
+image:
+  repository: kong
+  tag: '2.0'
+
+postgres:
+  image:
+    repository: postgres
+    tag: '9.5'
+
+  database: kong  
+  user: kong
+  password: changeme
+
+  replicas: 1
+  resources:
+    limits:
+      memory: "512Mi"

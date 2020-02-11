@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-admin
+spec:
+  host: kong-admin-{{ .Values.global.domain.internal.url }}
+  port:
+    targetPort: kong-admin
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-admin
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge

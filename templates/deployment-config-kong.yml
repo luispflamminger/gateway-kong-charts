@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+spec:
+  replicas: {{ .Values.postgres.replicas | default 1 }}
+  selector:
+    name: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: {{ include "kong.labels" $ | nindent 4 }}
+    spec:
+      initContainers:
+      - name: kong-init
+        image: '{{ .Values.image.repository | default "kong" }}:{{ .Values.image.tag | default "latest" }}'
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KONG_DATABASE
+          value: {{ .Values.postgres.database | default "kong" }}
+        - name: KONG_PG_PASSWORD
+          value: {{ .Values.postgres.password | default "kong" }}
+        - name: KONG_PG_PORT
+          value: '5432'
+        - name: KONG_PG_HOST
+          value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+        #command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations up" ]
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
+      containers:
+      - name: kong
+        image: '{{ .Values.image.repository | default "kong" }}:{{ .Values.image.tag | default "latest" }}'
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KONG_DATABASE
+          value: {{ .Values.postgres.database | default "kong" }}
+        - name: KONG_PG_PASSWORD
+          value: {{ .Values.postgres.password | default "kong" }}
+        - name: KONG_PG_PORT
+          value: '5432'
+        - name: KONG_PG_HOST
+          value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+        - name: KONG_NGINX_WORKER_PROCESSES
+          value: '1'
+        - name: KONG_ADMIN_LISTEN
+          value: '127.0.0.0:8444 ssl'
+        - name: KONG_PROXY_LISTEN
+          value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
+        ports:
+        - name: proxy
+          containerPort: 8000
+          protocol: TCP
+        - name: proxy-ssl
+          containerPort: 8443
+          protocol: TCP
+        - name: admin-ssl
+          containerPort: 8444
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 750m
+            memory: 1024Mi
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      resources:
+        limits:
+          memory: "2Gi"
+      terminationGracePeriodSeconds: 30
