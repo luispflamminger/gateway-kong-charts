@@ -2,6 +2,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ .Release.Name }}-proxy
+  labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
   host: kong-proxy-{{ .Values.global.domain.internal.url }}
   port:

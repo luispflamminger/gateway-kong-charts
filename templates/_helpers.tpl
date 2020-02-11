@@ -3,17 +3,27 @@
 {{- end -}}
 
 {{- define "postgresql.labels" -}}
-app: {{ include "prefixed_release_name" $ }}
-component: {{ .Chart.Name }}
-chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-release: {{ include "prefixed_release_name" $ }}
-installed_by: {{ .Values.global.installed_by | default "tif" }}
+app.kubernetes.io/name: postgresql
+app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/component: database
+app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
+app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
 {{- define "kong.labels" -}}
-app: {{ include "prefixed_release_name" $ }}
-component: {{ .Chart.Name }}
-chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-release: {{ include "prefixed_release_name" $ }}
-installed_by: {{ .Values.global.installed_by | default "tif" }}
+app.kubernetes.io/name: kong
+app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/component: api-gateway
+app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
+app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+{{- end -}}
+
+{{- define "postgresql.selector" -}}
+matchLabels:
+  app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
+{{- end -}}
+
+{{- define "kong.selector" -}}
+matchLabels:
+  app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
