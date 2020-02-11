@@ -9,7 +9,7 @@ spec:
     matchLabels: {{ include "postgresql.selector" $ | nindent 6 }}
   template:
     metadata:
-      labels: {{ include "postgresql.labels" $ | nindent 4 }}
+      labels: {{ include "postgresql.labels" $ | nindent 8 }}
     spec:
       containers:
       - name: {{ .Release.Name }}-postgresql
@@ -23,9 +23,14 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}-postgresql
               key: password
-        - name: POSTGRES_DATABASE
+        - name: POSTGRES_DB
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - 'pg_isready -U kong'
           failureThreshold: 3
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -41,7 +46,7 @@ spec:
             command:
             - /bin/sh
             - -c
-            - pg_isready
+            - 'pg_isready -U kong'
           failureThreshold: 3
           initialDelaySeconds: 5
           periodSeconds: 10

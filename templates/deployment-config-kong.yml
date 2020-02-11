@@ -9,7 +9,7 @@ spec:
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
     metadata:
-      labels: {{ include "kong.labels" $ | nindent 4 }}
+      labels: {{ include "kong.labels" $ | nindent 8 }}
     spec:
       initContainers:
       - name: kong-init
@@ -27,7 +27,6 @@ spec:
           value: '5432'
         - name: KONG_PG_HOST
           value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
-        #command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations up" ]
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
       containers:
       - name: kong
@@ -64,12 +63,9 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: 750m
-            memory: 1024Mi
+            cpu: {{ .Values.resources.requests.cpu | default "750m" }}
+            memory: {{ .Values.resources.requests.memory | default "1024Mi" }}
         terminationMessagePath: /dev/termination-log
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      resources:
-        limits:
-          memory: "2Gi"
       terminationGracePeriodSeconds: 30
