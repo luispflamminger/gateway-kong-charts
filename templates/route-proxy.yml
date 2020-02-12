@@ -10,6 +10,7 @@ spec:
   to:
     kind: Service
     name: {{ .Release.Name }}-proxy
+    weight: 100
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
