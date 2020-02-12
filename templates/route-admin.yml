@@ -14,3 +14,6 @@ spec:
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
+status:
+  ingress:
+    - host: ""
