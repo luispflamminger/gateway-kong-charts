@@ -17,7 +17,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: KONG_DATABASE
-          value: {{ .Values.postgres.database | default "kong" }}
+          value: postgres
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -34,7 +34,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: KONG_DATABASE
-          value: {{ .Values.postgres.database | default "kong" }}
+          value: postgres
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
