@@ -47,9 +47,9 @@ spec:
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
         - name: KONG_ADMIN_LISTEN
-          value: '127.0.0.0:8444 ssl'
+          value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
         - name: KONG_PROXY_LISTEN
-          value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
+          value: '0.0.0.0:8000, 0.0.0.0:8443 ssl'
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:
         - name: proxy

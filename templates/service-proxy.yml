@@ -7,7 +7,7 @@ spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
   - name: kong-proxy
-    port: 8000
+    port: 80
     targetPort: 8000
     protocol: TCP
   - name: kong-proxy-ssl
@@ -15,6 +15,10 @@ spec:
     targetPort: 8443
     protocol: TCP
   - name: kong-admin
+    port: 80
+    targetPort: 8001
+    protocol: TCP
+  - name: kong-admin-ssl
     port: 80
     targetPort: 8444
     protocol: TCP

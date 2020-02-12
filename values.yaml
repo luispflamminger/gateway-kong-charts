@@ -9,7 +9,8 @@ image:
   repository: kong
   tag: '2.0'
 
-enableAdmin: true
+# Warning: Might be unsecure to expose the adminapi
+enableAdmin: false
 
 resources:
   requests:
