@@ -14,3 +14,7 @@ spec:
     port: 8443
     targetPort: 8443
     protocol: TCP
+  - name: kong-admin
+    port: 80
+    targetPort: 8444
+    protocol: TCP

@@ -9,6 +9,8 @@ image:
   repository: kong
   tag: '2.0'
 
+enableAdmin: true
+
 resources:
   requests:
     cpu: 750m
