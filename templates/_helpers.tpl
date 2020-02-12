@@ -12,6 +12,7 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
 {{- define "kong.labels" -}}
+app: {{ .Chart.Name }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 app.kubernetes.io/component: api-gateway

@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-proxy
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
-  host: kong-proxy-{{ .Release.Namespace }}-{{ .Values.global.domain.internal.url }}
+  host: kong-proxy-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
   port:
     targetPort: kong-proxy
   to:
