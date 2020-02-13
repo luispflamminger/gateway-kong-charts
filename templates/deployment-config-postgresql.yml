@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-postgresql
-        image: '{{ .Values.postgres.image.repository | default "postgres" }}:{{ .Values.postgres.image.tag | default "9.5" }}'
+        image: '{{ .Values.postgres.image | default "postgres:9.5" }}'
         imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_USER
@@ -24,6 +24,16 @@ spec:
               name: {{ .Release.Name }}-postgresql
               key: password
         - name: POSTGRES_DB
+          value: {{ .Values.postgres.database | default "kong" }}
+        # for centos and rhel we do have different environment variables
+        - name: POSTGRESQL_USER
+          value: {{ .Values.postgres.user | default "kong" }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql
+              key: password
+        - name: POSTGRESQL_DATABASE
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
           exec:

@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
-  replicas: {{ .Values.postgres.replicas | default 1 }}
+  replicas: {{ .Values.replicas | default 1 }}
   selector: 
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
@@ -13,7 +13,7 @@ spec:
     spec:
       initContainers:
       - name: kong-init
-        image: '{{ .Values.image.repository | default "kong" }}:{{ .Values.image.tag | default "latest" }}'
+        image: 'kong:{{ .Values.version | default "latest" }}'
         imagePullPolicy: IfNotPresent
         env:
         - name: KONG_DATABASE
@@ -30,7 +30,7 @@ spec:
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
       containers:
       - name: kong
-        image: '{{ .Values.image.repository | default "kong" }}:{{ .Values.image.tag | default "latest" }}'
+        image: 'kong:{{ .Values.version | default "latest" }}'
         imagePullPolicy: IfNotPresent
         env:
         - name: KONG_DATABASE

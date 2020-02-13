@@ -5,12 +5,12 @@ global:
     internal:
       url: "changeme-internal.tif.telekom.de"
 
-image:
-  repository: kong
-  tag: '2.0'
+version: '2.0.1'
 
 # Warning: Might be unsecure to expose the adminapi
 enableAdmin: false
+
+replicas: 1
 
 resources:
   requests:
@@ -18,15 +18,16 @@ resources:
     memory: 1024Mi
 
 postgres:
-  image:
-    repository: postgres
-    tag: '9.5'
+# image: 'postgres:9.5'
+  # use this image for OpenShift environments due to security restrictions
+  image: 'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-95-rhel7:9.5-42'
 
   database: kong  
   user: kong
   password: changeme
 
   replicas: 1
+
   resources:
     limits:
       memory: "512Mi"
