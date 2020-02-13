@@ -29,7 +29,7 @@ spec:
           value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
 {{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
-          value: {{ .Values.enterprise.license }}
+          value: '{{ .Values.enterprise.license }}'
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
       containers:
@@ -56,7 +56,7 @@ spec:
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
 {{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
-          value: {{ .Values.enterprise.license }}
+          value: '{{ .Values.enterprise.license }}'
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:
