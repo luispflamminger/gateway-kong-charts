@@ -22,9 +22,9 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 
 {{- define "kong.image" -}}
 {{- if eq .Values.enterprise.enabled true -}}
-'kong:{{ .Values.version | default "latest" }}'
-{{- else -}}
 'mtr.external.otc.telekomcloud.com/tif/kong-ee:{{ .Values.version | default "latest" }}'
+{{- else -}}
+'kong:{{ .Values.version | default "latest" }}'
 {{- end -}}
 {{- end -}}
 
