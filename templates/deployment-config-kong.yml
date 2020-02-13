@@ -27,7 +27,7 @@ spec:
           value: '5432'
         - name: KONG_PG_HOST
           value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
-{{- if and .Values.enterprise.enabled .Values.enterprise.license }}
+{{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
           value: {{ .Values.enterprise.license }}
 {{- end }}
@@ -54,7 +54,7 @@ spec:
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
         - name: KONG_PROXY_LISTEN
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
-{{- if and .Values.enterprise.enabled .Values.enterprise.license }}
+{{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
           value: {{ .Values.enterprise.license }}
 {{- end }}
