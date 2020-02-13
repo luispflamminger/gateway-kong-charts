@@ -20,6 +20,14 @@ app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
+{{- define "kong.image" -}}
+{{- if .Values.enterprise.enabled -}}
+'kong:{{ .Values.version | default "latest" }}'
+{{- else -}}
+'mtr.external.otc.telekomcloud.com/tif/kong-ee:{{ .Values.version | default "latest" }}'
+{{- end -}}
+{{- end -}}
+
 {{- define "postgresql.selector" -}}
 app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}

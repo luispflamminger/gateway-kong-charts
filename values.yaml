@@ -7,6 +7,9 @@ global:
 
 version: '2.0.1'
 
+enterprise:
+  enabled: false
+
 # Warning: Might be unsecure to expose the adminapi
 enableAdmin: false
 
@@ -21,6 +24,7 @@ postgres:
 # image: 'postgres:9.5'
   # use this image for OpenShift environments due to security restrictions
   image: 'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-95-rhel7:9.5-42'
+  
 # data_locations: '/var/lib/postgresql/data'
   # use this data location for postgresql-95-rhel7 based postgres images
   data_locations: '/var/lib/pgsql/data'
