@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}-admin
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
-  host: kong-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
+  host: {{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
   port:
     targetPort: kong-admin
   to:
