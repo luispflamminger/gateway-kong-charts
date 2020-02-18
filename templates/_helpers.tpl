@@ -32,6 +32,22 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
+{{- define "postgresql.host" -}}
+{{- if and .Values.externalDatabase (eq .Values.externalDatabase.enabled true) -}}
+{{ .Values.externalDatabase.host }}
+{{- else -}}
+{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+{{- end -}}
+{{- end -}}
+
+{{- define "postgresql.port" -}}
+{{- if and .Values.externalDatabase (eq .Values.externalDatabase.enabled true) -}}
+{{ (.Values.externalDatabase.port | default "5432") | atoi }}
+{{- else -}}
+{{ (.Values.postgres.port | default "5432") | atoi }}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.selector" -}}
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}

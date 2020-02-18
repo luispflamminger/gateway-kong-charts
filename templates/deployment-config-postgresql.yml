@@ -37,14 +37,14 @@ spec:
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
           tcpSocket:
-            port: 5432
+            port:  {{ include "postgresql.port" $ }}
           failureThreshold: 3
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
         ports:
-        - containerPort: 5432
+        - containerPort: {{ include "postgresql.port" $ }}
           protocol: TCP
         readinessProbe:
           exec:

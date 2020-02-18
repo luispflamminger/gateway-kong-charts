@@ -24,9 +24,9 @@ spec:
               name: {{ .Release.Name }}-postgresql
               key: password
         - name: KONG_PG_PORT
-          value: '5432'
+          value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
-          value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+          value: {{ include "postgresql.host" $ }}
 {{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
@@ -45,9 +45,9 @@ spec:
               name: {{ .Release.Name }}-postgresql
               key: password
         - name: KONG_PG_PORT
-          value: '5432'
+          value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
-          value: {{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
+          value: {{ include "postgresql.host" $ }}
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
         - name: KONG_ADMIN_LISTEN

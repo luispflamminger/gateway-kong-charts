@@ -10,8 +10,16 @@ version: 'latest'
 enterprise:
   enabled: false
 
+ingress:
+  enabled: false
+
+externalDatabase:
+  enabled: false
+# host: some-external-postgresql-database.example.com
+# port: '5432'
+
 # Warning: Might be unsecure to expose the adminapi
-enableAdmin: false
+exposeAdminApi: false
 
 replicas: 1
 
@@ -28,6 +36,8 @@ postgres:
 # data_locations: '/var/lib/postgresql/data'
   # use this data location for postgresql-95-rhel7 based postgres images
   data_locations: '/var/lib/pgsql/data'
+
+# port: 5432
 
   database: kong  
   user: kong
