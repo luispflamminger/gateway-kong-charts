@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-proxy
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+  - host: {{ .Release.Name }}-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: {{ .Release.Name }}-proxy
+            servicePort: kong-proxy

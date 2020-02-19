@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-database-pvc
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
   - ReadWriteOnce
