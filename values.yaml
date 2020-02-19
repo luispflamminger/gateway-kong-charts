@@ -1,4 +1,5 @@
 global:
+  platform: "kubernetes"
   project_prefix: "tif-"
   storageclass: "cns"
   domain:
@@ -8,6 +9,9 @@ global:
 version: 'latest'
 
 enterprise:
+  enabled: false
+
+manager:
   enabled: false
 
 externalDatabase:

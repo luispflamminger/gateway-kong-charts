@@ -1,10 +1,11 @@
+{{- if eq .Values.global.platform "kubernetes" }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-proxy
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
   rules:
   - host: {{ .Release.Name }}-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
@@ -13,4 +14,5 @@ spec:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-proxy
-            servicePort: kong-proxy
+            servicePort: kong-proxy-ssl
+{{- end }}

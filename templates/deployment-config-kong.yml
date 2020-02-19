@@ -50,10 +50,22 @@ spec:
           value: {{ include "postgresql.host" $ }}
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
-        - name: KONG_ADMIN_LISTEN
-          value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
         - name: KONG_PROXY_LISTEN
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
+        - name: KONG_ADMIN_LISTEN
+          value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
+{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+        - name: KONG_ADMIN_GUI_LISTEN
+          value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
+        - name: KONG_ENFORCE_RBAC
+          value: 'on'
+        - name: KONG_ADMIN_GUI_URL
+          value: 'http://127.0.0.1:8002'
+        - name: KONG_ADMIN_GUI_AUTH
+          value: 'basic-auth'
+        - name: KONG_ADMIN_GUI_SESSION_CONF
+          value: '{"cookie_name":"kekse","secret":"monster"}'
+{{- end }}
 {{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
@@ -72,6 +84,14 @@ spec:
         - name: admin-ssl
           containerPort: 8444
           protocol: TCP
+{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+        - name: manager
+          containerPort: 8002
+          protocol: TCP
+        - name: manager-ssl
+          containerPort: 8445
+          protocol: TCP
+{{- end }}
         resources:
           requests:
             cpu: {{ .Values.resources.requests.cpu | default "750m" }}

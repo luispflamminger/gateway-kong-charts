@@ -1,3 +1,4 @@
+{{- if eq .Values.global.platform "kubernetes" }}
 {{- if .Values.exposeAdminApi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -5,7 +6,7 @@ metadata:
   name: {{ .Release.Name }}-admin
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
   rules:
   - host: {{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
@@ -13,6 +14,7 @@ spec:
       paths:
         - path: /
           backend:
-            serviceName: {{ .Release.Name }}-proxy
-            servicePort: kong-admin
+            serviceName: {{ .Release.Name }}-admin
+            servicePort: kong-admin-ssl
+{{- end }}
 {{- end }}
