@@ -14,7 +14,8 @@ spec:
     name: {{ .Release.Name }}-manager
     weight: 100
   tls:
-    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
 status:
   ingress:
     - host: ""
