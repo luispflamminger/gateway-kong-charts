@@ -8,7 +8,7 @@ metadata:
 spec:
   host: {{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
   port:
-    targetPort: kong-manager-ssl
+    targetPort: kong-manager
   to:
     kind: Service
     name: {{ .Release.Name }}-manager

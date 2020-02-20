@@ -8,7 +8,7 @@ metadata:
 spec:
   host: {{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
   port:
-    targetPort: kong-admin-ssl
+    targetPort: kong-admin
   to:
     kind: Service
     name: {{ .Release.Name }}-admin

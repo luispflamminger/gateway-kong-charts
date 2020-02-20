@@ -15,6 +15,6 @@ spec:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-admin
-            servicePort: kong-admin-ssl
+            servicePort: kong-admin
 {{- end }}
 {{- end }}
