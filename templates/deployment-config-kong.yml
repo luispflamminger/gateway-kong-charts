@@ -56,13 +56,13 @@ spec:
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
-          value: 'http://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+          value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
 {{- end }}
 {{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
         - name: KONG_ADMIN_GUI_LISTEN
           value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
         - name: KONG_ADMIN_GUI_URL
-          value: 'http://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+          value: 'https://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
 {{- if eq .Values.manager.disableAuth false }}
         - name: KONG_ENFORCE_RBAC
           value: 'on'
