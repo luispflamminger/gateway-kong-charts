@@ -58,7 +58,7 @@ spec:
         - name: KONG_ADMIN_GUI_LISTEN
           value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
         - name: KONG_ENFORCE_RBAC
-          value: 'on'
+          value: 'off'
         - name: KONG_ADMIN_GUI_URL
           value: 'http://127.0.0.1:8002'
         - name: KONG_ADMIN_GUI_AUTH
