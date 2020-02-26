@@ -9,7 +9,7 @@ global:
 version: 'latest'
 
 enterprise:
-  enabled: false
+  license: changeme
 
 manager:
   enabled: false
