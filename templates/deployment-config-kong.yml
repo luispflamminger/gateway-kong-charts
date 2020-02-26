@@ -27,7 +27,7 @@ spec:
           value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
           value: {{ include "postgresql.host" $ }}
-{{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
+{{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
@@ -58,7 +58,7 @@ spec:
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
 {{- end }}
-{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_ADMIN_GUI_LISTEN
           value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
         - name: KONG_ADMIN_GUI_URL
@@ -75,7 +75,7 @@ spec:
           value: 'off'
 {{- end }}
 {{- end }}
-{{- if and (eq .Values.enterprise.enabled true) .Values.enterprise.license }}
+{{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
@@ -93,7 +93,7 @@ spec:
         - name: admin-ssl
           containerPort: 8444
           protocol: TCP
-{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: manager
           containerPort: 8002
           protocol: TCP
