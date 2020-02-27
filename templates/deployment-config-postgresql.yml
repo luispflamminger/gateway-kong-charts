@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}-postgresql
-        image: '{{ .Values.postgres.image | default "postgres:9.5" }}'
+        image: '{{ .Values.postgres.image | default "postgres:9.6" }}'
         imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_USER

@@ -6,8 +6,6 @@ global:
     internal:
       url: "changeme-internal.tif.telekom.de"
 
-version: 'latest'
-
 enterprise:
   license: changeme
 
@@ -31,9 +29,9 @@ resources:
     memory: 1024Mi
 
 postgres:
-# image: 'postgres:9.5'
+# image: 'postgres:9.6'
   # use this image for OpenShift environments due to security restrictions
-  image: 'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-95-rhel7:9.5-42'
+  image: 'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-96-centos7:master'
   pvc:
     keepOnDelete: false
   

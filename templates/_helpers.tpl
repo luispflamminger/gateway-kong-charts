@@ -20,9 +20,19 @@ app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
+{{- define "kong.isEnterprise" -}}
+{{- if contains "changeme" .Values.enterprise.license }}
+false
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.image" -}}
-{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif/kong-ee:{{ .Values.version | default "latest" }}'
+{{- if .Values.image -}}
+{{ .Values.image }}
+{{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
+'mtr.external.otc.telekomcloud.com/tif/kong-ee-tif-plugin-mtls-auth:latest'
 {{- else -}}
 'kong:{{ .Values.version | default "latest" }}'
 {{- end -}}
@@ -50,12 +60,4 @@ app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 
 {{- define "kong.selector" -}}
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
-{{- end -}}
-
-{{- define "kong.isEnterprise" -}}
-{{- if contains "changeme" .Values.enterprise.license }}
-false
-{{- else -}}
-true
-{{- end -}}
 {{- end -}}
