@@ -67,9 +67,13 @@ spec:
         - name: KONG_ENFORCE_RBAC
           value: 'on'
         - name: KONG_ADMIN_GUI_AUTH
-          value: 'basic-auth'
+          value: basic-auth
         - name: KONG_ADMIN_GUI_SESSION_CONF
-          value: '{"cookie_name":"kekse","secret":"monster"}'
+          value: >-
+                { "cookie_name":"kookie" , "secret":"HakunaMatata",
+                "storage":"kong" }
+        - name: KONG_PASSWORD
+          value: HakunaMatata
 {{- else }}
         - name: KONG_ENFORCE_RBAC
           value: 'off'
