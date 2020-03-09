@@ -31,7 +31,13 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
+        command: ["bin/sh","-c"]
+        args:
+          - KONG_NGINX_DAEMON='off';
+            kong migrations bootstrap;
+            echo yourAreCreateRamo;
+            curl --version;
+            
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
