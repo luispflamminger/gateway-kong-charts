@@ -11,7 +11,7 @@ enterprise:
 
 manager:
   enabled: false
-  enableAuth: false
+  disableAuth: false
 
 externalDatabase:
   enabled: false
