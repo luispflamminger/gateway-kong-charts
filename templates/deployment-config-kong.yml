@@ -33,9 +33,18 @@ spec:
 {{- end }}
         command: ["/bin/sh", "-c"]
         args:
-          - export KONG_NGINX_DAEMON=off && 
+          - export KONG_NGINX_DAEMON=on && 
             kong migrations bootstrap &&
-            export RAMO=ramo
+            kong start &&
+            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
+            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
+            kong stop &&
+            export KONG_NGINX_DAEMON=off
+            # && curl -X POST <ADMIN_URL>/admins
+         ## TODO 0- export KONG_NGINX_DAEMON='on'
+         #       1- kong start 
+         ##      2- curl create admin
+         ##      3- kong stop
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
