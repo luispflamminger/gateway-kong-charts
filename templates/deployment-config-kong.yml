@@ -33,8 +33,8 @@ spec:
 {{- end }}
         command: ["/bin/sh", "-c"]
         args:
-          - export KONG_NGINX_DAEMON=off;
-            kong migrations bootstrap;
+          - export KONG_NGINX_DAEMON=off && 
+            kong migrations bootstrap &&
             export RAMO=ramo
       containers:
       - name: kong
@@ -87,11 +87,7 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-        command: ["/bin/sh", "-c"]
-        args:
-          - export KONG_NGINX_DAEMON=off;
-            kong start;
-            export RAMO=ramo;
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start && export RAMO=RAMO"]
         ports:
         - name: proxy
           containerPort: 8000
