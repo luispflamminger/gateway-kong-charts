@@ -37,7 +37,6 @@ spec:
             kong migrations bootstrap;
             echo yourAreCreateRamo;
             curl --version;
-            
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
