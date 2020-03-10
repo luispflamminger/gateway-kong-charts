@@ -32,7 +32,8 @@ true
 {{- if .Values.image -}}
 {{ .Values.image }}
 {{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif/kong-ee-tif-plugin-mtls-auth:latest'
+#'mtr.external.otc.telekomcloud.com/tif/kong-ee-tif-plugin-mtls-auth:latest'
+'mtr.external.otc.telekomcloud.com/tif/kong-ee:kong-ee-curl'
 {{- else -}}
 'kong:{{ .Values.version | default "latest" }}'
 {{- end -}}
