@@ -31,20 +31,10 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-        command: ["/bin/sh", "-c"]
+        command: [ "/bin/sh", "-c"]
         args:
-          - export KONG_NGINX_DAEMON=on && 
-            kong migrations bootstrap &&
-            kong start &&
-            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
-            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
-            kong stop &&
-            export KONG_NGINX_DAEMON=off
-            # && curl -X POST <ADMIN_URL>/admins
-         ## TODO 0- export KONG_NGINX_DAEMON='on'
-         #       1- kong start 
-         ##      2- curl create admin
-         ##      3- kong stop
+          - export KONG_NGINX_DAEMON=off &&
+            kong migrations bootstrap;
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
@@ -96,7 +86,7 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start && export RAMO=RAMO"]
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start"]
         ports:
         - name: proxy
           containerPort: 8000
