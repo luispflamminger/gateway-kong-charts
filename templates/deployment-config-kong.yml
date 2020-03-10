@@ -55,7 +55,10 @@ spec:
         - name: KONG_ADMIN_LISTEN
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
         - name: KONG_PASSWORD
-          value: {{ .Values.manager.kong_password }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-postgresql
+              key: password
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
