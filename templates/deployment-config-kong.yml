@@ -38,7 +38,7 @@ spec:
             kong start
             curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
             curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
-            export KONG_NGINX_DAEMON=on
+            export KONG_NGINX_DAEMON=off
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
