@@ -32,14 +32,6 @@ spec:
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
-#       command: [ "/bin/sh", "-c"]
-#       args:
-#         - export KONG_NGINX_DAEMON=off && 
-#           kong migrations bootstrap &&
-#           kong start
-#           curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
-#           curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
-#           export KONG_NGINX_DAEMON=off
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
@@ -97,15 +89,17 @@ spec:
           - '-c'
           - >-
               export KONG_NGINX_DAEMON='on' && kong start && 
-              curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  && 
+              export KONG_PASSWORD= admin1234 && 
+              curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin12345  && 
               curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin &&
+              kong migrations bootstrap && 
               export KONG_NGINX_DAEMON='off' &&
-              kong stop && export KONG_NGINX_DAEMON='off' &&
+              kong stop && 
+              export KONG_ENFORCE_RBAC='on'
+              export KONG_ADMIN_GUI_AUTH='basic-auth'
+              export KONG_ADMIN_GUI_SESSION_CONF='{ "cookie_name":"kookie" , "secret":"HakunaMatata","storage":"kong" }'
+              export KONG_NGINX_DAEMON='off' &&
               kong start
-#          args:
-#            - export KONG_NGINX_DAEMON=off && kong start && curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  && curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin 
-#            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
-#            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
         ports:
         - name: proxy
           containerPort: 8000
