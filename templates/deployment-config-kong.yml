@@ -54,6 +54,8 @@ spec:
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
         - name: KONG_ADMIN_LISTEN
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
+        - name: KONG_PASSWORD
+          value: {{ .Values.manager.kong_password }}
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
@@ -72,8 +74,6 @@ spec:
           value: >-
                 { "cookie_name":"kookie" , "secret":"HakunaMatata",
                 "storage":"kong" }
-        - name: KONG_PASSWORD
-          value: HakunaMatata
 {{- else }}
         - name: KONG_ENFORCE_RBAC
           value: 'off'
@@ -83,21 +83,19 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-#        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start"] "change daemon to on"
         command: 
           - /bin/sh
           - '-c'
           - >-
               export KONG_NGINX_DAEMON='on' && kong start && 
-              export KONG_PASSWORD= admin1234 && 
               curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin12345  && 
               curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin &&
               kong migrations bootstrap && 
               export KONG_NGINX_DAEMON='off' &&
               kong stop && 
-              export KONG_ENFORCE_RBAC='on'
-              export KONG_ADMIN_GUI_AUTH='basic-auth'
-              export KONG_ADMIN_GUI_SESSION_CONF='{ "cookie_name":"kookie" , "secret":"HakunaMatata","storage":"kong" }'
+              export KONG_ENFORCE_RBAC='on' &&
+              export KONG_ADMIN_GUI_AUTH='basic-auth' &&
+              export KONG_ADMIN_GUI_SESSION_CONF='{ "cookie_name":"kookie" , "secret":"HakunaMatata","storage":"kong" }' &&
               export KONG_NGINX_DAEMON='off' &&
               kong start
         ports:
