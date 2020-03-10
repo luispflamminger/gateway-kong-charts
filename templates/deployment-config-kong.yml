@@ -92,12 +92,9 @@ spec:
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
 #        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start"]
-        command: [ "/bin/sh", "-c"]
-        args:
-          - export KONG_NGINX_DAEMON=off && 
-            kong start &&
-            curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
-            curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin 
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' && kong start && curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  && curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin"]
+#          args:
+#            - export KONG_NGINX_DAEMON=off && kong start && curl -X POST localhost:8001/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  && curl -X POST localhost:8001/rbac/users/kong-super-admin/roles -d roles=super-admin 
 #            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/ -d name=kong-super-admin -d user_token=admin1234  &&
 #            curl -X POST https://kong-apigateway-admin-kong-rbac-test.lab.tif.telekom.de/rbac/users/kong-super-admin/roles -d roles=super-admin  &&
         ports:
