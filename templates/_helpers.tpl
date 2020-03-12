@@ -38,6 +38,16 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "postgres.image" -}}
+{{- if .Values.postgres.image -}}
+{{ .Values.postgres.image }}
+{{- else if eq .Values.global.platform "openshift" -}}
+'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-96-centos7:master'
+{{- else -}}
+'postgres:9.6'
+{{- end -}}
+{{- end -}}
+
 {{- define "postgresql.selector" -}}
 app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}
