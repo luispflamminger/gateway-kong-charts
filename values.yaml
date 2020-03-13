@@ -12,7 +12,6 @@ enterprise:
 manager:
   enabled: false
   disableAuth: false
-  kong_password: HakunaMatata
 
 externalDatabase:
   enabled: false
