@@ -17,9 +17,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: KONG_DATABASE
-          value: postgres
-        - name: KONG_PASSWORD
-          value: myPassword          
+          value: postgres       
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
