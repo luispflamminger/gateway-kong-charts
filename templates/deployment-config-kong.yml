@@ -19,7 +19,10 @@ spec:
         - name: KONG_DATABASE
           value: postgres
         - name: KONG_PASSWORD
-          value: myPassword          
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-kong-rbac
+              key: kongPassword          
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -44,8 +47,8 @@ spec:
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql
-              key: password
+              name: {{ .Release.Name }}-kong-rbac
+              key: kongPassword  
         - name: KONG_PG_PORT
           value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
@@ -56,6 +59,11 @@ spec:
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
         - name: KONG_ADMIN_LISTEN
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
+        - name: KONG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-kong-rbac
+              key: password 
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
@@ -65,7 +73,7 @@ spec:
           value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
         - name: KONG_ADMIN_GUI_URL
           value: 'https://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
-{{- if eq .Values.manager.disableAuth false }}
+{{- if eq .Values.manager.enableAuth false }}
         - name: KONG_ENFORCE_RBAC
           value: 'on'
         - name: KONG_ADMIN_GUI_AUTH
@@ -83,7 +91,7 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
+         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:
         - name: proxy
           containerPort: 8000
