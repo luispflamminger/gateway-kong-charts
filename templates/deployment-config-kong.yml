@@ -91,7 +91,7 @@ spec:
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
 {{- end }}
-         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:
         - name: proxy
           containerPort: 8000
