@@ -21,7 +21,7 @@ spec:
         - name: KONG_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-kong
+              name: {{ .Release.Name }}-kong-rbac
               key: kongPassword   
         - name: KONG_PG_PASSWORD
           valueFrom:
@@ -62,7 +62,7 @@ spec:
         - name: KONG_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-kong
+              name: {{ .Release.Name }}-kong-rbac
               key: kongPassword   
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
