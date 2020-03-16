@@ -19,10 +19,11 @@ spec:
         - name: KONG_DATABASE
           value: postgres
         - name: KONG_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-kong-rbac
-              key: kongPassword         
+          value: myPassword
+#          valueFrom:
+#           secretKeyRef:
+#             name: {{ .Release.Name }}-kong-rbac
+#             key: kongPassword         
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -60,10 +61,11 @@ spec:
         - name: KONG_ADMIN_LISTEN
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
         - name: KONG_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-kong-rbac
-              key: kongPassword
+          value: myPassword
+#          valueFrom:
+#           secretKeyRef:
+#             name: {{ .Release.Name }}-kong-rbac
+#             key: kongPassword
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
