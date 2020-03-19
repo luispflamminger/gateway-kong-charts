@@ -73,6 +73,10 @@ spec:
           value: '{{ .Release.Name }}-portal-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
           value: https
+        - name: KONG_PORTAL_API_LISTEN
+          value: '0.0.0.0:8004, 0.0.0.0:8447 ssl'
+        - name: KONG_PORTAL_API_URL
+          value: 'https://{{ .Release.Name }}-portal-api-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
 {{- end }}
 {{- if eq .Values.manager.disableAuth false }}
         - name: KONG_ENFORCE_RBAC
@@ -119,6 +123,12 @@ spec:
           protocol: TCP
         - name: portal-ssl
           containerPort: 8446
+          protocol: TCP
+        - name: portal-api
+          containerPort: 8004
+          protocol: TCP
+        - name: portal-api-ssl
+          containerPort: 8447
           protocol: TCP
 {{- end }}
         resources:
