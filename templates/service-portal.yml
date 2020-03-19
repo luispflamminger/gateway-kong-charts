@@ -1,0 +1,18 @@
+{{- if and (eq .Values.portal.enabled true) .Values.enterprise.license }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-portal
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+spec:
+  selector: {{ include "kong.selector" $ | nindent 4 }}
+  ports:
+  - name: kong-portal
+    port: 8003
+    targetPort: 8003
+    protocol: TCP
+  - name: kong-portal-ssl
+    port: 8446
+    targetPort: 8446
+    protocol: TCP
+{{- end }}
