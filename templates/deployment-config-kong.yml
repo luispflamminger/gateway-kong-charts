@@ -110,10 +110,10 @@ spec:
           protocol: TCP
 {{- end }}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
-        - name: manager
+        - name: portal
           containerPort: 8003
           protocol: TCP
-        - name: manager-ssl
+        - name: portal-ssl
           containerPort: 8446
           protocol: TCP
 {{- end }}
