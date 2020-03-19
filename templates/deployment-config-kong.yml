@@ -69,6 +69,10 @@ spec:
           value: 'on'
         - name: KONG_PORTAL_GUI_LISTEN
           value: '0.0.0.0:8003, 0.0.0.0:8446 ssl'
+        - name: KONG_PORTAL_GUI_HOST
+          value: '{{ .Release.Name }}-portal-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+        - name: KONG_PORTAL_GUI_PROTOCOL
+          value: https
 {{- end }}
 {{- if eq .Values.manager.disableAuth false }}
         - name: KONG_ENFORCE_RBAC
