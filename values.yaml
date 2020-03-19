@@ -13,6 +13,9 @@ manager:
   enabled: false
   disableAuth: false
 
+portal:
+  enabled: false
+
 externalDatabase:
   enabled: false
 # host: some-external-postgresql-database.example.com
