@@ -10,10 +10,14 @@ enterprise:
   license: changeme
 
 manager:
-  enabled: false
+  enabled: true
+  session:
+    secret: changeme
 
 portal:
-  enabled: false
+  enabled: true
+  session:
+    secret: changeme
 
 rbac:
   enabled: true

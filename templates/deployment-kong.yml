@@ -88,10 +88,12 @@ spec:
           value: 'on'
         - name: KONG_ADMIN_GUI_AUTH
           value: 'basic-auth'
+        - name: KONG_ADMIN_GUI_SESSION_CONF
+          value: '{"secret":"{{ .Values.manager.session.secret }}"}'
         - name: KONG_PORTAL_AUTH
           value: 'basic-auth'
-        - name: KONG_ADMIN_GUI_SESSION_CONF
-          value: '{"cookie_name":"kekse","secret":"monster"}'
+        - name: KONG_PORTAL_SESSION_CONF
+          value: '{"secret":"{{ .Values.portal.session.secret }}"}'
 {{- end }}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
