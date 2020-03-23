@@ -2,7 +2,7 @@ global:
   platform: "kubernetes"
   project_prefix: "tif-"
   storageclass: "cns"
-  externalDnsTarget: "changeme"
+  externalDnsTarget: changeme
   domain:
     internal:
       url: "changeme-internal.tif.telekom.de"
