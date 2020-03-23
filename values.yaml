@@ -22,7 +22,7 @@ portal:
 
 rbac:
   enabled: true
-  kong_password: changeme
+  kongAdminPassword: changeme
 
 externalDatabase:
   enabled: false
@@ -32,6 +32,11 @@ externalDatabase:
 # Warning: 
 # If you disable rbac exposing the Admin API can be dangerous
 exposeAdminApi: true
+
+# values used by nginx directives
+sslVerify: false
+sslVerifyDepth: '1'
+disableUpstreamCache: false
 
 replicas: 1
 

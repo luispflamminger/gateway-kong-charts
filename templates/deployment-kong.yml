@@ -23,7 +23,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
-              key: kong_password
+              key: kongAdminPassword
 {{- end }}
         - name: KONG_PG_PASSWORD
           valueFrom:
@@ -140,6 +140,16 @@ spec:
             cpu: {{ .Values.resources.requests.cpu | default "750m" }}
             memory: {{ .Values.resources.requests.memory | default "1024Mi" }}
         terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - name: trusted-ca-certificates
+          mountPath: /usr/local/kong/tif
+      volumes:
+      - name: trusted-ca-certificates
+        configMap:
+          name: {{ .Release.Name }}-nginx-directives
+          items:
+          - key: SSL_TRUSTED_CERTIFICATE
+            path: trusted-ca-certificates.pem
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
