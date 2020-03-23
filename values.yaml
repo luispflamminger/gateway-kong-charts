@@ -13,19 +13,27 @@ enterprise:
 rbac:
   kongPassword: changeme
 manager:
-  enabled: false
-  disableAuth: false
+  enabled: true
+  session:
+    secret: changeme
 
 portal:
-  enabled: false
+  enabled: true
+  session:
+    secret: changeme
+
+rbac:
+  enabled: true
+  kong_password: changeme
 
 externalDatabase:
   enabled: false
 # host: some-external-postgresql-database.example.com
 # port: '5432'
 
-# Warning: Might be unsecure to expose the adminapi
-exposeAdminApi: false
+# Warning: 
+# If you disable rbac exposing the Admin API can be dangerous
+exposeAdminApi: true
 
 replicas: 1
 
