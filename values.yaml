@@ -10,8 +10,6 @@ global:
 enterprise:
   license: changeme
 
-rbac:
-  kongPassword: changeme
 manager:
   enabled: true
   session:
