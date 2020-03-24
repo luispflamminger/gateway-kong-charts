@@ -17,5 +17,5 @@ spec:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-proxy
-            servicePort: kong-proxy
+            servicePort: kong-proxy-ssl
 {{- end }}
