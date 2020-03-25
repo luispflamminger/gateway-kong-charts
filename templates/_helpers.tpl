@@ -80,10 +80,42 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
   value: 'on'
 - name: KONG_NGINX_HTTP_PROXY_SSL_VERIFY_DEPTH
   value: '{{ .Values.sslVerifyDepth | default '1' }}'
-{{- end }}
+{{- end -}}
 {{- if eq .Values.disableUpstreamCache true }}
 # See: : https://github.com/openresty/lua-resty-core/pull/276/files#diff-c6d3d61f52132e153660e7832e95b88aR340-R349
 - name: KONG_NGINX_HTTP_UPSTREAM_KEEPALIVE
   value: 'NONE'
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.customPlugins.env" -}}
+{{- if .Values.customPlugins -}}
+{{ $enabledPlugins := "" }}
+{{- range .Values.customPlugins -}}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins .name }}
+{{- end }}
+- name: KONG_PLUGINS
+  value: bundled{{ $enabledPlugins }}
+- name: KONG_LUA_PACKAGE_PATH
+  value: "/opt/?.lua;;"
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.customPlugins.volumeMounts" -}}
+{{- if .Values.customPlugins -}}
+{{- range .Values.customPlugins }}
+- name: kong-plugin-{{ .name }}
+  mountPath: /opt/kong/plugins/{{ .name }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.customPlugins.volumes" -}}
+{{- if .Values.customPlugins -}}
+{{- range .Values.customPlugins }}
+- name: kong-plugin-{{ .name }}
+  configMap:
+    name: {{ .configMap }}
+{{- end -}}
 {{- end -}}
 {{- end -}}

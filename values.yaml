@@ -24,6 +24,17 @@ rbac:
   enabled: true
   kongAdminPassword: changeme
 
+# You can add custom plugins here:
+# Note:
+# The plugins must be deployed as configmaps and correctly referenced here
+# You can either deploy the configmaps seperaty in a previous process
+# or you place the configmaps into the templates directory of this Helm chart
+# customPlugins:
+#   - name: custom1
+#     configMap: kong-plugin-custom1-5e67ca89
+#   - name: custom2
+#     configMap: kong-plugin-custom2-6a2bc71b
+
 externalDatabase:
   enabled: false
 # host: some-external-postgresql-database.example.com

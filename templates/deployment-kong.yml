@@ -44,6 +44,8 @@ spec:
         image: {{ include "kong.image" $ }}
         imagePullPolicy: IfNotPresent
         env:
+        {{- include "kong.nginx.directives" $ | indent 8 }}
+        {{- include "kong.customPlugins.env" $ | indent 8 }}
         - name: KONG_DATABASE
           value: postgres
         - name: KONG_PG_PASSWORD
@@ -141,9 +143,11 @@ spec:
             memory: {{ .Values.resources.requests.memory | default "1024Mi" }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
+        {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
         - name: trusted-ca-certificates
           mountPath: /usr/local/kong/tif
       volumes:
+      {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       - name: trusted-ca-certificates
         configMap:
           name: {{ .Release.Name }}-nginx-directives
