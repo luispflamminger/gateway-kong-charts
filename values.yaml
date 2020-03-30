@@ -29,11 +29,15 @@ rbac:
 # The plugins must be deployed as configmaps and correctly referenced here
 # You can either deploy the configmaps seperaty in a previous process
 # or you place the configmaps into the templates directory of this Helm chart
+# If you provide a sha256 sum you will tigger a re-deployment of Kong when the
+# plugin and its sha256 sum changes later!
 # customPlugins:
 #   - name: custom1
 #     configMap: kong-plugin-custom1-5e67ca89
+#     sha256sum: f4950244a2cc624125a2cde3febd33dfadf7d4f8d66fb59f3e076b5fadd87068
 #   - name: custom2
 #     configMap: kong-plugin-custom2-6a2bc71b
+#     sha256sum: bfc0367fce13159ac68ff19be9c5fc081c5c2fa55eedf24a281e0d9d190a4b46
 
 externalDatabase:
   enabled: false

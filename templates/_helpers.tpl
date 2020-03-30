@@ -88,6 +88,16 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.customPlugins.annotations" -}}
+{{- if .Values.customPlugins -}}
+{{- range .Values.customPlugins -}}
+{{- if .sha256sum }}
+checksum/kong-plugin-{{ .name }}-config: {{ .sha256sum }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.customPlugins.env" -}}
 {{- if .Values.customPlugins -}}
 {{ $enabledPlugins := "" }}
