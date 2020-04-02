@@ -67,6 +67,15 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.externalDnsTarget`   | AWS EKS only: The service IP of your external ingress controller | `nil`            |
 | `global.domain.internal.url` | URL for cluster external access set in Ingress/Route             | `nil`            |
 
+## Compatibility
+
+| Environment | Compatible |
+|-------------|------------|
+| OTC         | Yes        |
+| AppAgile    | Unverified |
+| AWS EKS     | Yes        |
+
+
 ## Changes
 
 1.0.0
