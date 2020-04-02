@@ -1,8 +1,3 @@
----
-title: "Kong API-Gateway"
-weight: 10
----
-
 # TIF Kong API-Gateway
 
 ## Requirements
