@@ -44,7 +44,7 @@ true
 {{- else if eq .Values.global.platform "openshift" -}}
 'mtr.external.otc.telekomcloud.com/tifpackages/postgresql-96-centos7:master'
 {{- else -}}
-'postgres:9.6'
+'mtr.external.otc.telekomcloud.com/tif-public/postgres:9.6'
 {{- end -}}
 {{- end -}}
 
