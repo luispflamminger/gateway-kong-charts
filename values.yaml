@@ -16,7 +16,7 @@ manager:
     secret: changeme
 
 portal:
-  enabled: true
+  enabled: false
   session:
     secret: changeme
 
