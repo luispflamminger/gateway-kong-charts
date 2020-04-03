@@ -33,26 +33,9 @@ By default, the ingress giving access to the admin API is enabled. Access is sec
 
 ## Configuration via TIF-Deployer
 
-This section describes how to deploy Kong API-Gateway with the TIF-Deployer. Configuration parameters and information provided in the general Configuration section apply to this also, if not mentioned otherwise. 
+Kong API-Gateway can also be deployed via the TIF-Deployer. Documentation can also be found [here in Codeshare](https://codeshare.workbench.telekom.de/gitlab/TIF-Collaboration/examples/pipelines/tif-infrastructure).
 
-### Deployment
-
-To add Kong API-Gateway to your TIF deployment, add `kong-apigateway` to the component list of your `tif-infrastructure.yaml`. You have to have an enterprise license for Kong to run as enterprise edition. This also requires a PostgreSQL database, which is delivered within the Kong API-Gateway component.
-
-```
-  components:
-  - kong-apigateway
-```
-
-### License
-
-You need to add the license to your deployment pipeline. Simply place the `.sops.yaml` and `secrets.yaml` in the following path, starting on the level of your `infrastructure.yaml`: `secrets/kong-apigateway`
-
-**NOTE:** You can use the same license-file for your Kong API-Gateway Kong and mTLS-Proxy Kong, but it is mandatory to be stored in each components secrets folder.
-
-### Removal
-
-Note that if you undeploy the PostgreSQL component, the Volume Claims created on deployment will remain. This is intended to prevent trace information to be lost. If you don't see further use in keeping thos information, delete the Volume Claims manually.
+**WARNING: If you undeploy the PostgreSQL bundled in this component, the Volume Claims created on deployment will be deleted!**
 
 ## Parameters
 
