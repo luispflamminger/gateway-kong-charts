@@ -11,6 +11,7 @@ spec:
     metadata:
       labels: {{ include "postgresql.labels" $ | nindent 8 }}
     spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgres.image" $ }}

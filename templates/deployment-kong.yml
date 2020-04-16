@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}
   annotations: 
-    {{- include "kong.customPlugins.annotations" $ | indent 4 }}
+    {{- include "kong.checksums" $ | indent 4 }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
@@ -13,6 +13,7 @@ spec:
     metadata:
       labels: {{ include "kong.labels" $ | nindent 8 }}
     spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
       initContainers:
       - name: kong-init
         image: {{ include "kong.image" $ }}
@@ -145,10 +146,12 @@ spec:
             memory: {{ .Values.resources.requests.memory | default "1024Mi" }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
+        {{- include "kong.volumeMounts" $ | indent 8 }}
         {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
         - name: trusted-ca-certificates
           mountPath: /usr/local/kong/tif
       volumes:
+      {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       - name: trusted-ca-certificates
         configMap:

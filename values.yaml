@@ -5,6 +5,28 @@ global:
   externalDnsTarget: changeme
   domain: ""
 
+  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise no pull secret will be deployed
+  # If you use tif-infra-pipeline (TIF installer) this will be set automatically
+  # imagePullSecrets:
+  #   - name: mtr-tif-public
+  #     registry: https://mtr.external.otc.telekomcloud.com
+  #     username: changeme
+  #     password: changeme
+  imagePullSecrets: []
+
+# You can list files (in /templates) here that should cause a re-deployment of your application
+# when their contents change
+# This makes sense if you change configMaps or secrets and you
+# want your deployment to use the latest configuration
+#
+# templateChangeTriggers:
+#   - my-custom-configmap.yaml
+#   - my-custom-kong-plugin.yaml
+templateChangeTriggers:
+  - configmap-tif-dhei-defaults.yaml
+
+image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0-beta.1-1.3.0.2-alpine'
+
 enterprise:
   license: changeme
 
@@ -18,6 +40,8 @@ portal:
   session:
     secret: changeme
 
+# Warning: 
+# If you disable RBAC exposing the Admin API can be dangerous
 rbac:
   enabled: true
   kongAdminPassword: changeme
@@ -27,15 +51,33 @@ rbac:
 # The plugins must be deployed as configmaps and correctly referenced here
 # You can either deploy the configmaps seperaty in a previous process
 # or you place the configmaps into the templates directory of this Helm chart
-# If you provide a sha256 sum you will tigger a re-deployment of Kong when the
-# plugin and its sha256 sum changes later!
+#
+# Note: If your configMap name will not change with future updates of your Kong plugin (e.g.: no checksum in name)
+# you can list the configMap yaml file in the templateChangeTriggers list above
+# to tigger a re-deployment of Kong
+#
 # customPlugins:
 #   - name: custom1
 #     configMap: kong-plugin-custom1-5e67ca89
-#     sha256sum: f4950244a2cc624125a2cde3febd33dfadf7d4f8d66fb59f3e076b5fadd87068
 #   - name: custom2
 #     configMap: kong-plugin-custom2-6a2bc71b
-#     sha256sum: bfc0367fce13159ac68ff19be9c5fc081c5c2fa55eedf24a281e0d9d190a4b46
+customPlugins: []
+
+# If you want to change the default trusted CA certificates
+# you can do so by referencing a configMap and a key here to point
+# to the chain of CAs in PEM format 
+# Please have a look at the default configMap configmap-tif-dhei-defaults.yaml
+# and the NGINX documentation here:
+# https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_trusted_certificate
+#
+# Note: If your configMap name will not change with future updates of your Kong plugin (e.g.: no checksum in name)
+# you can list the configMap yaml file in the templateChangeTriggers list above
+# to tigger a re-deployment of Kong
+#
+# trustedCaCertificates:
+#   configMap: my-kong-apigateway-config
+#   key: trusted-ca-certificates.pem
+trustedCaCertificates: {}
 
 externalDatabase:
   enabled: false
