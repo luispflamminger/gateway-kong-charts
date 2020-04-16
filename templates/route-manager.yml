@@ -1,4 +1,4 @@
-{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
 {{- if eq .Values.global.platform "openshift" }}
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -19,5 +19,5 @@ spec:
 status:
   ingress:
     - host: ""
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}

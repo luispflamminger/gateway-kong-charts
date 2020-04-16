@@ -1,4 +1,4 @@
-{{- if and (eq .Values.manager.enabled true) .Values.enterprise.license }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
 {{- if eq .Values.global.platform "kubernetes" }}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -19,5 +19,5 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-manager
             servicePort: kong-manager
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}

@@ -1,4 +1,4 @@
-{{- if eq .Values.global.platform "openshift" }}
+{{- if eq .Values.global.platform "openshift" -}}
 {{- if .Values.exposeAdminApi }}
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -19,5 +19,5 @@ spec:
 status:
   ingress:
     - host: ""
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}

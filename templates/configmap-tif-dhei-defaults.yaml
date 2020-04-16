@@ -1,5 +1,5 @@
 
-{{- if not .Values.trustedCaCertificates.configMap -}}
+{{- if not .Values.trustedCaCertificates.configMap }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

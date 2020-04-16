@@ -17,4 +17,4 @@ spec:
 status:
   ingress:
     - host: ""
-{{- end }}
+{{- end -}}

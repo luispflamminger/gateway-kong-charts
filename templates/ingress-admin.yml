@@ -1,4 +1,4 @@
-{{- if eq .Values.global.platform "kubernetes" }}
+{{- if eq .Values.global.platform "kubernetes" -}}
 {{- if .Values.exposeAdminApi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -19,5 +19,5 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-admin
             servicePort: kong-admin
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}

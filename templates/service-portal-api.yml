@@ -1,4 +1,4 @@
-{{- if and (eq .Values.portal.enabled true) .Values.enterprise.license }}
+{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,4 +15,4 @@ spec:
     port: 8447
     targetPort: 8447
     protocol: TCP
-{{- end }}
+{{- end -}}
