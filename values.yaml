@@ -3,9 +3,7 @@ global:
   project_prefix: "tif-"
   storageclass: "cns"
   externalDnsTarget: changeme
-  domain:
-    internal:
-      url: "changeme-internal.tif.telekom.de"
+  domain: ""
 
 enterprise:
   license: changeme

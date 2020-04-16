@@ -48,7 +48,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.project_prefix`      | Prefix for the deployed application name to group applications   | `tif-`           |
 | `global.storageClass`        | Select storage class for the PVCs depending on your platform     | `gp2`            |
 | `global.externalDnsTarget`   | AWS EKS only: The service IP of your external ingress controller | `nil`            |
-| `global.domain.internal.url` | URL for cluster external access set in Ingress/Route             | `nil`            |
+| `global.domain`              | URL for cluster external access set in Ingress/Route             | `nil`            |
 
 ## Compatibility
 

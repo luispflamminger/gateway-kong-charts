@@ -6,7 +6,7 @@ metadata:
   name: {{ .Release.Name }}-manager
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
-  host: {{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}
+  host: {{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain }}
   port:
     targetPort: kong-manager
   to:

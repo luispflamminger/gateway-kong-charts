@@ -67,13 +67,13 @@ spec:
           value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
 {{- if .Values.exposeAdminApi }}
         - name: KONG_ADMIN_API_URI
-          value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+          value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
 {{- end }}
 {{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_ADMIN_GUI_LISTEN
           value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
         - name: KONG_ADMIN_GUI_URL
-          value: 'https://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+          value: 'https://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
 {{- end }}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_PORTAL
@@ -81,7 +81,7 @@ spec:
         - name: KONG_PORTAL_GUI_LISTEN
           value: '0.0.0.0:8003, 0.0.0.0:8446 ssl'
         - name: KONG_PORTAL_GUI_HOST
-          value: '{{ .Release.Name }}-portal-{{ .Release.Namespace }}.{{ .Values.global.domain.internal.url }}'
+          value: '{{ .Release.Name }}-portal-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
           value: https
         - name: KONG_PORTAL_API_LISTEN
