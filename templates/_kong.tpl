@@ -33,6 +33,9 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
+{{- if not .Values.trustedCaCertificates.configMap }}
+checksum/configmap-tif-dhei-defaults.yaml: {{ include (print .Template.BasePath "/configmap-tif-dhei-defaults.yaml" ) $ | sha256sum }}
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.volumes" }}

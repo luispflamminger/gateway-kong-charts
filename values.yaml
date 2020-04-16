@@ -22,8 +22,7 @@ global:
 # templateChangeTriggers:
 #   - my-custom-configmap.yaml
 #   - my-custom-kong-plugin.yaml
-templateChangeTriggers:
-  - configmap-tif-dhei-defaults.yaml
+templateChangeTriggers: []
 
 # You can force using a specific image here:
 # image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0-beta.1-1.3.0.2-alpine'
