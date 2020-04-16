@@ -148,17 +148,9 @@ spec:
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
         {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
-        - name: trusted-ca-certificates
-          mountPath: /usr/local/kong/tif
       volumes:
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
-      - name: trusted-ca-certificates
-        configMap:
-          name: {{ .Release.Name }}-nginx-directives
-          items:
-          - key: SSL_TRUSTED_CERTIFICATE
-            path: trusted-ca-certificates.pem
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
