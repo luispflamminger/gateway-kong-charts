@@ -43,6 +43,7 @@ portal:
 
 # Warning: 
 # If you disable RBAC exposing the Admin API can be dangerous
+# Note that RBAC will only work when Kong in running in enterprise edition (enterprise.license is provided) 
 rbac:
   enabled: true
   kongAdminPassword: changeme

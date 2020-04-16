@@ -4,7 +4,7 @@
 
 ### License
 
-To allow Kong to start as enteprise edition, you need a valid enterprise license. The license is stored as secret and will be pulled by the TIF-Pipeline-Operator to be deployed in the cluster.
+To allow Kong to start as enteprise edition, you need a valid enterprise license.
 
 ### Database
 
@@ -17,7 +17,7 @@ Right now, Kong enterprise cannot run DB-less and additionally, certificates wil
 
 ### License
 
-Place your license-JSON into at in the `enterprise` scope of the `values.yaml`. Make sure that `enabled` is set to `true`. Otherwise it will not start as enterprise.
+Place your license-JSON into at in the `enterprise` scope of the `values.yaml`. If you don't provide a license, Kong API-Gateway will start in the community edition where no Enterprise features will be available. In this case enabled RBAC will not take effect.
 
 ### Database
 
