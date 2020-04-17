@@ -55,20 +55,20 @@ checksum/configmap-tif-dhei-defaults.yaml: {{ include (print .Template.BasePath 
 
 {{- define "kong.nginx.directives" -}}
 {{- if eq .Values.sslVerify true }}
-- name: KONG_NGINX_HTTP_PROXY_SSL_TRUSTED_CERTIFICATE
+- name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
 {{- if .Values.trustedCaCertificates.key -}}
   value: '/usr/local/kong/tif/{{ .Values.trustedCaCertificates.key }}'
 {{- else }}
   value: '/usr/local/kong/tif/trusted-ca-certificates.pem'
 {{- end }}
-- name: KONG_NGINX_HTTP_PROXY_SSL_VERIFY
+- name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY
   value: 'on'
-- name: KONG_NGINX_HTTP_PROXY_SSL_VERIFY_DEPTH
+- name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY_DEPTH
   value: '{{ .Values.sslVerifyDepth | default '1' }}'
 {{- end -}}
 {{- if eq .Values.disableUpstreamCache true }}
 # See: : https://github.com/openresty/lua-resty-core/pull/276/files#diff-c6d3d61f52132e153660e7832e95b88aR340-R349
-- name: KONG_NGINX_HTTP_UPSTREAM_KEEPALIVE
+- name: KONG_NGINX_PROXY_UPSTREAM_KEEPALIVE
   value: 'NONE'
 {{- end -}}
 {{- end -}}
