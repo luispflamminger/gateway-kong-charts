@@ -15,7 +15,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgres.image" $ }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: POSTGRES_USER
           value: {{ .Values.postgres.user | default "kong" }}

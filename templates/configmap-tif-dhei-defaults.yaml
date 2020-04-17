@@ -4,8 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-dhei-defaults
-  labels:
-    {{- include "kong.labels" $ | nindent 8 }}
+  labels: {{- include "kong.labels" $ | nindent 4 }}
 data:
   trusted-ca-certificates.pem: |
     # cat ./ca_certificates_in_pem_format/* > ca_certificates.crt

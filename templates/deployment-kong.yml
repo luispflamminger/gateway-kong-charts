@@ -17,7 +17,7 @@ spec:
       initContainers:
       - name: kong-init
         image: {{ include "kong.image" $ }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: KONG_DATABASE
           value: postgres
@@ -45,7 +45,7 @@ spec:
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         {{- include "kong.nginx.directives" $ | indent 8 }}
         {{- include "kong.customPlugins.env" $ | indent 8 }}

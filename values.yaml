@@ -90,8 +90,9 @@ externalDatabase:
 exposeAdminApi: true
 
 # values used by nginx directives
-sslVerify: false
+sslVerify: true
 sslVerifyDepth: '1'
+
 disableUpstreamCache: false
 
 replicas: 1
