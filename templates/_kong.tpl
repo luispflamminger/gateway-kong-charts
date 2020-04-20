@@ -30,37 +30,33 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
 {{- define "kong.checksums" -}}
+{{- if eq .Values.sslVerify true -}}
+checksum/trusted-ca-certificates: {{ (.Values.trustedCaCertificates | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
+{{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
-{{- if not .Values.trustedCaCertificates.configMap }}
-checksum/configmap-tif-dhei-defaults.yaml: {{ include (print .Template.BasePath "/configmap-tif-dhei-defaults.yaml" ) $ | sha256sum }}
-{{- end -}}
 {{- end -}}
 
-{{- define "kong.volumes" }}
+{{- define "kong.volumes" -}}
+{{- if eq .Values.sslVerify true }}
 - name: trusted-ca-certificates
-  configMap:
-{{- if .Values.trustedCaCertificates.configMap }}
-    name: {{ .Values.trustedCaCertificates.configMap }}
-{{- else }}
-    name: {{ .Release.Name }}-dhei-defaults
+  secret:
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.volumeMounts" }}
+{{- define "kong.volumeMounts" -}}
+{{- if eq .Values.sslVerify true }}
 - name: trusted-ca-certificates
   mountPath: /usr/local/kong/tif
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.nginx.directives" -}}
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
-{{- if .Values.trustedCaCertificates.key }}
-  value: '/usr/local/kong/tif/{{ .Values.trustedCaCertificates.key }}'
-{{- else }}
   value: '/usr/local/kong/tif/trusted-ca-certificates.pem'
-{{- end }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY
   value: 'on'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY_DEPTH

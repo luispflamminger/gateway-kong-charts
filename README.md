@@ -33,44 +33,23 @@ By default, the ingress giving access to the admin API is enabled. Access is sec
 
 ### SSL Verification
 
-By default Kong API-Gateway will verify the forward proxy traffic against a chain of default Telekom CA certificates.  
-You can disables this behavior by setting sslVerify to false in the ``values.yaml``.  
-You can use your own CA certificates by copying a new configMap to the templates/ directory and refer to that configmap in the ``values.yaml``.
-
-Example *templates/my-apigateway-config.yaml*:
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: my-apigateway-config
-  labels: {{- include "kong.labels" $ | nindent 4 }}
-data:
-  trusted-ca-certificates.pem: |
-    -----BEGIN CERTIFICATE-----
-    <CA certificate 01 in PEM format here>
-    -----END CERTIFICATE-----
-    -----BEGIN CERTIFICATE-----
-    <CA certificate 02 in PEM format here>
-    -----END CERTIFICATE-----
-    -----BEGIN CERTIFICATE-----
-    <CA certificate 03 in PEM format here>
-    -----END CERTIFICATE-----
-```
+By default Kong API-Gateway will try to verify all traffic against a chain of trusted CA certificates which needs to be specified explicitely. 
+You can disables this behavior completely by setting sslVerify to false in the ``values.yaml``.  Otherwise you'll need to provide your own truststore by setting the ``trustedCaCertificates`` field with the content of your CA certificates in PEM format 
 
 Example *values.yaml*:
 ```yaml
-# ...
-
-trustedCaCertificates:
-  configMap: my-apigateway-config
-  key: trusted-ca-certificates.pem
-
-templateChangeTriggers:
-  - my-apigateway-config.yaml
-# ...
+trustedCaCertificates: |
+  -----BEGIN CERTIFICATE-----
+  <CA certificate 01 in PEM format here>
+  -----END CERTIFICATE-----
+  -----BEGIN CERTIFICATE-----
+  <CA certificate 02 in PEM format here>
+  -----END CERTIFICATE-----
+  -----BEGIN CERTIFICATE-----
+  <CA certificate 03 in PEM format here>
+  -----END CERTIFICATE-----
 ```
-
-Adding the configMap file to ``templateChangeTriggers`` will cause a re-deployment of Kong API-Gateway if the content of that file change.
+Of course Helm let's you reference multiple values files when installing a deployment so you could also outsource ``trustedCaCertificates`` wo its own values file, for example ``my-trustes-ca-certificates.yaml``.
 
 ## Configuration via TIF-Deployer
 
@@ -91,11 +70,23 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.externalDnsTarget`           | AWS EKS only: The service IP of your external ingress controller               | `nil`            |
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
-| `trustedCaCertificates`              | List of references for CA certificate chains in PEM format                     | `[]`             |
-| `trustedCaCertificates[].configMap`  | Name of the configMap that holds CA certificates                               | `nil`            |
-| `trustedCaCertificates[].key`        | Data key of the configMap that holds CA certificates in PEM format             | `nil`            |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
+| `trustedCaCertificates`              | CA certificates chain in PEM format (string)                                   | `nil`            |
+
+## Troubleshooting
+
+If the Kong API-Gateway deployment fails to come up, please have a look at the logs of the container.
+
+**Log message:**
+```
+Error: /usr/local/share/lua/5.1/kong/cmd/start.lua:37: nginx configuration is invalid (exit code 1):
+nginx: [emerg] SSL_CTX_load_verify_locations("/usr/local/kong/tif/trusted-ca-certificates.pem") failed (SSL: error:0B084088:x509 certificate routines:X509_load_cert_crl_file:no certificate or crl found)
+nginx: configuration file /usr/local/kong/nginx.conf test failed
+```
+**Solution:**  
+This error happens if ``sslVerify`` is set to true but no valid certificates could be found.  
+Please make sue that ``trustedCaCertificates`` is set probably or set sslVerify to false if you don't wish to use ssl verification.
 
 ## Compatibility
 

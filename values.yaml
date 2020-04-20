@@ -64,22 +64,6 @@ rbac:
 #     configMap: kong-plugin-custom2-6a2bc71b
 customPlugins: []
 
-# If you want to change the default trusted CA certificates
-# you can do so by referencing a configMap and a key here to point
-# to the chain of CAs in PEM format 
-# Please have a look at the default configMap configmap-tif-dhei-defaults.yaml
-# and the NGINX documentation here:
-# https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_trusted_certificate
-#
-# Note: If your configMap name will not change with future updates of your Kong plugin (e.g.: no checksum in name)
-# you can list the configMap yaml file in the templateChangeTriggers list above
-# to tigger a re-deployment of Kong
-#
-# trustedCaCertificates:
-#   configMap: my-kong-apigateway-config
-#   key: trusted-ca-certificates.pem
-trustedCaCertificates: {}
-
 externalDatabase:
   enabled: false
 # host: some-external-postgresql-database.example.com
@@ -92,6 +76,19 @@ exposeAdminApi: true
 # values used by nginx directives
 sslVerify: true
 sslVerifyDepth: '1'
+
+# You can define the truststore for SSL verification by setting your CAs in PEM format here 
+#
+# trustedCaCertificates: |
+#   -----BEGIN CERTIFICATE-----
+#   <CA certificate 01 in PEM format here>
+#   -----END CERTIFICATE-----
+#   -----BEGIN CERTIFICATE-----
+#   <CA certificate 02 in PEM format here>
+#   -----END CERTIFICATE-----
+#   -----BEGIN CERTIFICATE-----
+#   <CA certificate 03 in PEM format here>
+#   -----END CERTIFICATE-----
 
 disableUpstreamCache: false
 
