@@ -56,7 +56,7 @@ checksum/configmap-tif-dhei-defaults.yaml: {{ include (print .Template.BasePath 
 {{- define "kong.nginx.directives" -}}
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
-{{- if .Values.trustedCaCertificates.key -}}
+{{- if .Values.trustedCaCertificates.key }}
   value: '/usr/local/kong/tif/{{ .Values.trustedCaCertificates.key }}'
 {{- else }}
   value: '/usr/local/kong/tif/trusted-ca-certificates.pem'
