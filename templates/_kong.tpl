@@ -68,7 +68,7 @@ checksum/configmap-tif-dhei-defaults.yaml: {{ include (print .Template.BasePath 
 {{- end -}}
 {{- if eq .Values.disableUpstreamCache true }}
 # See: : https://github.com/openresty/lua-resty-core/pull/276/files#diff-c6d3d61f52132e153660e7832e95b88aR340-R349
-- name: KONG_NGINX_PROXY_UPSTREAM_KEEPALIVE
+- name: KONG_NGINX_HTTP_UPSTREAM_KEEPALIVE
   value: 'NONE'
 {{- end -}}
 {{- end -}}
