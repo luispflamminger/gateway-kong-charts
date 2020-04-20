@@ -82,14 +82,20 @@ Kong API-Gateway can also be deployed via the TIF-Deployer. Documentation can al
 
 This is a short overlook about important parameters in the `values.yaml`.
 
-| Parameter                    | Description                                                      | Default          |
-|------------------------------|------------------------------------------------------------------|------------------|
-| `global`                     | Common values for all TIF-Helm-Charts                            |                  |
-| `global.platform`            | Determines where the chart will be deployed                      | `kubernetes`     |
-| `global.project_prefix`      | Prefix for the deployed application name to group applications   | `tif-`           |
-| `global.storageClass`        | Select storage class for the PVCs depending on your platform     | `gp2`            |
-| `global.externalDnsTarget`   | AWS EKS only: The service IP of your external ingress controller | `nil`            |
-| `global.domain`              | URL for cluster external access set in Ingress/Route             | `nil`            |
+| Parameter                            | Description                                                                    | Default          |
+|--------------------------------------|--------------------------------------------------------------------------------|------------------|
+| `global`                             | Common values for all TIF-Helm-Charts                                          |                  |
+| `global.platform`                    | Determines where the chart will be deployed                                    | `kubernetes`     |
+| `global.project_prefix`              | Prefix for the deployed application name to group applications                 | `tif-`           |
+| `global.storageClass`                | Select storage class for the PVCs depending on your platform                   | `gp2`            |
+| `global.externalDnsTarget`           | AWS EKS only: The service IP of your external ingress controller               | `nil`            |
+| `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
+| `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
+| `trustedCaCertificates`              | List of references for CA certificate chains in PEM format                     | `[]`             |
+| `trustedCaCertificates[].configMap`  | Name of the configMap that holds CA certificates                               | `nil`            |
+| `trustedCaCertificates[].key`        | Data key of the configMap that holds CA certificates in PEM format             | `nil`            |
+| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
+| `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
 
 ## Compatibility
 
