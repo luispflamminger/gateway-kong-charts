@@ -1,14 +1,22 @@
 {{- if eq .Values.global.platform "openshift" -}}
-{{- if .Values.exposeAdminApi }}
+{{- if and .Values.adminApi.enabled .Values.adminApi.ingress.enabled }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ .Release.Name }}-admin
   labels: {{ include "kong.labels" $ | nindent 4 }}
+{{- if .Values.adminApi.ingress.annotations }}
+  annotations:
+    {{- toYaml .Values.adminApi.ingress.annotations | nindent 4 }}
+{{- end }}
 spec:
-  host: {{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain }}
+  host: {{ include "kong.adminApi.host" . }}
   port:
+{{- if .Values.adminApi.tls.enabled }}
+    targetPort: kong-admin-ssl
+{{- else }}
     targetPort: kong-admin
+{{- end }}
   to:
     kind: Service
     name: {{ .Release.Name }}-admin

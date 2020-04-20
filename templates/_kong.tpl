@@ -103,6 +103,22 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.manager.host" -}}
+{{- if not (empty .Values.manager.ingress.hostname) }}
+{{- .Values.manager.ingress.hostname -}}
+{{- else }}
+{{- printf "%s-manager-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.portal.host" -}}
+{{- if not (empty .Values.portal.ingress.hostname) }}
+{{- .Values.portal.ingress.hostname -}}
+{{- else }}
+{{- printf "%s-portal-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.proxy.host" -}}
 {{- if not (empty .Values.proxy.ingress.hostname) }}
 {{- .Values.proxy.ingress.hostname -}}

@@ -63,29 +63,46 @@ spec:
           value: '1'
         - name: KONG_PROXY_LISTEN
           value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
+{{- if .Values.adminApi.enabled }}
         - name: KONG_ADMIN_LISTEN
-          value: '0.0.0.0:8001, 0.0.0.0:8444 ssl'
-{{- if .Values.exposeAdminApi }}
+{{- if .Values.adminApi.tls.enabled }}
+          value: '0.0.0.0:8444 ssl'
+{{- else }}
+          value: '0.0.0.0:8001'
+{{- end }}
+{{- if .Values.adminApi.ingress.enabled }}
         - name: KONG_ADMIN_API_URI
-          value: 'https://{{ .Release.Name }}-admin-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
+          value: 'https://{{ include "kong.adminApi.host" . }}'
+{{- end }}
 {{- end }}
 {{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_ADMIN_GUI_LISTEN
-          value: '0.0.0.0:8002, 0.0.0.0:8445 ssl'
+{{- if .Values.manager.tls.enabled }}
+          value: '0.0.0.0:8445 ssl'
+{{- else }}
+          value: '0.0.0.0:8002'
+{{- end }}
         - name: KONG_ADMIN_GUI_URL
-          value: 'https://{{ .Release.Name }}-manager-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
+          value: 'https://{{ include "kong.manager.host" . }}'
 {{- end }}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_PORTAL
           value: 'on'
+{{- if .Values.portal.tls.enabled }}
         - name: KONG_PORTAL_GUI_LISTEN
-          value: '0.0.0.0:8003, 0.0.0.0:8446 ssl'
+          value: '0.0.0.0:8446 ssl'
+        - name: KONG_PORTAL_API_LISTEN
+          value: '0.0.0.0:8447 ssl'
+{{- else }}
+        - name: KONG_PORTAL_GUI_LISTEN
+          value: '0.0.0.0:8003'
+        - name: KONG_PORTAL_API_LISTEN
+          value: '0.0.0.0:8004'
+{{- end }}
         - name: KONG_PORTAL_GUI_HOST
-          value: '{{ .Release.Name }}-portal-{{ .Release.Namespace }}.{{ .Values.global.domain }}'
+          value: '{{ include "kong.portal.host" . }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
           value: https
-        - name: KONG_PORTAL_API_LISTEN
-          value: '0.0.0.0:8004, 0.0.0.0:8447 ssl'
 {{- end }}
 {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ENFORCE_RBAC
@@ -111,33 +128,44 @@ spec:
         - name: proxy-ssl
           containerPort: 8443
           protocol: TCP
-        - name: admin
-          containerPort: 8001
-          protocol: TCP
+{{- if .Values.adminApi.enabled }}
+{{- if .Values.adminApi.tls.enabled }}
         - name: admin-ssl
           containerPort: 8444
           protocol: TCP
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
-        - name: manager
-          containerPort: 8002
+{{- else }}
+        - name: admin
+          containerPort: 8001
           protocol: TCP
+{{- end }}
+{{- end }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+{{- if .Values.manager.tls.enabled }}
         - name: manager-ssl
           containerPort: 8445
           protocol: TCP
+{{- else }}
+        - name: manager
+          containerPort: 8002
+          protocol: TCP
+{{- end }}
 {{- end }}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
-        - name: portal
-          containerPort: 8003
-          protocol: TCP
+{{- if .Values.portal.tls.enabled }}
         - name: portal-ssl
           containerPort: 8446
-          protocol: TCP
-        - name: portal-api
-          containerPort: 8004
           protocol: TCP
         - name: portal-api-ssl
           containerPort: 8447
           protocol: TCP
+{{- else}}
+        - name: portal
+          containerPort: 8003
+          protocol: TCP
+        - name: portal-api
+          containerPort: 8004
+          protocol: TCP
+{{- end }}
 {{- end }}
         resources:
           requests:

@@ -1,3 +1,4 @@
+{{- if .Values.adminApi.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,11 +7,14 @@ metadata:
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
-  - name: kong-admin
-    port: 8001
-    targetPort: 8001
-    protocol: TCP
+{{- if .Values.adminApi.tls.enabled }}
   - name: kong-admin-ssl
     port: 8444
     targetPort: 8444
+{{- else }}
+  - name: kong-admin
+    port: 8001
+    targetPort: 8001
+{{- end }}
     protocol: TCP
+{{- end -}}

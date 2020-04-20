@@ -1,7 +1,7 @@
 global:
-  platform: "kubernetes"
+  platform: openshift
   project_prefix: "tif-"
-  storageclass: "cns"
+  storageclass: "gp2"
   externalDnsTarget: changeme
   domain: ""
 
@@ -29,16 +29,6 @@ templateChangeTriggers: []
 
 enterprise:
   license: changeme
-
-manager:
-  enabled: true
-  session:
-    secret: changeme
-
-portal:
-  enabled: false
-  session:
-    secret: changeme
 
 # Warning: 
 # If you disable RBAC exposing the Admin API can be dangerous
@@ -69,9 +59,49 @@ externalDatabase:
 # host: some-external-postgresql-database.example.com
 # port: '5432'
 
+# Enable Admin API and whether it is http or https
 # Warning: 
-# If you disable rbac exposing the Admin API can be dangerous
-exposeAdminApi: true
+# Enabled Admin API with disabled RBAC can be dangerous
+adminApi:
+  enabled: true
+  tls:
+    enabled: false
+# Activate Admin API ingress and set a dedicated hostname
+  ingress:
+    enabled: true
+    # hostname: ""
+    annotations: {}
+
+# Configure Kong Manager
+manager:
+  enabled: true
+  tls:
+    enabled: false
+  session:
+    secret: changeme
+  ingress:
+    enabled: true
+    # hostname: ""
+    annotations: {}
+
+# Configure the Portal
+portal:
+  enabled: false
+  tls:
+    enabled: false
+  session:
+    secret: changeme
+  ingress:
+    enabled: true
+    # hostname: ""
+    annotations: {}
+
+# Activate proxy ingress and set a dedicated hostname
+proxy:
+  ingress:
+    enabled: true
+    # hostname: ""
+    annotations: {}
 
 # values used by nginx directives
 sslVerify: true

@@ -1,21 +1,27 @@
 {{- if eq .Values.global.platform "kubernetes" }}
+{{- if .Values.proxy.ingress.enabled }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-proxy
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
+{{- if .Values.proxy.ingress.annotations }}
+    {{- toYaml .Values.proxy.ingress.annotations | nindent 4 }}
+{{- else }}
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    external-dns.alpha.kubernetes.io/hostname: {{ .Release.Name }}-{{ .Release.Namespace }}.{{ .Values.global.domain }}
+    external-dns.alpha.kubernetes.io/hostname: {{ include "kong.proxy.host" . }}
     external-dns.alpha.kubernetes.io/target: {{ .Values.global.externalDnsTarget }}
     kubernetes.io/ingress.class: external-nginx
+{{- end }}
 spec:
   rules:
-  - host: {{ .Release.Name }}-{{ .Release.Namespace }}.{{ .Values.global.domain }}
+  - host: {{ include "kong.proxy.host" . }}
     http:
       paths:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-proxy
             servicePort: kong-proxy-ssl
+{{- end -}}
 {{- end -}}

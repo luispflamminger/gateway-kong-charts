@@ -69,6 +69,24 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.storageClass`                | Select storage class for the PVCs depending on your platform                   | `gp2`            |
 | `global.externalDnsTarget`           | AWS EKS only: The service IP of your external ingress controller               | `nil`            |
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
+| `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`           |
+| `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`          |
+| `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`           |
+| `adminApi.ingress.hostname`          | Set dedicated hostname for Admin API ingress (or route), overwrites global URL | `nil`            |
+| `adminApi.ingress.annotations`       | Overwrite default ingress annotations                                          | `nil`            |
+| `manager.enabled`                    | Create service for accessing Kong Manager                                      | `true`           |
+| `manager.tls.enabled`                | Access Manager via https instead of http                                       | `false`          |
+| `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                            | `true`           |
+| `manager.ingress.hostname`           | Set dedicated hostname Manager ingress (or route), overwrites global URL       | `nil`            |
+| `manager.ingress.annotations`        | Overwrite default ingress annotations                                          | `nil`            |
+| `portal.enabled`                     | Create service for accessing the Portal                                        | `false`          |
+| `portal.tls.enabled`                 | Access the Portal via https instead of http                                    | `false`          |
+| `portal.ingress.enabled`             | Create ingress (or route for OpenShift) for the Portal                         | `true`           |
+| `portal.ingress.hostname`            | Set dedicated hostname for the Portal ingress (or route), overwrites global URL| `nil`            |
+| `portal.ingress.annotations`         | Overwrite default ingress annotations                                          | `nil`            |
+| `proxy.ingress.enabled`              | Create ingress (or route for OpenShift) for proxy                              | `true`           |
+| `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL     | `nil`            |
+| `proxy.ingress.annotations`          | Overwrite default ingress annotations                                          | `nil`            |
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
@@ -98,6 +116,10 @@ Please make sue that ``trustedCaCertificates`` is set probably or set sslVerify 
 
 
 ## Changes
+
+0.0.0
+- DHEI-1430: Hostname setting for every ingress/route
+- DHEI-1430: Annotations overwrite for ingress/routes
 
 1.0.0
 - Initial release
