@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
-  annotations: 
-    {{- include "kong.checksums" $ | indent 4 }}
+  annotations: {{- include "kong.checksums" $ | nindent 4 }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
