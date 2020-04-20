@@ -31,6 +31,47 @@ Kong API-Gateway can be accessed via created Ingress/Route. See the Parameters s
 
 By default, the ingress giving access to the admin API is enabled. Access is secured by role based access control (RBAC).
 
+### SSL Verification
+
+By default Kong API-Gateway will verify the forward proxy traffic against a chain of default Telekom CA certificates.  
+You can disables this behavior by setting sslVerify to false in the ``values.yaml``.  
+You can use your own CA certificates by copying a new configMap to the templates/ directory and refer to that configmap in the ``values.yaml``.
+
+Example *templates/my-apigateway-config.yaml*:
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-apigateway-config
+  labels: {{- include "kong.labels" $ | nindent 4 }}
+data:
+  trusted-ca-certificates.pem: |
+    -----BEGIN CERTIFICATE-----
+    <CA certificate 01 in PEM format here>
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    <CA certificate 02 in PEM format here>
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    <CA certificate 03 in PEM format here>
+    -----END CERTIFICATE-----
+```
+
+Example *values.yaml*:
+```yaml
+# ...
+
+trustedCaCertificates:
+  configMap: my-apigateway-config
+  key: trusted-ca-certificates.pem
+
+templateChangeTriggers:
+  - my-apigateway-config.yaml
+# ...
+```
+
+Adding the configMap file to ``templateChangeTriggers`` will cause a re-deployment of Kong API-Gateway if the content of that file change.
+
 ## Configuration via TIF-Deployer
 
 Kong API-Gateway can also be deployed via the TIF-Deployer. Documentation can also be found [here in Codeshare](https://codeshare.workbench.telekom.de/gitlab/TIF-Collaboration/examples/pipelines/tif-infrastructure).
