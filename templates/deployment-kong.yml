@@ -69,12 +69,12 @@ spec:
           value: '0.0.0.0:8444 ssl'
 {{- else }}
           value: '0.0.0.0:8001'
-{{- end }}
+{{- end -}}
 {{- if .Values.adminApi.ingress.enabled }}
         - name: KONG_ADMIN_API_URI
           value: 'https://{{ include "kong.adminApi.host" . }}'
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
 {{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_ADMIN_GUI_LISTEN
 {{- if .Values.manager.tls.enabled }}
@@ -84,7 +84,7 @@ spec:
 {{- end }}
         - name: KONG_ADMIN_GUI_URL
           value: 'https://{{ include "kong.manager.host" . }}'
-{{- end }}
+{{- end -}}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_PORTAL
           value: 'on'
@@ -103,7 +103,7 @@ spec:
           value: '{{ include "kong.portal.host" . }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
           value: https
-{{- end }}
+{{- end -}}
 {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ENFORCE_RBAC
           value: 'on'
@@ -115,7 +115,7 @@ spec:
           value: 'basic-auth'
         - name: KONG_PORTAL_SESSION_CONF
           value: '{"secret":"{{ .Values.portal.session.secret }}"}'
-{{- end }}
+{{- end -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
           value: '{{ .Values.enterprise.license }}'
@@ -128,7 +128,12 @@ spec:
         - name: proxy-ssl
           containerPort: 8443
           protocol: TCP
-{{- if .Values.adminApi.enabled }}
+{{- if .Values.prometheus.enabled }}
+        - name: metrics
+          containerPort: {{ .Values.prometheus.port | default 9542 }}
+          protocol: TCP
+{{- end -}}
+{{- if .Values.adminApi.enabled -}}
 {{- if .Values.adminApi.tls.enabled }}
         - name: admin-ssl
           containerPort: 8444
@@ -137,9 +142,9 @@ spec:
         - name: admin
           containerPort: 8001
           protocol: TCP
+{{- end -}}
 {{- end }}
-{{- end }}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
 {{- if .Values.manager.tls.enabled }}
         - name: manager-ssl
           containerPort: 8445
@@ -148,9 +153,9 @@ spec:
         - name: manager
           containerPort: 8002
           protocol: TCP
-{{- end }}
-{{- end }}
-{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+{{- end -}}
+{{- end -}}
+{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
 {{- if .Values.portal.tls.enabled }}
         - name: portal-ssl
           containerPort: 8446
@@ -158,14 +163,14 @@ spec:
         - name: portal-api-ssl
           containerPort: 8447
           protocol: TCP
-{{- else}}
+{{- else }}
         - name: portal
           containerPort: 8003
           protocol: TCP
         - name: portal-api
           containerPort: 8004
           protocol: TCP
-{{- end }}
+{{- end -}}
 {{- end }}
         resources:
           requests:

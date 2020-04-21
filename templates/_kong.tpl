@@ -7,6 +7,12 @@ app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
+{{- define "kong.annotations.prometheus" }}
+prometheus.io/path: '/metrics'
+prometheus.io/scrape: 'true'
+prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
+{{- end -}}
+
 {{- define "kong.isEnterprise" -}}
 {{- if contains "changeme" .Values.enterprise.license }}
 false
@@ -38,7 +44,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.volumes" -}}
+{{- define "kong.volumes" }}
+- name: nginx-servers
+  configMap:
+    name: {{ .Release.Name }}-nginx-servers
 {{- if eq .Values.sslVerify true }}
 - name: trusted-ca-certificates
   secret:
@@ -46,17 +55,21 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.volumeMounts" -}}
+{{- define "kong.volumeMounts" }}
+- name: nginx-servers
+  mountPath: /usr/local/kong/nginx
 {{- if eq .Values.sslVerify true }}
 - name: trusted-ca-certificates
-  mountPath: /usr/local/kong/tif
+  mountPath: /usr/local/kong/tls
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.nginx.directives" -}}
+{{- define "kong.nginx.directives" }}
+- name: KONG_NGINX_HTTP_INCLUDE
+  value: '/usr/local/kong/nginx/servers.conf'
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
-  value: '/usr/local/kong/tif/trusted-ca-certificates.pem'
+  value: '/usr/local/kong/tls/trusted-ca-certificates.pem'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY
   value: 'on'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY_DEPTH

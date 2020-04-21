@@ -124,6 +124,10 @@ disableUpstreamCache: false
 
 replicas: 1
 
+prometheus:
+  enabled: true
+# port: 9542
+
 resources:
   requests:
     cpu: 750m
