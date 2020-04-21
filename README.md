@@ -26,6 +26,8 @@ No detailed configuration is necessary. PostgreSQL will be deployed together wit
 ### External access
 
 Kong API-Gateway can be accessed via created Ingress/Route. See the Parameters section for details.
+By default, URLs will have the format `<Release.Name>[-<Suffix>]-<.Release.Namespace>.<.Values.global.domain>`.
+Setting dedicated hostnames for an ingress will overwrite the created URL. The value set in `hostname` needs to be fully qualified, as `.Values.global.domain` will not be added automatically!
 
 ## Security
 
