@@ -7,12 +7,14 @@ metadata:
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
-  - name: kong-portal-api
-    port: 8004
-    targetPort: 8004
-    protocol: TCP
+{{- if .Values.portal.tls.enabled }}
   - name: kong-portal-api-ssl
     port: 8447
     targetPort: 8447
+{{- else }}
+  - name: kong-portal-api
+    port: 8004
+    targetPort: 8004
+{{- end }}
     protocol: TCP
 {{- end -}}
