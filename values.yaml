@@ -1,5 +1,5 @@
 global:
-  platform: openshift
+  platform: kubernetes
   project_prefix: "tif-"
   storageclass: "gp2"
   externalDnsTarget: changeme
