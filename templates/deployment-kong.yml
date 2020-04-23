@@ -10,6 +10,7 @@ spec:
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
     metadata:
+      annotations: {{- include "kong.checksums" $ | nindent 8 }}
       labels: {{ include "kong.labels" $ | nindent 8 }}
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
