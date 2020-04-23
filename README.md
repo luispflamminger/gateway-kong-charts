@@ -35,8 +35,8 @@ By default, the ingress giving access to the admin API is enabled. Access is sec
 
 ### SSL Verification
 
-By default Kong API-Gateway will try to verify all traffic against a chain of trusted CA certificates which needs to be specified explicitely. 
-You can disables this behavior completely by setting sslVerify to false in the ``values.yaml``.  Otherwise you'll need to provide your own truststore by setting the ``trustedCaCertificates`` field with the content of your CA certificates in PEM format 
+By default Kong API-Gateway will try to verify all traffic against a bundle of trusted CA certificates which needs to be specified explicitely. 
+You can disable this behavior completely by setting sslVerify to false in the ``values.yaml``.  Otherwise you'll need to provide your own truststore by setting the ``trustedCaCertificates`` field with the content of your CA certificates in PEM format. 
 
 Example *values.yaml*:
 ```yaml
@@ -92,7 +92,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
-| `trustedCaCertificates`              | CA certificates chain in PEM format (string)                                   | `nil`            |
+| `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
 
 ## Troubleshooting
 
