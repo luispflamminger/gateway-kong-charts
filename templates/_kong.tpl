@@ -7,8 +7,8 @@ app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 
-{{- define "kong.annotations.prometheus" }}
-prometheus.io/path: '/metrics'
+{{- define "kong.annotations.prometheus" -}}
+prometheus.io/path: '{{ .Values.prometheus.path | default "/metrics" }}'
 prometheus.io/scrape: 'true'
 prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
 {{- end -}}

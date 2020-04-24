@@ -127,6 +127,7 @@ replicas: 1
 prometheus:
   enabled: true
 # port: 9542
+# path: /metrics
 
 resources:
   requests:

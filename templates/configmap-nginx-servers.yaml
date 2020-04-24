@@ -12,7 +12,7 @@ data:
           listen 0.0.0.0:{{ .Values.prometheus.port | default 9542 }};
           access_log off;
 
-          location /metrics {
+          location {{ .Values.prometheus.path | default "/metrics" }} {
               default_type text/plain;
               content_by_lua_block {
                   local prometheus = require "kong.plugins.prometheus.exporter"
