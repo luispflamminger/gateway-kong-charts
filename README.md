@@ -35,8 +35,8 @@ By default, the ingress giving access to the admin API is enabled. Access is sec
 
 ### SSL Verification
 
-By default Kong API-Gateway will try to verify all traffic against a bundle of trusted CA certificates which needs to be specified explicitely. 
-You can disable this behavior completely by setting sslVerify to false in the ``values.yaml``.  Otherwise you'll need to provide your own truststore by setting the ``trustedCaCertificates`` field with the content of your CA certificates in PEM format. 
+If you enable SSL verification Kong API-Gateway will try to verify all traffic against a bundle of trusted CA certificates which needs to be specified explicitely. 
+You can enable this by setting sslVerify to true in the ``values.yaml``.  If you do so, you must provide your own truststore by setting the ``trustedCaCertificates`` field with the content of your CA certificates in PEM format otherwise Kong won't start. 
 
 Example *values.yaml*:
 ```yaml
@@ -90,7 +90,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL     | `nil`            |
 | `proxy.ingress.annotations`          | Overwrite default ingress annotations                                          | `nil`            |
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
-| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
+| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
 | `prometheus.enabled`               | Controls whether a metrics services should be deployed or not                  | `true`           |

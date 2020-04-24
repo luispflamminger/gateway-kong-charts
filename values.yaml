@@ -104,7 +104,7 @@ proxy:
     annotations: {}
 
 # values used by nginx directives
-sslVerify: true
+sslVerify: false
 sslVerifyDepth: '1'
 
 # You can define the truststore for SSL verification by setting your CAs in PEM format here 
