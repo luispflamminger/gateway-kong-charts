@@ -93,6 +93,9 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `true`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
+| `prometheus.enabled`               | Controls whether a metrics services should be deployed or not                  | `true`           |
+| `prometheus.port`                  | Sets the port at which metrics can be accessed                                 | `9542`           |
+| `prometheus.path`                  | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
 
 ## Troubleshooting
 
