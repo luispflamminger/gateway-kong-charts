@@ -104,6 +104,12 @@ spec:
           value: '{{ include "kong.portal.host" . }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
           value: https
+{{- if eq .Values.rbac.enabled true }}
+        - name: KONG_PORTAL_AUTH
+          value: 'basic-auth'
+        - name: KONG_PORTAL_SESSION_CONF
+          value: '{"secret":"{{ .Values.portal.session.secret }}"}'
+{{- end -}}
 {{- end -}}
 {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ENFORCE_RBAC
@@ -112,10 +118,6 @@ spec:
           value: 'basic-auth'
         - name: KONG_ADMIN_GUI_SESSION_CONF
           value: '{"secret":"{{ .Values.manager.session.secret }}"}'
-        - name: KONG_PORTAL_AUTH
-          value: 'basic-auth'
-        - name: KONG_PORTAL_SESSION_CONF
-          value: '{"secret":"{{ .Values.portal.session.secret }}"}'
 {{- end -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
