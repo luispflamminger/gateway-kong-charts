@@ -125,9 +125,12 @@ disableUpstreamCache: false
 replicas: 1
 
 prometheus:
-  enabled: true
+  enabled: true 
 # port: 9542
 # path: /metrics
+# setupJob:
+#   backoffLimit: 20
+#   activeDeadlineSeconds: 300
 
 resources:
   requests:

@@ -1,0 +1,46 @@
+{{- if eq .Values.prometheus.enabled true }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-prometheus-setup
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+{{- $defaultBackoffLimit := 20 }}
+{{- $defaultActiveDeadlineSeconds := 300 }}
+{{- if .Values.prometheus.setupJob }}
+  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
+{{- else }}
+  backoffLimit: {{ $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
+{{- end }}
+  template:
+    spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
+      containers:
+      - name: {{ .Release.Name }}-prometheus-setup
+        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        env:
+        - name: KONG_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: kongAdminPassword
+        command:        
+          - /bin/bash
+          - -c
+          - |-
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" -X GET {{ include "kong.adminApi.url" . }}`
+            if [ "$HTTP_RETURN_CODE" == "200" ]; then
+              curl -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" \
+              -X POST {{ include "kong.adminApi.url" . }}/plugins \
+              --data "name=prometheus" 
+            else
+                echo "Kong Admin-API unreachable"
+                exit 1
+            fi
+      restartPolicy: OnFailure
+{{- end -}}
