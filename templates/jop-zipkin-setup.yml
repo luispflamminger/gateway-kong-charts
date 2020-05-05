@@ -1,0 +1,49 @@
+{{- if and .Values.zipkin.enabled ( not ( eq .Values.zipkin.collectorUrl "" )) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-zipkin-setup
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+{{- $defaultBackoffLimit := 20 }}
+{{- $defaultActiveDeadlineSeconds := 300 }}
+{{- if .Values.zipkin.setupJob }}
+  backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
+{{- else }}
+  backoffLimit: {{ $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
+{{- end }}
+  template:
+    spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
+      containers:
+      - name: tif-base-image
+        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        env:
+        - name: KONG_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: kongAdminPassword
+        command:        
+          - /bin/bash
+          - -c
+          - |-   
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" -X GET {{ include "kong.adminApi.url" . }}`
+            if [ "$HTTP_RETURN_CODE" == "200" ]; then
+               curl -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" \
+               -X POST {{ include "kong.adminApi.url" .}}/plugins \
+               --data "name=zipkin" \
+               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
+               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
+               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}"
+            else
+                echo "Kong Admin-API unreachable"
+                exit 1
+            fi
+      restartPolicy: OnFailure
+{{- end }}
