@@ -38,6 +38,7 @@ spec:
                curl -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" \
                -X POST {{ include "kong.adminApi.url" .}}/plugins \
                --data "name=zipkin" \
+               --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}" \
                --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
                --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
                --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}"
