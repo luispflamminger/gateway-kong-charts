@@ -42,6 +42,7 @@ zipkin:
   enabled: false
   collectorUrl: ""
   # sampleRatio: 0.001
+  # defaultServiceName: "kong-apigateway"
   # includeCredential: "true"
   # Set job retries and maximum runtime (default values preset)
   # setupJob:
