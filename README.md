@@ -1,3 +1,7 @@
+**Table of contents**
+
+[[_TOC_]]
+
 # TIF Kong API-Gateway
 
 ## Requirements
