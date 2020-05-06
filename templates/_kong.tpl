@@ -53,6 +53,11 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
 {{- end -}}
+{{- if .Values.defaultTlsSecret }}            
+- name: server-certificate
+  secret:
+    secretName: {{ .Values.defaultTlsSecret }}
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
@@ -62,11 +67,21 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: trusted-ca-certificates
   mountPath: /usr/local/kong/tls
 {{- end -}}
+{{- if .Values.defaultTlsSecret }}            
+- name: server-certificate
+  mountPath: /usr/local/kong/default-https
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_HTTP_INCLUDE
   value: '/usr/local/kong/nginx/servers.conf'
+{{- if .Values.defaultTlsSecret }}            
+- name: KONG_SSL_CERT
+  value: /usr/local/kong/default-https/tls.crt
+- name: KONG_SSL_CERT_KEY
+  value: /usr/local/kong/default-https/tls.key
+{{- end }}
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
   value: '/usr/local/kong/tls/trusted-ca-certificates.pem'

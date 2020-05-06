@@ -132,6 +132,11 @@ sslVerifyDepth: '1'
 #   <CA certificate 03 in PEM format here>
 #   -----END CERTIFICATE-----
 
+# You can define the default HTTPS server certificate by specifing the secret with private-key/certificate here
+# Note: additional route-specific server certificates can by configured and assigned to SNIs at runtime. This is only a default certificate
+#
+# defaultTlsSecret: "mysecret"
+
 disableUpstreamCache: false
 
 replicas: 1

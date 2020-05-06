@@ -53,6 +53,22 @@ trustedCaCertificates: |
 ```
 Of course Helm let's you reference multiple values files when installing a deployment so you could also outsource ``trustedCaCertificates`` wo its own values file, for example ``my-trustes-ca-certificates.yaml``.
 
+### Server Certificate
+
+If "https" is used but no SNI is configured, the API gateway provides a default server certificate issued for "https://localhost". You can replace the default certificate by a custom server-certificate by specyfing the secret name in the variable ``defaultTlsSecret``.
+
+Example *values.yaml*:
+```yaml
+defaultTlsSecret: my-https-secret
+```
+
+Here are some examples how to create a corresponding secret from PEM files. For more details s. Kubernetes/Openshift documentation.
+```
+kubectl create secret tls my-https-secret --key=key.pem --cert=cert.pem
+oc create secret generic my-https-secret-2 --from-file=tls.key=key.pem  --from-file=tls.crt=cert.pem
+```
+
+## Configuration via TIF-Deployer
 ## Configuration via TIF-Deployer
 
 Kong API-Gateway can also be deployed via the TIF-Deployer. Documentation can also be found [here in Codeshare](https://codeshare.workbench.telekom.de/gitlab/TIF-Collaboration/examples/pipelines/tif-infrastructure).
@@ -92,17 +108,18 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
-| `zipkin.enabled`                       | Enable tracing via Zipkin-Plugin                                               | `false`          |
-| `zipkin.defaultServiceName`            | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
-| `zipkin.collectorUrl`                  | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory         | `nil`            |
-| `zipkin.sampleRatio`                   | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`          |
-| `zipkin.includeCredential`             | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`           |
-| `zipkin.setupJob.backoffLimit`         | How often should be retried to run the job successfully                        | `20`             |
-| `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                         | `300`            |
+| `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                               | `false`          |
+| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
+| `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory         | `nil`            |
+| `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`          |
+| `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`           |
+| `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
+| `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
-| `prometheus.enabled`               | Controls whether a metrics services should be deployed or not                  | `true`           |
-| `prometheus.port`                  | Sets the port at which metrics can be accessed                                 | `9542`           |
-| `prometheus.path`                  | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
+| `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`            |
+| `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`           |
+| `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
+| `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
 
 ## Troubleshooting
 
