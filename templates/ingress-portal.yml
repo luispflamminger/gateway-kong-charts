@@ -1,0 +1,33 @@
+{{- if eq .Values.global.platform "kubernetes" }}
+{{- if and .Values.portal.ingress.enabled .Values.portal.enabled (eq (include "kong.isEnterprise" $ ) "true") -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-portal
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+{{- if .Values.portal.ingress.annotations }}
+    {{- toYaml .Values.portal.ingress.annotations | nindent 4 }}
+{{- else }}
+ {{- if .Values.portal.tls.enabled }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+{{- end }}
+    external-dns.alpha.kubernetes.io/hostname: {{ include "kong.portal.host" . }}
+    external-dns.alpha.kubernetes.io/target: {{ .Values.global.externalDnsTarget }}
+    kubernetes.io/ingress.class: external-nginx
+{{- end }}
+spec:
+  rules:
+  - host: {{ include "kong.portal.host" . }}
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: {{ .Release.Name }}-portal
+ {{- if .Values.portal.tls.enabled }}
+            servicePort: kong-portal-ssl
+ {{- else }}
+            servicePort: kong-portal
+{{- end -}}
+{{- end -}}
+{{- end -}}

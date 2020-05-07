@@ -1,0 +1,31 @@
+{{- if eq .Values.global.platform "openshift" }}
+{{- if and .Values.manager.ingress.enabled .Values.manager.enabled true (eq (include "kong.isEnterprise" $ ) "true") -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-manager
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+{{- if .Values.manager.ingress.annotations }}
+  annotations:
+    {{- toYaml .Values.manager.ingress.annotations | nindent 4 }}
+{{- end }}
+spec:
+  host: {{ include "kong.manager.host" . }}
+  port:
+{{- if .Values.manager.tls.enabled }}
+    targetPort: kong-manager-ssl
+{{- else }}
+    targetPort: kong-manager
+{{- end }}
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-manager
+    weight: 100
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+status:
+  ingress:
+    - host: ""
+{{- end -}}
+{{- end -}}

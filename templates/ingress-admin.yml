@@ -1,0 +1,33 @@
+{{- if eq .Values.global.platform "kubernetes" -}}
+{{- if and .Values.adminApi.enabled .Values.adminApi.ingress.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-admin
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+{{- if .Values.adminApi.ingress.annotations }}
+    {{- toYaml .Values.adminApi.ingress.annotations | nindent 4 }}
+{{- else }}
+{{- if .Values.adminApi.tls.enabled }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+{{- end }}
+    external-dns.alpha.kubernetes.io/hostname: {{ include "kong.adminApi.host" . }}
+    external-dns.alpha.kubernetes.io/target: {{ .Values.global.externalDnsTarget }}
+    kubernetes.io/ingress.class: external-nginx
+{{- end }}
+spec:
+  rules:
+  - host: {{ include "kong.adminApi.host" . }}
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: {{ .Release.Name }}-admin
+{{- if .Values.adminApi.tls.enabled }}
+            servicePort: kong-admin-ssl
+{{- else }}
+            servicePort: kong-admin
+{{- end -}}
+{{- end -}}
+{{- end -}}

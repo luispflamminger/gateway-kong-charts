@@ -1,14 +1,26 @@
+{{- if eq .Values.global.platform "openshift" }}
+{{- if .Values.proxy.ingress.enabled }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ .Release.Name }}-proxy
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+{{- if .Values.proxy.ingress.annotations }}
+  annotations:
+    {{- toYaml .Values.proxy.ingress.annotations | nindent 4 }}
+{{- end }}
 spec:
-  host: kong-proxy-{{ .Values.global.domain.internal.url }}
+  host: {{ include "kong.proxy.host" . }}
   port:
-    targetPort: kong-proxy
+    targetPort: kong-proxy-ssl
   to:
     kind: Service
     name: {{ .Release.Name }}-proxy
+    weight: 100
   tls:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+    termination: passthrough
+status:
+  ingress:
+    - host: ""
+{{- end -}}
+{{- end -}}

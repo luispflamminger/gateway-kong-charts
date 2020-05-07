@@ -6,3 +6,5 @@ description: Kong API gateway provided by DHEI
 maintainers:
 - name: Mike Herwig
   email: Mike.Herwig@external.t-systems.com
+- name: Christian Stein
+  email: steinc@external.telekom.de
