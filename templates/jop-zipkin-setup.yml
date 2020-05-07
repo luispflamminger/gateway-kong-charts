@@ -24,24 +24,29 @@ spec:
       - name: tif-base-image
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
         env:
+        {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: kongAdminPassword
+         {{- end }}
         command:        
           - /bin/bash
           - -c
-          - |-   
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" -X GET {{ include "kong.adminApi.url" . }}`
+          - |- 
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -X GET {{ include "kong.adminApi.url" . }} {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end -}}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
-               curl -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" \
-               -X POST {{ include "kong.adminApi.url" .}}/plugins \
-               --data "name=zipkin" \
-               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
-               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
-               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
-               --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}"
+              curl \
+              -X POST {{ include "kong.adminApi.url" . }}/plugins \
+              --data "name=zipkin" \
+              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}" \
+              --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
+              --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
+              --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
+              {{- if eq .Values.rbac.enabled true }}
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" 
+              {{- end }}
             else
                 echo "Kong Admin-API unreachable"
                 exit 1
