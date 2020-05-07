@@ -35,18 +35,20 @@ spec:
           - /bin/bash
           - -c
           - |- 
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -X GET {{ include "kong.adminApi.url" . }} {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end -}}`
+            echo "Enabling Kong plugin via POST {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
               curl \
-              -X POST {{ include "kong.adminApi.url" . }}/plugins \
+              {{- if eq .Values.rbac.enabled true }}
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+              {{- end }}
+              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
               --data "name=zipkin" \
-              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}" \
               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
-              {{- if eq .Values.rbac.enabled true }}
-              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" 
-              {{- end }}
+              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}"
             else
                 echo "Kong Admin-API unreachable"
                 exit 1
