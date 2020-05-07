@@ -25,7 +25,7 @@ true
 {{- if .Values.image -}}
 {{ .Values.image }}
 {{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0-beta.1-1.3.0.2-alpine'
+'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
 {{- else -}}
 'mtr.external.otc.telekomcloud.com/tif-public/kong:2.0.3-alpine'
 {{- end -}}
