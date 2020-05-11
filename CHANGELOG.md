@@ -7,7 +7,7 @@
 - Bugfix: Wrong secrets reference in non-rbac case for plugin-enabling jobs
 - Added job to enable Prometheus plugin on global default workspace
 
-## 1.0.1
+## 1.0.0
 
 - DHEI-1430: Hostname setting for every ingress/route
 - DHEI-1430: Annotations overwrite for ingress/routes
