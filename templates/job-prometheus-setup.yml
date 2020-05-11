@@ -24,19 +24,26 @@ spec:
       - name: {{ .Release.Name }}-prometheus-setup
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
         env:
+        {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: kongAdminPassword
+        {{- end }}
         command:        
           - /bin/bash
           - -c
           - |-
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" -X GET {{ include "kong.adminApi.url" . }}`
+            echo "Enabling Kong plugin via POST {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
-              curl -H "Kong-Admin-Token:${KONG_ADMIN_PASSWORD}" \
-              -X POST {{ include "kong.adminApi.url" . }}/plugins \
+              curl \
+            {{- if eq .Values.rbac.enabled true }}
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+            {{- end }}
+              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
               --data "name=prometheus" 
             else
                 echo "Kong Admin-API unreachable"

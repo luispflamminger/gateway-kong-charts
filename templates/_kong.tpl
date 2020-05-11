@@ -135,6 +135,19 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- printf "https://%s" (include "kong.adminApi.host" . ) }}
 {{- end -}}
 
+{{- define "kong.adminApi.serviceHost" -}}
+{{- printf "%s-admin.%s" .Release.Name .Release.Namespace }}
+{{- end -}}
+
+{{- define "kong.adminApi.serviceUrl" -}}
+{{- $host := include "kong.adminApi.serviceHost" . -}}
+{{- if .Values.adminApi.tls.enabled }}
+{{- printf "https://%s:%s" $host "8444" }}
+{{- else }}
+{{- printf "http://%s:%s" $host "8001" }}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.manager.host" -}}
 {{- if not (empty .Values.manager.ingress.hostname) }}
 {{- .Values.manager.ingress.hostname -}}

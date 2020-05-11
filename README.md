@@ -113,10 +113,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`           |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
 | `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                               | `false`          |
-| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
 | `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory         | `nil`            |
 | `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`          |
 | `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`           |
+| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
 | `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
 | `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
@@ -146,14 +146,3 @@ Please make sue that ``trustedCaCertificates`` is set probably or set sslVerify 
 | OTC         | Yes        |
 | AppAgile    | Unverified |
 | AWS EKS     | Yes        |
-
-
-## Changes
-
-0.0.0
-- DHEI-1430: Hostname setting for every ingress/route
-- DHEI-1430: Annotations overwrite for ingress/routes
-- DHEI-1136: Enable and configure Zipkin-Plugin
-
-1.0.0
-- Initial release

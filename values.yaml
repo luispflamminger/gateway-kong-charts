@@ -37,18 +37,6 @@ rbac:
   enabled: true
   kongAdminPassword: changeme
 
-
-zipkin:
-  enabled: false
-  collectorUrl: ""
-  # sampleRatio: 0.001
-  # defaultServiceName: "kong-apigateway"
-  # includeCredential: "true"
-  # Set job retries and maximum runtime (default values preset)
-  # setupJob:
-  #   backoffLimit: 20
-  #   activeDeadlineSeconds: 300
-
 # You can add custom plugins here:
 # Note:
 # The plugins must be deployed as configmaps and correctly referenced here
@@ -140,6 +128,17 @@ sslVerifyDepth: '1'
 disableUpstreamCache: false
 
 replicas: 1
+
+zipkin:
+  enabled: false
+  collectorUrl: ""
+  # sampleRatio: 0.001
+  # includeCredential: "true"
+  # defaultServiceName: "kong-apigateway"
+  # Set job retries and maximum runtime (default values preset)
+  # setupJob:
+  #   backoffLimit: 20
+  #   activeDeadlineSeconds: 300
 
 prometheus:
   enabled: true 
