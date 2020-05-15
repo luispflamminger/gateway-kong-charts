@@ -14,7 +14,7 @@ prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
 {{- end -}}
 
 {{- define "kong.isEnterprise" -}}
-{{- if contains "changeme" .Values.enterprise.license }}
+{{- if eq .Values.enterprise.license "" -}}
 false
 {{- else -}}
 true

@@ -28,7 +28,7 @@ templateChangeTriggers: []
 # image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
 
 enterprise:
-  license: changeme
+  license: ""
 
 # Warning: 
 # If you disable RBAC exposing the Admin API can be dangerous
