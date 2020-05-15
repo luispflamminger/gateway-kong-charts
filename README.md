@@ -91,6 +91,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.storageClass`                | Select storage class for the PVCs depending on your platform                   | `gp2`            |
 | `global.externalDnsTarget`           | AWS EKS only: The service IP of your external ingress controller               | `nil`            |
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
+| `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`            |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`           |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`          |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`           |

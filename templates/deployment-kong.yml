@@ -39,7 +39,10 @@ spec:
           value: {{ include "postgresql.host" $ }}            
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
-          value: '{{ .Values.enterprise.license }}'
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: license
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
       containers:
@@ -121,7 +124,10 @@ spec:
 {{- end -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
-          value: '{{ .Values.enterprise.license }}'
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: license
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:

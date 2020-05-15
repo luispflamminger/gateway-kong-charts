@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 0.0.0
+ - Enterprise license stored in secret
+
 ## 1.0.1
 
 - Bugfix: Wrong secrets reference in non-rbac case for plugin-enabling jobs
