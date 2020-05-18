@@ -13,9 +13,9 @@ spec:
   host: {{ include "kong.manager.host" . }}
   port:
 {{- if .Values.manager.tls.enabled }}
-    targetPort: kong-manager-ssl
+    targetPort: manager-ssl
 {{- else }}
-    targetPort: kong-manager
+    targetPort: manager
 {{- end }}
   to:
     kind: Service

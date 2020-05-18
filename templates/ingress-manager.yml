@@ -25,9 +25,9 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-manager
 {{- if .Values.manager.tls.enabled }}
-            servicePort: kong-manager-ssl
+            servicePort: manager-ssl
 {{- else }}
-            servicePort: kong-manager
+            servicePort: manager
 {{- end -}}
 {{- end -}}
 {{- end -}}

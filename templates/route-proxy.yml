@@ -12,7 +12,7 @@ metadata:
 spec:
   host: {{ include "kong.proxy.host" . }}
   port:
-    targetPort: kong-proxy-ssl
+    targetPort: proxy-ssl
   to:
     kind: Service
     name: {{ .Release.Name }}-proxy

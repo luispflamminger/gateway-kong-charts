@@ -6,11 +6,11 @@ metadata:
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
-  - name: kong-proxy
+  - name: proxy
     port: 8000
     targetPort: 8000
     protocol: TCP
-  - name: kong-proxy-ssl
+  - name: proxy-ssl
     port: 8443
     targetPort: 8443
     protocol: TCP

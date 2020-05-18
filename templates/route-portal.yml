@@ -13,9 +13,9 @@ spec:
   host: {{ include "kong.portal.host" . }}
   port:
 {{- if .Values.portal.tls.enabled }}
-    targetPort: kong-portal-ssl
+    targetPort: portal-ssl
 {{- else }}
-    targetPort: kong-portal
+    targetPort: portal
 {{- end }}
   to:
     kind: Service

@@ -25,9 +25,9 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-portal
  {{- if .Values.portal.tls.enabled }}
-            servicePort: kong-portal-ssl
+            servicePort: portal-ssl
  {{- else }}
-            servicePort: kong-portal
+            servicePort: portal
 {{- end -}}
 {{- end -}}
 {{- end -}}

@@ -25,9 +25,9 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-admin
 {{- if .Values.adminApi.tls.enabled }}
-            servicePort: kong-admin-ssl
+            servicePort: admin-ssl
 {{- else }}
-            servicePort: kong-admin
+            servicePort: admin
 {{- end -}}
 {{- end -}}
 {{- end -}}
