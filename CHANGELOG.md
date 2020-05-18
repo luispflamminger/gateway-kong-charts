@@ -3,6 +3,8 @@
 [[_TOC_]]
 
 ## 0.0.0
+
+ - Removed kong prefix from servicePort to comply with requirements
  - Enterprise license stored in secret
 
 ## 1.0.1
