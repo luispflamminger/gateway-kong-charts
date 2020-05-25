@@ -5,10 +5,7 @@ kind: Route
 metadata:
   name: {{ .Release.Name }}-admin
   labels: {{ include "kong.labels" $ | nindent 4 }}
-{{- if .Values.adminApi.ingress.annotations }}
-  annotations:
-    {{- toYaml .Values.adminApi.ingress.annotations | nindent 4 }}
-{{- end }}
+{{- include "kong.merged.adminApi.annotations" $ | nindent 2 }}
 spec:
   host: {{ include "kong.adminApi.host" . }}
   port:

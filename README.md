@@ -89,29 +89,29 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.platform`                    | Determines where the chart will be deployed                                    | `kubernetes`     |
 | `global.project_prefix`              | Prefix for the deployed application name to group applications                 | `tif-`           |
 | `global.storageClass`                | Select storage class for the PVCs depending on your platform                   | `gp2`            |
-| `global.externalDnsTarget`           | AWS EKS only: The service IP of your external ingress controller               | `nil`            |
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
+| `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`            |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`            |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`           |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`          |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`           |
 | `adminApi.ingress.hostname`          | Set dedicated hostname for Admin API ingress (or route), overwrites global URL | `nil`            |
-| `adminApi.ingress.annotations`       | Overwrite default ingress annotations                                          | `nil`            |
+| `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                | `nil`            |
 | `manager.enabled`                    | Create service for accessing Kong Manager                                      | `true`           |
 | `manager.tls.enabled`                | Access Manager via https instead of http                                       | `false`          |
 | `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                            | `true`           |
 | `manager.ingress.hostname`           | Set dedicated hostname Manager ingress (or route), overwrites global URL       | `nil`            |
-| `manager.ingress.annotations`        | Overwrite default ingress annotations                                          | `nil`            |
+| `manager.ingress.annotations`        | Merges specific into global ingress annotations                                | `nil`            |
 | `portal.enabled`                     | Create service for accessing the Portal                                        | `false`          |
 | `portal.tls.enabled`                 | Access the Portal via https instead of http                                    | `false`          |
 | `portal.ingress.enabled`             | Create ingress (or route for OpenShift) for the Portal                         | `true`           |
-| `portal.ingress.hostname`            | Set dedicated hostname for the Portal ingress (or route), overwrites global URL| `nil`            |
-| `portal.ingress.annotations`         | Overwrite default ingress annotations                                          | `nil`            |
+| `portal.ingress.hostname`            | Extend global ingress annotations                                              | `nil`            |
+| `portal.ingress.annotations`         | Merges specific into global ingress annotations                                | `nil`            |
 | `proxy.ingress.enabled`              | Create ingress (or route for OpenShift) for proxy                              | `true`           |
 | `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL     | `nil`            |
-| `proxy.ingress.annotations`          | Overwrite default ingress annotations                                          | `nil`            |
+| `proxy.ingress.annotations`          | Merges specific into global ingress annotations                                | `ssl-passthrough`|
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`             |
-| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`           |
+| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`          |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`              |
 | `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                               | `false`          |
 | `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory         | `nil`            |

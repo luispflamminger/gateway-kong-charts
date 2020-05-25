@@ -2,8 +2,11 @@ global:
   platform: kubernetes
   project_prefix: "tif-"
   storageclass: "gp2"
-  externalDnsTarget: changeme
   domain: ""
+  ingress:
+    annotations: {}
+      # external-dns.alpha.kubernetes.io/target: ""
+      # kubernetes.io/ingress.class: ""
 
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise no pull secret will be deployed
   # If you use tif-infra-pipeline (TIF installer) this will be set automatically
@@ -101,7 +104,8 @@ proxy:
   ingress:
     enabled: true
     # hostname: ""
-    annotations: {}
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 
 # values used by nginx directives
 sslVerify: false

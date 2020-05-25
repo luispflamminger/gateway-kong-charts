@@ -5,10 +5,7 @@ kind: Route
 metadata:
   name: {{ .Release.Name }}-proxy
   labels: {{ include "kong.labels" $ | nindent 4 }}
-{{- if .Values.proxy.ingress.annotations }}
-  annotations:
-    {{- toYaml .Values.proxy.ingress.annotations | nindent 4 }}
-{{- end }}
+{{- include "kong.merged.proxy.annotations" $ | nindent 2 }}
 spec:
   host: {{ include "kong.proxy.host" . }}
   port:
