@@ -171,3 +171,31 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- printf "%s-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.merged.adminApi.annotations" }}
+{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
+{{- $localAnnotations := dict "annotations" .Values.adminApi.ingress.annotations -}}
+{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
+{{- $mergedAnnotations | toYaml -}}
+{{ end -}}
+
+{{- define "kong.merged.manager.annotations" }}
+{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
+{{- $localAnnotations := dict "annotations" .Values.manager.ingress.annotations -}}
+{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
+{{- $mergedAnnotations | toYaml -}}
+{{ end -}}
+
+{{- define "kong.merged.portal.annotations" }}
+{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
+{{- $localAnnotations := dict "annotations" .Values.portal.ingress.annotations -}}
+{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
+{{- $mergedAnnotations | toYaml -}}
+{{ end -}}
+
+{{- define "kong.merged.proxy.annotations" }}
+{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
+{{- $localAnnotations := dict "annotations" .Values.proxy.ingress.annotations -}}
+{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
+{{- $mergedAnnotations | toYaml -}}
+{{ end -}}
