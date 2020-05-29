@@ -1,10 +1,11 @@
+{{- if not .Values.postgres.externalDatabase -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-postgresql
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
-  replicas: {{ .Values.postgres.replicas | default 1 }}
+  replicas: {{ .Values.postgres.configuration.replicas | default 1 }}
   selector:
     matchLabels: {{ include "postgresql.selector" $ | nindent 6 }}
   template:
@@ -22,8 +23,8 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql
-              key: password
+              name: {{ .Release.Name }}
+              key: postgresPassword
         - name: POSTGRES_DB
           value: {{ .Values.postgres.database | default "kong" }}
         # for centos and rhel we do have different environment variables
@@ -32,8 +33,8 @@ spec:
         - name: POSTGRESQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql
-              key: password
+              name: {{ .Release.Name }}
+              key: postgresPassword
         - name: POSTGRESQL_DATABASE
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
@@ -59,11 +60,10 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources:
-          limits:
-            memory: {{ .Values.postgres.resources.limits.memory }}
+{{- toYaml .Values.postgres.configuration.resources | nindent 10 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
-        - mountPath: {{ .Values.postgres.data_locations | default "/var/lib/pgsql/data" }}
+        - mountPath: {{ .Values.postgres.configuration.data_locations | default "/var/lib/pgsql/data" }}
           name: {{ .Release.Name }}-postgresql-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
@@ -72,3 +72,4 @@ spec:
       - name: {{ .Release.Name }}-postgresql-data
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-database-pvc
+{{- end -}}

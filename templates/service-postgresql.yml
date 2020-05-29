@@ -1,7 +1,8 @@
+{{- if not .Values.postgres.externalDatabase -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-postgresql
+  name: {{ template "postgresql.serviceName" . }}
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
   selector: {{ include "postgresql.selector" $ | nindent 4 }}
@@ -10,3 +11,4 @@ spec:
     protocol: TCP
     port: 5432
     targetPort: 5432
+{{- end -}}

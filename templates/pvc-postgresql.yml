@@ -1,11 +1,14 @@
+{{- if not .Values.postgres.externalDatabase -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-database-pvc
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
-{{- if .Values.postgres.pvc.keepOnDelete }}
+{{- if .Values.postgres.configuration.pvc }}
+  {{- if .Values.postgres.configuration.pvc.keepOnDelete }}
   annotations:
     "helm.sh/resource-policy": keep
+  {{- end -}}
 {{- end }}
 spec:
   accessModes:
@@ -13,4 +16,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: {{ .Values.global.storageclass | default "cns" }} 
+  storageClassName: {{ .Values.global.storageclass | default "cns" }}
+{{- end -}}
