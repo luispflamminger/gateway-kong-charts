@@ -17,22 +17,26 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{- end -}}
 {{- end -}}
 
+{{- define "postgresql.serviceName" -}}
+{{ printf "%s-postgres" $.Release.Name }}
+{{- end -}}
+
+{{- define "postgresql.host" -}}
+{{ .Values.postgres.host | default (printf "%s.%s.svc.cluster.local" ( include "postgresql.serviceName" $ ) $.Release.Namespace) }}
+{{- end -}}
+
 {{- define "postgresql.selector" -}}
 app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
-{{- define "postgresql.host" -}}
-{{- if and .Values.externalDatabase (eq .Values.externalDatabase.enabled true) -}}
-{{ .Values.externalDatabase.host }}
-{{- else -}}
-{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local
-{{- end -}}
+{{- define "postgresql.port" -}}
+{{ ( .Values.postgres.port | default "5432") | atoi }}
 {{- end -}}
 
-{{- define "postgresql.port" -}}
-{{- if and .Values.externalDatabase (eq .Values.externalDatabase.enabled true) -}}
-{{ (.Values.externalDatabase.port | default "5432") | atoi }}
-{{- else -}}
-{{ (.Values.postgres.port | default "5432") | atoi }}
+{{- define "postgresql.database" -}}
+{{ .Values.postgres.database | default "kong" }}
 {{- end -}}
+
+{{- define "postgresql.user" -}}
+{{ .Values.postgres.user | default "kong" }}
 {{- end -}}

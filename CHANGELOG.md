@@ -4,6 +4,7 @@
 
 ## 0.0.0
 
+ - DHEI-1712: Extended external database configuration
  - Removed kong prefix from servicePort to comply with requirements
  - Enterprise license stored in secret
  - Global ingress annotations setting

@@ -38,7 +38,7 @@ enterprise:
 # Note that RBAC will only work when Kong in running in enterprise edition (enterprise.license is provided) 
 rbac:
   enabled: true
-  kongAdminPassword: changeme
+  kongAdminPassword: ""
 
 # You can add custom plugins here:
 # Note:
@@ -56,11 +56,6 @@ rbac:
 #   - name: custom2
 #     configMap: kong-plugin-custom2-6a2bc71b
 customPlugins: []
-
-externalDatabase:
-  enabled: false
-# host: some-external-postgresql-database.example.com
-# port: '5432'
 
 # Enable Admin API and whether it is http or https
 # Warning: 
@@ -158,21 +153,22 @@ resources:
     memory: 1024Mi
 
 postgres:
-  pvc:
-    keepOnDelete: false
+  # If set to true, the bundled PostgreSQL will not be deployed
+  externalDatabase: false
   
-# data_locations: '/var/lib/postgresql/data'
-  # use this data location for postgresql-95-rhel7 based postgres images
-  data_locations: '/var/lib/pgsql/data'
-
-# port: 5432
-
-  database: kong  
+  # Set host if you use an external database or service name is not sufficient
+  # host: 'some-external-postgresql-database.example.com'
+  port: '5432'
+  database: kong
   user: kong
-  password: changeme
+  password: ""
 
-  replicas: 1
-
-  resources:
-    limits:
-      memory: "512Mi"
+  # Specific confguration for the PostgreSQL bundled in this chart
+  configuration:
+    pvc:
+      keepOnDelete: false
+    # data_locations: '/var/lib/pgsql/data'
+    replicas: 1
+    resources:
+      limits:
+        memory: "512Mi"

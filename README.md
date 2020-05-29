@@ -92,6 +92,8 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`            |
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`            |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`            |
+| `rbac.enabled`                         | Security relevant. Role based access control for Admin API                   | `true`           |
+| `rbac.kongAdminPassword`               | Password for Kong Administrator                                              | `nil`            |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`           |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`          |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`           |
@@ -125,6 +127,15 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`           |
 | `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
 | `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
+| `postgres.enabled`                     | Enable Kong to run with PostrgeSQL as database                               | `true`           |
+| `postgres.externalDatabase`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
+| `postgres.port`                        | Port of the database                                                         | `5432`           |
+| `postgres.database`                    | Name of the database                                                         | `kong`           |
+| `postgres.user`                        | Username for accessing the database                                          | `kong`           |
+| `postgres.password`                    | The users password                                                           | `nil`            |
+| `configuration.pvc.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted                 | `false`          |
+| `configuration.replicas`               | Set the number of replicas                                                   | `1`              |
+| `configuration.resources`              | Assign ressources, e.g. limits, for Postgres                                 | `Memory limits`  |
 
 ## Troubleshooting
 
