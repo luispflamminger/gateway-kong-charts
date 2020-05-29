@@ -93,7 +93,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`            |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`            |
 | `rbac.enabled`                         | Security relevant. Role based access control for Admin API                   | `true`           |
-| `rbac.kongAdminPassword`               | Password for Kong Administrator                                              | `nil`            |
+| `rbac.kongAdminPassword`               | Password for Kong Administrator                                              | `changeme`       |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`           |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`          |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`           |
@@ -132,7 +132,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `postgres.port`                        | Port of the database                                                         | `5432`           |
 | `postgres.database`                    | Name of the database                                                         | `kong`           |
 | `postgres.user`                        | Username for accessing the database                                          | `kong`           |
-| `postgres.password`                    | The users password                                                           | `nil`            |
+| `postgres.password`                    | The users password                                                           | `changeme`       |
 | `configuration.pvc.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted                 | `false`          |
 | `configuration.replicas`               | Set the number of replicas                                                   | `1`              |
 | `configuration.resources`              | Assign ressources, e.g. limits, for Postgres                                 | `Memory limits`  |

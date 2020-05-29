@@ -38,7 +38,7 @@ enterprise:
 # Note that RBAC will only work when Kong in running in enterprise edition (enterprise.license is provided) 
 rbac:
   enabled: true
-  kongAdminPassword: ""
+  kongAdminPassword: "changeme"
 
 # You can add custom plugins here:
 # Note:
@@ -161,7 +161,7 @@ postgres:
   port: '5432'
   database: kong
   user: kong
-  password: ""
+  password: "changeme"
 
   # Specific confguration for the PostgreSQL bundled in this chart
   configuration:
