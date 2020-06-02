@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## 0.0.0
+## 1.1.0
 
  - DHEI-1712: Extended external database configuration
  - Removed kong prefix from servicePort to comply with requirements
