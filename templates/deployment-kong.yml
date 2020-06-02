@@ -31,15 +31,22 @@ spec:
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql
-              key: password
+              name: {{ .Release.Name }}
+              key: postgresPassword
         - name: KONG_PG_PORT
           value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
-          value: {{ include "postgresql.host" $ }}            
+          value: '{{ include "postgresql.host" $ }}'
+        - name: KONG_PG_USER
+          value: '{{ include "postgresql.user" $ }}'
+        - name: KONG_PG_DATABASE
+          value: '{{ include "postgresql.database" $ }}'
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
-          value: '{{ .Values.enterprise.license }}'
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: license
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
       containers:
@@ -54,12 +61,16 @@ spec:
         - name: KONG_PG_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-postgresql
-              key: password
+              name: {{ .Release.Name }}
+              key: postgresPassword
         - name: KONG_PG_PORT
           value: '{{ include "postgresql.port" $ }}'
         - name: KONG_PG_HOST
-          value: {{ include "postgresql.host" $ }}
+          value: '{{ include "postgresql.host" $ }}'
+        - name: KONG_PG_USER
+          value: '{{ include "postgresql.user" $ }}'
+        - name: KONG_PG_DATABASE
+          value: '{{ include "postgresql.database" $ }}'
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
         - name: KONG_PROXY_LISTEN
@@ -121,7 +132,10 @@ spec:
 {{- end -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
-          value: '{{ .Values.enterprise.license }}'
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: license
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:

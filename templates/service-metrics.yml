@@ -8,7 +8,7 @@ metadata:
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
-  - name: kong-metrics
+  - name: metrics
     port: {{ .Values.prometheus.port | default 9542 }}
     targetPort: {{ .Values.prometheus.port | default 9542 }}
     protocol: TCP

@@ -8,11 +8,11 @@ spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
 {{- if .Values.manager.tls.enabled }}
-  - name: kong-manager-ssl
+  - name: manager-ssl
     port: 8445
     targetPort: 8445
 {{- else }}
-  - name: kong-manager
+  - name: manager
     port: 8002
     targetPort: 8002
 {{- end }}

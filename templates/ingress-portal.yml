@@ -5,17 +5,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-portal
   labels: {{ include "kong.labels" $ | nindent 4 }}
-  annotations:
-{{- if .Values.portal.ingress.annotations }}
-    {{- toYaml .Values.portal.ingress.annotations | nindent 4 }}
-{{- else }}
- {{- if .Values.portal.tls.enabled }}
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-{{- end }}
-    external-dns.alpha.kubernetes.io/hostname: {{ include "kong.portal.host" . }}
-    external-dns.alpha.kubernetes.io/target: {{ .Values.global.externalDnsTarget }}
-    kubernetes.io/ingress.class: external-nginx
-{{- end }}
+{{- include "kong.merged.portal.annotations" $ | nindent 2 }}
 spec:
   rules:
   - host: {{ include "kong.portal.host" . }}
@@ -25,9 +15,9 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-portal
  {{- if .Values.portal.tls.enabled }}
-            servicePort: kong-portal-ssl
+            servicePort: portal-ssl
  {{- else }}
-            servicePort: kong-portal
+            servicePort: portal
 {{- end -}}
 {{- end -}}
 {{- end -}}

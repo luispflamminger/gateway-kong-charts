@@ -5,17 +5,14 @@ kind: Route
 metadata:
   name: {{ .Release.Name }}-manager
   labels: {{ include "kong.labels" $ | nindent 4 }}
-{{- if .Values.manager.ingress.annotations }}
-  annotations:
-    {{- toYaml .Values.manager.ingress.annotations | nindent 4 }}
-{{- end }}
+{{- include "kong.merged.manager.annotations" $ | nindent 2 }}
 spec:
   host: {{ include "kong.manager.host" . }}
   port:
 {{- if .Values.manager.tls.enabled }}
-    targetPort: kong-manager-ssl
+    targetPort: manager-ssl
 {{- else }}
-    targetPort: kong-manager
+    targetPort: manager
 {{- end }}
   to:
     kind: Service

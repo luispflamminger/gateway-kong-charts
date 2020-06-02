@@ -5,17 +5,14 @@ kind: Route
 metadata:
   name: {{ .Release.Name }}-portal
   labels: {{ include "kong.labels" $ | nindent 4 }}
-{{- if .Values.portal.ingress.annotations }}
-  annotations:
-    {{- toYaml .Values.portal.ingress.annotations | nindent 4 }}
-{{- end }}
+{{- include "kong.merged.portal.annotations" $ | nindent 2 }}
 spec:
   host: {{ include "kong.portal.host" . }}
   port:
 {{- if .Values.portal.tls.enabled }}
-    targetPort: kong-portal-ssl
+    targetPort: portal-ssl
 {{- else }}
-    targetPort: kong-portal
+    targetPort: portal
 {{- end }}
   to:
     kind: Service
