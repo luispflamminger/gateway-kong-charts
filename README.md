@@ -133,9 +133,9 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `postgres.database`                    | Name of the database                                                         | `kong`           |
 | `postgres.user`                        | Username for accessing the database                                          | `kong`           |
 | `postgres.password`                    | The users password                                                           | `changeme`       |
-| `configuration.pvc.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted                 | `false`          |
-| `configuration.replicas`               | Set the number of replicas                                                   | `1`              |
-| `configuration.resources`              | Assign ressources, e.g. limits, for Postgres                                 | `Memory limits`  |
+| `postgres.configuration.pvc.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted                 | `false`          |
+| `postgres.configuration.replicas`               | Set the number of replicas                                                   | `1`              |
+| `postgres.configuration.resources`              | Assign ressources, e.g. limits, for Postgres                                 | `Memory limits`  |
 
 ## Troubleshooting
 
