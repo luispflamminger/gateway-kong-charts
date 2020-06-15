@@ -44,6 +44,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.luaSslTrustedCertificates" }}
+{{ .Values.zipkin.luaSslTrustedCertificate }}
+{{ end -}}
+
 {{- define "kong.volumes" }}
 - name: nginx-servers
   configMap:
