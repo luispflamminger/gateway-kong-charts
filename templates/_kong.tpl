@@ -52,7 +52,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if eq .Values.sslVerify true }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -67,7 +67,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- define "kong.volumeMounts" }}
 - name: nginx-servers
   mountPath: /usr/local/kong/nginx
-{{- if eq .Values.sslVerify true }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 - name: trusted-ca-certificates
   mountPath: /usr/local/kong/tls
 {{- end -}}
