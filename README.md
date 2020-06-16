@@ -122,6 +122,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
 | `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
 | `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
+| `zipkin.luaSslTrustedCertificate`    | CA certificate for the Zipkin-Collector-URL                                    | `nil`            |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
 | `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`            |
 | `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`           |
