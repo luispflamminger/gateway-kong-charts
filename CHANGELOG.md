@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 0.0.0
+
+ - Allow setting of a Zipkin CA certificate
+
 ## 1.1.0
 
  - DHEI-1712: Extended external database configuration
