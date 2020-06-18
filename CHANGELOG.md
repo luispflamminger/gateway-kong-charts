@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 0.0.0
+
+ - Global labels settings with a default fluentd label
+
 ## 1.1.0
 
  - DHEI-1712: Extended external database configuration
