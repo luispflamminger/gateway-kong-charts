@@ -61,6 +61,8 @@ spec:
               key: license
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
+        volumeMounts:
+          {{- include "kong.init.volumeMounts" $ | indent 8 }}
       containers:
       - name: kong
         image: {{ include "kong.image" $ }}
@@ -91,7 +93,7 @@ spec:
         - name: KONG_PG_SSL_VERIFY
           value: 'on'
         - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-          value: '/usr/local/kong/tls/postgres-ssl-certificate.pem'
+          value: '/usr/local/kong/tls/init/postgres-ssl-certificate.pem'
 {{- end }}
 {{- end }}
 {{- end }}
