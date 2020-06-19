@@ -41,6 +41,18 @@ spec:
           value: '{{ include "postgresql.user" $ }}'
         - name: KONG_PG_DATABASE
           value: '{{ include "postgresql.database" $ }}'
+{{- if eq .Values.postgres.externalDatabase.enabled true }}
+{{- if .Values.postgres.externalDatabase.ssl }}
+        - name: KONG_PG_SSL
+          value: 'on'
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+        - name: KONG_PG_SSL_VERIFY
+          value: 'on'
+        - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+          value: '/usr/local/kong/tls/postgres-ssl-certificate.pem'
+{{- end }}
+{{- end }}
+{{- end }}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
         - name: KONG_LICENSE_DATA
           valueFrom:
@@ -71,6 +83,18 @@ spec:
           value: '{{ include "postgresql.user" $ }}'
         - name: KONG_PG_DATABASE
           value: '{{ include "postgresql.database" $ }}'
+{{- if eq .Values.postgres.externalDatabase.enabled true }}
+{{- if .Values.postgres.externalDatabase.ssl }}
+        - name: KONG_PG_SSL
+          value: 'on'
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+        - name: KONG_PG_SSL_VERIFY
+          value: 'on'
+        - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+          value: '/usr/local/kong/tls/postgres-ssl-certificate.pem'
+{{- end }}
+{{- end }}
+{{- end }}
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
         - name: KONG_PROXY_LISTEN
@@ -198,6 +222,7 @@ spec:
         {{- include "kong.volumeMounts" $ | indent 8 }}
         {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
       volumes:
+      {{- include "kong.init.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
