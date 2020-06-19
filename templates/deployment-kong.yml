@@ -49,7 +49,7 @@ spec:
         - name: KONG_PG_SSL_VERIFY
           value: 'on'
         - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-          value: '/usr/local/kong/tls/postgres-ssl-certificate.pem'
+          value: '/usr/local/kong/tls/init/postgres-ssl-certificate.pem'
 {{- end }}
 {{- end }}
 {{- end }}
@@ -93,7 +93,7 @@ spec:
         - name: KONG_PG_SSL_VERIFY
           value: 'on'
         - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-          value: '/usr/local/kong/tls/init/postgres-ssl-certificate.pem'
+          value: '/usr/local/kong/tls/postgres-ssl-certificate.pem'
 {{- end }}
 {{- end }}
 {{- end }}
