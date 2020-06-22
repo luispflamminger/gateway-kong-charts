@@ -67,7 +67,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
     secretName: {{ .Release.Name }}-trusted-ca-certificates
     items:
       - key: postgres-ssl-certificate.pem
-        path: 'init'
+        path: 'init/postgres-ssl-certificate.pem'
 {{- end -}}
 {{- end -}}
 
