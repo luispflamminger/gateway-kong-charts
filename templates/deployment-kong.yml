@@ -137,6 +137,10 @@ spec:
               name: {{ .Release.Name }}
               key: license
 {{- end }}
+{{- if .Values.zipkin.luaSslTrustedCertificate }}
+        - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+          value: '/usr/local/kong/tls/lua-ssl-trusted-certificates.pem'
+{{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         ports:
         - name: proxy

@@ -4,6 +4,7 @@
 
 ## 0.0.0
 
+ - Allow setting of a Zipkin CA certificate
  - Global labels settings with a default fluentd label
 
 ## 1.1.0

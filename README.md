@@ -121,14 +121,15 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`             |
 | `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`              |
 | `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
-| `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`                  |
-| `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`                 |
-| `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`                 |
-| `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`                 |
-| `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`                |
-| `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`                |
-| `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`            |
-| `postgres.enabled`                     | Enable Kong to run with PostrgeSQL as database                               | `true`                |
+| `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
+| `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
+| `zipkin.luaSslTrustedCertificate`    | CA certificate for the Zipkin-Collector-URL                                    | `nil`            |
+| `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
+| `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`            |
+| `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`           |
+| `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
+| `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
+| `postgres.enabled`                     | Enable Kong to run with PostrgeSQL as database                               | `true`           |
 | `postgres.externalDatabase`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.port`                        | Port of the database                                                         | `5432`                |
 | `postgres.database`                    | Name of the database                                                         | `kong`                |
