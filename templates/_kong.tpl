@@ -5,6 +5,7 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 app.kubernetes.io/component: api-gateway
 app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+{{ .Values.global.labels | toYaml }}
 {{- end -}}
 
 {{- define "kong.annotations.prometheus" -}}

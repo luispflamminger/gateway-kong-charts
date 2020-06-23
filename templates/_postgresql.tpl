@@ -5,6 +5,7 @@ app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 app.kubernetes.io/component: database
 app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+{{ .Values.global.labels | toYaml }}
 {{- end -}}
 
 {{- define "postgres.image" -}}
