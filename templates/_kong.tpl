@@ -41,7 +41,7 @@ app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{ end -}}
 
 {{- define "kong.checksums" -}}
-{{- if eq .Values.sslVerify true -}}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
