@@ -1,5 +1,6 @@
 {{- define "kong.labels" -}}
 app: {{ .Chart.Name }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 app.kubernetes.io/component: api-gateway
