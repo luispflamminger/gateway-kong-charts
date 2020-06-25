@@ -1,4 +1,4 @@
-{{- if not .Values.postgres.externalDatabase.enabled -}}
+{{- if not .Values.postgres.externalDatabase -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
