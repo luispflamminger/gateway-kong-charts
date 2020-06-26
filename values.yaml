@@ -161,7 +161,14 @@ resources:
 
 postgres:
   # If set to true, the bundled PostgreSQL will not be deployed
-  externalDatabase: false
+  externalDatabase: 
+    enabled: false
+    # ssl: false
+    # sslVerify: false
+    # luaSslTrustedCertificate: |
+    #   -----BEGIN CERTIFICATE-----
+    #   <CA certificate in PEM format here>
+    #   -----END CERTIFICATE-----
   
   # Set host if you use an external database or service name is not sufficient
   # host: 'some-external-postgresql-database.example.com'

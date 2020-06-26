@@ -55,7 +55,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -67,10 +67,28 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.init.volumes" }}
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificate
+  secret:
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
+    items:
+      - key: lua-ssl-trusted-certificate.pem
+        path: 'init/lua-ssl-trusted-certificate.pem'
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.init.volumeMounts" }}
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificate
+  mountPath: /usr/local/kong/tls
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.volumeMounts" }}
 - name: nginx-servers
   mountPath: /usr/local/kong/nginx
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   mountPath: /usr/local/kong/tls
 {{- end -}}
@@ -106,6 +124,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 
 {{- define "kong.luaSslTrustedCertificates" }}
 {{ .Values.zipkin.luaSslTrustedCertificate }}
+{{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
 {{- define "kong.customPlugins.env" -}}
