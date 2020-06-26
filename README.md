@@ -130,7 +130,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
 | `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
 | `postgres.enabled`                     | Enable Kong to run with PostrgeSQL as database                               | `true`           |
-| `postgres.externalDatabase`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
+| `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
+| `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |
+| `postgres.externalDatabase.sslVerify`            | Toggles server certificate verification if ssl is enabled. See the lua_ssl_trusted_certificate setting to specify a certificate authority. | `false` |
+| `postgres.externalDatabase.luaSslTrustedCertificate`            | Specified certificate authority for TLS connection between Kong and PostgreSQL. | `changeme` |
 | `postgres.port`                        | Port of the database                                                         | `5432`                |
 | `postgres.database`                    | Name of the database                                                         | `kong`                |
 | `postgres.user`                        | Username for accessing the database                                          | `kong`                |
