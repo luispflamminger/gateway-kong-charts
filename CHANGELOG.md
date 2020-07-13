@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## 0.0.0
+## 1.2.0
 
  - Allow setting of a Zipkin CA certificate
  - Allow setting of a external Postgres CA certificate
