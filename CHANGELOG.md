@@ -2,6 +2,13 @@
 
 [[_TOC_]]
 
+## 1.2.0
+
+ - Allow setting of a Zipkin CA certificate
+ - Allow setting of a external Postgres CA certificate
+ - Global labels settings with a default fluentd label
+ - Label deployments with chart version
+
 ## 1.1.0
 
  - DHEI-1712: Extended external database configuration

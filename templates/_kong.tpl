@@ -1,10 +1,12 @@
 {{- define "kong.labels" -}}
 app: {{ .Chart.Name }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 app.kubernetes.io/component: api-gateway
 app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+{{ .Values.global.labels | toYaml }}
 {{- end -}}
 
 {{- define "kong.annotations.prometheus" -}}
@@ -25,7 +27,7 @@ true
 {{- if .Values.image -}}
 {{ .Values.image }}
 {{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
+'mtr.external.otc.telekomcloud.com/tif-public/kong-enterprise-edition:1.3.0.2-alpine'
 {{- else -}}
 'mtr.external.otc.telekomcloud.com/tif-public/kong:2.0.3-alpine'
 {{- end -}}
@@ -35,9 +37,14 @@ true
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
+{{- define "kong.bundledTrustedCaCertificates" }}
+{{ include "kong.luaSslTrustedCertificates" $ }}
+{{ .Values.trustedCaCertificates }}
+{{ end -}}
+
 {{- define "kong.checksums" -}}
-{{- if eq .Values.sslVerify true -}}
-checksum/trusted-ca-certificates: {{ (.Values.trustedCaCertificates | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
+checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
@@ -48,7 +55,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if eq .Values.sslVerify true }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -60,10 +67,28 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.init.volumes" }}
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificates
+  secret:
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
+    items:
+      - key: lua-ssl-trusted-certificates.pem
+        path: 'init/lua-ssl-trusted-certificates.pem'
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.init.volumeMounts" }}
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificates
+  mountPath: /usr/local/kong/tls
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.volumeMounts" }}
 - name: nginx-servers
   mountPath: /usr/local/kong/nginx
-{{- if eq .Values.sslVerify true }}
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   mountPath: /usr/local/kong/tls
 {{- end -}}
@@ -96,6 +121,11 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: 'NONE'
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.luaSslTrustedCertificates" }}
+{{ .Values.zipkin.luaSslTrustedCertificate }}
+{{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
+{{ end -}}
 
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
