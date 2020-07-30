@@ -33,6 +33,14 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.jumper.image" -}}
+{{- if .Values.jumper.image -}}
+{{ .Values.jumper.image }}
+{{- else -}}
+'mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0'
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.selector" -}}
 app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}

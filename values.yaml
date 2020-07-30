@@ -154,6 +154,16 @@ prometheus:
 #   backoffLimit: 20
 #   activeDeadlineSeconds: 300
 
+# Jumper is a component needed for Gateway-to-Gateway
+# communication
+jumper:
+  enabled: true
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
+  resources:
+    requests:
+      cpu: 110m
+      memory: 1Gi
+
 resources:
   requests:
     cpu: 750m
