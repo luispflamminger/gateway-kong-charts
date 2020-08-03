@@ -64,6 +64,16 @@ spec:
         volumeMounts:
           {{- include "kong.init.volumeMounts" $ | indent 8 }}
       containers:
+{{- if eq .Values.jumper.enabled true }}
+      - name: jumper
+        image: {{ include "kong.jumper.image" $ }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.jumper.port | default 8080 }} 
+          name: jumper
+          protocol: TCP
+        resources: {{ .Values.resources | toYaml | nindent 10 }}
+{{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
