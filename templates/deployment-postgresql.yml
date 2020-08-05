@@ -17,6 +17,11 @@ spec:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgres.image" $ }}
         imagePullPolicy: Always
+{{- if not (eq .Values.global.platform "openshift") }}
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+{{- end }}
         env:
         - name: POSTGRES_USER
           value: {{ .Values.postgres.user | default "kong" }}
