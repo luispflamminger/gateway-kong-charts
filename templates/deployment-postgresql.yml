@@ -64,12 +64,16 @@ spec:
 {{- toYaml .Values.postgres.configuration.resources | nindent 10 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
+        - mountPath: /tmp
+          name: {{ .Release.Name }}-postgresql-tmp
         - mountPath: {{ .Values.postgres.configuration.data_locations | default "/var/lib/pgsql/data" }}
           name: {{ .Release.Name }}-postgresql-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:
+      - name: {{ .Release.Name }}-postgresql-tmp
+        emptyDir: {}
       - name: {{ .Release.Name }}-postgresql-data
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-database-pvc
