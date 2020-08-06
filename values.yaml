@@ -131,6 +131,14 @@ disableUpstreamCache: false
 
 replicas: 1
 
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
 zipkin:
   enabled: false
   collectorUrl: ""
@@ -160,14 +168,12 @@ jumper:
   enabled: true
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
   resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
     requests:
-      cpu: 110m
-      memory: 1Gi
-
-resources:
-  requests:
-    cpu: 750m
-    memory: 1024Mi
+      cpu: 100m
+      memory: 128Mi
 
 postgres:
   # If set to true, the bundled PostgreSQL will not be deployed
@@ -192,7 +198,13 @@ postgres:
     pvc:
       keepOnDelete: false
     # data_locations: '/var/lib/pgsql/data'
+    
     replicas: 1
+
     resources:
       limits:
-        memory: "512Mi"
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
