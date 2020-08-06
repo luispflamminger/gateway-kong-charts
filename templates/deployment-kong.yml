@@ -70,11 +70,11 @@ spec:
         image: {{ include "kong.jumper.image" $ }}
         imagePullPolicy: Always
         securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
         ports:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
           protocol: TCP
-        resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
 {{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
@@ -179,6 +179,7 @@ spec:
           value: '/usr/local/kong/tls/lua-ssl-trusted-certificates.pem'
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
+        resources: {{ .Values.resources | toYaml | nindent 10 }}
         ports:
         - name: proxy
           containerPort: 8000
@@ -230,7 +231,6 @@ spec:
           protocol: TCP
 {{- end -}}
 {{- end }}
-        resources: {{ .Values.resources | toYaml | nindent 10 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
