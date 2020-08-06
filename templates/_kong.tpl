@@ -93,6 +93,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumes" }}
+- name: tmp
+  emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   secret:
@@ -104,6 +106,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumeMounts" }}
+- name: tmp
+  mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   mountPath: /usr/local/kong/tls
