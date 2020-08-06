@@ -68,12 +68,16 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: {{ .Release.Name }}-postgresql-tmp
+        - mountPath: /var/run/postgresql
+          name: {{ .Release.Name }}-postgresql-run
         - mountPath: {{ .Values.postgres.configuration.data_locations | default "/var/lib/pgsql/data" }}
           name: {{ .Release.Name }}-postgresql-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:
+      - name: {{ .Release.Name }}-postgresql-run
+        emptyDir: {}
       - name: {{ .Release.Name }}-postgresql-tmp
         emptyDir: {}
       - name: {{ .Release.Name }}-postgresql-data
