@@ -72,7 +72,7 @@ spec:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
           protocol: TCP
-        resources: {{ .Values.resources | toYaml | nindent 10 }}
+        resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
 {{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
