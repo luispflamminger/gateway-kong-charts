@@ -148,9 +148,9 @@ If the Kong API-Gateway deployment fails to come up, please have a look at the l
 
 **Log message:**
 ```
-Error: /usr/local/share/lua/5.1/kong/cmd/start.lua:37: nginx configuration is invalid (exit code 1):
-nginx: [emerg] SSL_CTX_load_verify_locations("/usr/local/kong/tif/trusted-ca-certificates.pem") failed (SSL: error:0B084088:x509 certificate routines:X509_load_cert_crl_file:no certificate or crl found)
-nginx: configuration file /usr/local/kong/nginx.conf test failed
+Error: /usr/local/share/lua/5.1/opt/kong/cmd/start.lua:37: nginx configuration is invalid (exit code 1):
+nginx: [emerg] SSL_CTX_load_verify_locations("/usr/local/opt/kong/tif/trusted-ca-certificates.pem") failed (SSL: error:0B084088:x509 certificate routines:X509_load_cert_crl_file:no certificate or crl found)
+nginx: configuration file /opt/kong/nginx.conf test failed
 ```
 **Solution:**  
 This error happens if ``sslVerify`` is set to true but no valid certificates could be found.  

@@ -60,6 +60,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumes" }}
+- name: kong-working-dir
+  emptyDir: {}
 - name: kong-tmp
   emptyDir: {}
 - name: nginx-servers
@@ -78,17 +80,19 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
+- name: kong-working-dir
+  mountPath: /usr/local/kong
 - name: kong-tmp
   mountPath: /tmp
 - name: nginx-servers
-  mountPath: /usr/local/kong/nginx
+  mountPath: /opt/kong/nginx
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
-  mountPath: /usr/local/kong/tls
+  mountPath: /opt/kong/tls
 {{- end -}}
 {{- if .Values.defaultTlsSecret }}            
 - name: server-certificate
-  mountPath: /usr/local/kong/default-https
+  mountPath: /opt/kong/default-https
 {{- end -}}
 {{- end -}}
 
@@ -110,22 +114,22 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
-  mountPath: /usr/local/kong/tls
+  mountPath: /opt/kong/tls
 {{- end -}}
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_HTTP_INCLUDE
-  value: '/usr/local/kong/nginx/servers.conf'
+  value: '/opt/kong/nginx/servers.conf'
 {{- if .Values.defaultTlsSecret }}            
 - name: KONG_SSL_CERT
-  value: /usr/local/kong/default-https/tls.crt
+  value: /opt/kong/default-https/tls.crt
 - name: KONG_SSL_CERT_KEY
-  value: /usr/local/kong/default-https/tls.key
+  value: /opt/kong/default-https/tls.key
 {{- end }}
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
-  value: '/usr/local/kong/tls/trusted-ca-certificates.pem'
+  value: '/opt/kong/tls/trusted-ca-certificates.pem'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY
   value: 'on'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY_DEPTH

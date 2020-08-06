@@ -50,7 +50,7 @@ spec:
         - name: KONG_PG_SSL_VERIFY
           value: 'on'
         - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-          value: '/usr/local/kong/tls/init/lua-ssl-trusted-certificates.pem'
+          value: '/opt/kong/tls/init/lua-ssl-trusted-certificates.pem'
 {{- end }}
 {{- end }}
 {{- end }}
@@ -176,7 +176,7 @@ spec:
 {{- end }}
 {{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
         - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-          value: '/usr/local/kong/tls/lua-ssl-trusted-certificates.pem'
+          value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
 {{- end }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         resources: {{ .Values.resources | toYaml | nindent 10 }}
