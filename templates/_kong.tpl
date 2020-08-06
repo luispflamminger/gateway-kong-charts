@@ -60,7 +60,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumes" }}
-- name: tmp
+- name: kong-tmp
   emptyDir: {}
 - name: nginx-servers
   configMap:
@@ -78,7 +78,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
-- name: tmp
+- name: kong-tmp
   mountPath: /tmp
 - name: nginx-servers
   mountPath: /usr/local/kong/nginx
@@ -93,7 +93,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumes" }}
-- name: tmp
+- name: kong-init-tmp
   emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
@@ -106,7 +106,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumeMounts" }}
-- name: tmp
+- name: kong-init-tmp
   mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
