@@ -83,6 +83,8 @@ spec:
         env:
         {{- include "kong.nginx.directives" $ | indent 8 }}
         {{- include "kong.customPlugins.env" $ | indent 8 }}
+        - name: KONG_PREFIX
+          value: /kong
         - name: KONG_DATABASE
           value: postgres
         - name: KONG_PG_PASSWORD

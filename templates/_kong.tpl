@@ -60,7 +60,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumes" }}
-- name: kong-logs-dir
+- name: kong-prefix-dir
   emptyDir: {}
 - name: kong-tmp
   emptyDir: {}
@@ -80,8 +80,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
-- name: kong-logs-dir
-  mountPath: /usr/local/kong/logs
+- name: kong-prefix-dir
+  mountPath: /kong
 - name: kong-tmp
   mountPath: /tmp
 - name: nginx-servers
