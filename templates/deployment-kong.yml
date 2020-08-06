@@ -18,6 +18,7 @@ spec:
       - name: kong-init
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
+        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
         env:
         - name: KONG_DATABASE
           value: postgres
@@ -68,6 +69,7 @@ spec:
       - name: jumper
         image: {{ include "kong.jumper.image" $ }}
         imagePullPolicy: Always
+        securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
         ports:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
@@ -77,6 +79,7 @@ spec:
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
+        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
         env:
         {{- include "kong.nginx.directives" $ | indent 8 }}
         {{- include "kong.customPlugins.env" $ | indent 8 }}
