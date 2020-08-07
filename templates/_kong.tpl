@@ -184,9 +184,9 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- define "kong.adminApi.url" -}}
 {{- $host := include "kong.adminApi.host" . -}}
 {{- if .Values.adminApi.tls.enabled }}
-{{- printf "https://%s:%s" $host "8444" }}
+{{- printf "https://%s" $host }}
 {{- else }}
-{{- printf "http://%s:%s" $host "8001" }}
+{{- printf "http://%s" $host }}
 {{- end -}}
 {{- end -}}
 
@@ -208,6 +208,15 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- .Values.manager.ingress.hostname -}}
 {{- else }}
 {{- printf "%s-manager-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.manager.url" -}}
+{{- $host := include "kong.manager.host" . -}}
+{{- if .Values.manager.tls.enabled }}
+{{- printf "https://%s" $host }}
+{{- else }}
+{{- printf "http://%s" $host }}
 {{- end -}}
 {{- end -}}
 

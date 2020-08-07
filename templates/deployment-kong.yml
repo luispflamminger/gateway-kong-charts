@@ -134,7 +134,7 @@ spec:
           value: '0.0.0.0:8002'
 {{- end }}
         - name: KONG_ADMIN_GUI_URL
-          value: 'https://{{ include "kong.manager.host" . }}'
+          value: '{{ include "kong.manager.url" . }}'
 {{- end -}}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_PORTAL
