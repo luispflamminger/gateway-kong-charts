@@ -18,7 +18,7 @@ spec:
             servicePort: portal-ssl
 {{- else }}
             servicePort: portal
-{{- end -}}
+{{- end }}
   tls:
   - hosts:
     - {{ include "kong.portal.host" . }}
