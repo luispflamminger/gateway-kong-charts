@@ -19,5 +19,8 @@ spec:
 {{- else }}
             servicePort: manager
 {{- end -}}
+  tls:
+  - hosts:
+    - {{ include "kong.manager.host" . }}
 {{- end -}}
 {{- end -}}
