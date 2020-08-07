@@ -123,7 +123,7 @@ spec:
 {{- end -}}
 {{- if .Values.adminApi.ingress.enabled }}
         - name: KONG_ADMIN_API_URI
-          value: '{{ include "kong.adminApi.url" . }}'
+          value: 'https://{{ include "kong.adminApi.host" . }}'
 {{- end -}}
 {{- end -}}
 {{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
@@ -134,7 +134,7 @@ spec:
           value: '0.0.0.0:8002'
 {{- end }}
         - name: KONG_ADMIN_GUI_URL
-          value: '{{ include "kong.manager.url" . }}'
+          value: 'https://{{ include "kong.manager.host" . }}'
 {{- end -}}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
         - name: KONG_PORTAL
@@ -153,7 +153,7 @@ spec:
         - name: KONG_PORTAL_GUI_HOST
           value: '{{ include "kong.portal.host" . }}'
         - name: KONG_PORTAL_GUI_PROTOCOL
-          value: {{ include "kong.portal.protocol" . }}
+          value: https
 {{- if eq .Values.rbac.enabled true }}
         - name: KONG_PORTAL_AUTH
           value: 'basic-auth'

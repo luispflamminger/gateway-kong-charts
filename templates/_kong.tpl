@@ -181,15 +181,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.adminApi.url" -}}
-{{- $host := include "kong.adminApi.host" . -}}
-{{- if .Values.adminApi.tls.enabled }}
-{{- printf "https://%s" $host }}
-{{- else }}
-{{- printf "http://%s" $host }}
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.adminApi.serviceHost" -}}
 {{- printf "%s-admin.%s" .Release.Name .Release.Namespace }}
 {{- end -}}
@@ -211,29 +202,11 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.manager.url" -}}
-{{- $host := include "kong.manager.host" . -}}
-{{- if .Values.manager.tls.enabled }}
-{{- printf "https://%s" $host }}
-{{- else }}
-{{- printf "http://%s" $host }}
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.portal.host" -}}
 {{- if not (empty .Values.portal.ingress.hostname) }}
 {{- .Values.portal.ingress.hostname -}}
 {{- else }}
 {{- printf "%s-portal-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
-{{- end -}}
-{{- end -}}
-
-
-{{- define "kong.portal.protocol" -}}
-{{- if .Values.portal.tls.enabled }}
-{{- printf "https" }}
-{{- else }}
-{{- printf "http" }}
 {{- end -}}
 {{- end -}}
 
