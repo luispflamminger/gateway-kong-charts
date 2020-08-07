@@ -228,6 +228,15 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+
+{{- define "kong.portal.protocol" -}}
+{{- if .Values.portal.tls.enabled }}
+{{- printf "https" }}
+{{- else }}
+{{- printf "http" }}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.proxy.host" -}}
 {{- if not (empty .Values.proxy.ingress.hostname) }}
 {{- .Values.proxy.ingress.hostname -}}
