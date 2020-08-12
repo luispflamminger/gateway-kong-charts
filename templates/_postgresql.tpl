@@ -2,11 +2,15 @@
 app: {{ .Chart.Name }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: postgresql
-app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 app.kubernetes.io/component: database
-app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
+app.kubernetes.io/part-of: tif-runtime
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{ .Values.global.labels | toYaml }}
+{{- end -}}
+
+{{- define "postgresql.selector" -}}
+app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- end -}}
 
 {{- define "postgres.image" -}}
@@ -25,10 +29,6 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 
 {{- define "postgresql.host" -}}
 {{ .Values.postgres.host | default (printf "%s.%s.svc.cluster.local" ( include "postgresql.serviceName" $ ) $.Release.Namespace) }}
-{{- end -}}
-
-{{- define "postgresql.selector" -}}
-app.kubernetes.io/instance: postgresql-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
 {{- define "postgresql.port" -}}

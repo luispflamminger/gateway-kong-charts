@@ -75,6 +75,8 @@ spec:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
           protocol: TCP
+        volumeMounts:
+          {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
 {{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
@@ -240,6 +242,7 @@ spec:
       volumes:
       {{- include "kong.init.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
+      {{- include "kong.jumper.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always

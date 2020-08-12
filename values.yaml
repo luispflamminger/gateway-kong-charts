@@ -11,14 +11,14 @@ global:
       # external-dns.alpha.kubernetes.io/target: ""
       # kubernetes.io/ingress.class: ""
 
-  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise no pull secret will be deployed
-  # If you use tif-infra-pipeline (TIF installer) this will be set automatically
-  # imagePullSecrets:
-  #   - name: mtr-tif-public
-  #     registry: https://mtr.external.otc.telekomcloud.com
-  #     username: changeme
-  #     password: changeme
+  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
+  # no pull secret will be deployed
+  # If you use Sapling for deployment this will be set automatically
   imagePullSecrets: []
+  #- name: mtr-tif-public
+  #  registry: https://mtr.external.otc.telekomcloud.com
+  #  username: changeme
+  #  password: changeme
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -131,6 +131,9 @@ disableUpstreamCache: false
 
 securityContext: {}
 
+jobs:
+  securityContext: {}
+
 replicas: 1
 
 resources:
@@ -175,7 +178,7 @@ jumper:
   resources:
     limits:
       cpu: 200m
-      memory: 128Mi
+      memory: 256Mi
     requests:
       cpu: 100m
       memory: 128Mi

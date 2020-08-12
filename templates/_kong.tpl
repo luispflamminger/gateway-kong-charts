@@ -2,11 +2,15 @@
 app: {{ .Chart.Name }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
-app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
-app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
+app.kubernetes.io/part-of: tif-runtime
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{ .Values.global.labels | toYaml }}
+{{- end -}}
+
+{{- define "kong.selector" -}}
+app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 
 {{- define "kong.annotations.prometheus" -}}
@@ -39,10 +43,6 @@ true
 {{- else -}}
 'mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0'
 {{- end -}}
-{{- end -}}
-
-{{- define "kong.selector" -}}
-app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
 {{- define "kong.bundledTrustedCaCertificates" }}
@@ -116,6 +116,16 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: lua-ssl-trusted-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
+{{- end -}}
+
+{{- define "kong.jumper.volumes" }}
+- name: kong-jumper-tmp
+  emptyDir: {}
+{{- end -}}
+
+{{- define "kong.jumper.volumeMounts" }}
+- name: kong-jumper-tmp
+  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}

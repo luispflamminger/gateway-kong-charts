@@ -23,6 +23,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-prometheus-setup
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
         {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ADMIN_PASSWORD
