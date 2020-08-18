@@ -134,14 +134,10 @@ sslVerifyDepth: '1'
 
 disableUpstreamCache: false
 
-securityContext:
-  privileged: false
-  runAsNonRoot: true
+securityContext: {}
 
 jobs:
-  securityContext:
-    privileged: false
-    runAsNonRoot: true
+  securityContext: {}
 
 replicas: 1
 
@@ -188,9 +184,7 @@ jumper:
   # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
 
-  securityContext:
-    privileged: false
-    runAsNonRoot: true
+  securityContext: {}
 
   resources:
     limits:
@@ -235,9 +229,7 @@ postgres:
       requests:
         storage: 1Gi
 
-  securityContext:
-    privileged: false
-    runAsNonRoot: true
+  securityContext: {}
 
   replicas: 1
 
