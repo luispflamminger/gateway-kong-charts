@@ -87,8 +87,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 |--------------------------------------|--------------------------------------------------------------------------------|-----------------------|
 | `global`                             | Common values for all TIF-Helm-Charts                                          |                       |
 | `global.platform`                    | Determines where the chart will be deployed                                    | `kubernetes`          |
-| `global.project_prefix`              | Prefix for the deployed application name to group applications                 | `tif-`                |
-| `global.storageClass`                | Select storage class for the PVCs depending on your platform                   | `gp2`                 |
+| `global.storageclass`                | Select storage class for the PVCs depending on your platform                   | `gp2`                 |
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`                 |
 | `global.labels`                      | Define global labels                                                           | `tif.telekom.de/group`|
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`                 |
@@ -126,10 +125,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `zipkin.luaSslTrustedCertificate`    | CA certificate for the Zipkin-Collector-URL                                    | `nil`            |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
 | `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`            |
-| `prometheus.enabled`                 | Controls whether a metrics services should be deployed or not                  | `true`           |
+| `prometheus.enabled`                 | Controls whether to annotate pods with prometheus scraping information or not  | `true`           |
 | `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
 | `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
-| `postgres.enabled`                     | Enable Kong to run with PostrgeSQL as database                               | `true`           |
+| `postgres.enabled`                   | Enable Kong to run with PostrgeSQL as database                                 | `true`           |
 | `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |
 | `postgres.externalDatabase.sslVerify`            | Toggles server certificate verification if ssl is enabled. See the lua_ssl_trusted_certificate setting to specify a certificate authority. | `false` |
@@ -138,9 +137,9 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `postgres.database`                    | Name of the database                                                         | `kong`                |
 | `postgres.user`                        | Username for accessing the database                                          | `kong`                |
 | `postgres.password`                    | The users password                                                           | `changeme`            |
-| `postgres.configuration.pvc.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted        | `false`               |
-| `postgres.configuration.replicas`               | Set the number of replicas                                          | `1`                   |
-| `postgres.configuration.resources`              | Assign ressources, e.g. limits, for Postgres                        | `Memory limits`       |
+| `postgres.persistence.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted        | `false`               |
+| `postgres.replicas`               | Set the number of replicas                                          | `1`                   |
+| `postgres.resources`              | Assign ressources, e.g. limits, for Postgres                        | `Memory limits`       |
 
 ## Troubleshooting
 
@@ -163,3 +162,4 @@ Please make sue that ``trustedCaCertificates`` is set probably or set sslVerify 
 | OTC         | Yes        |
 | AppAgile    | Unverified |
 | AWS EKS     | Yes        |
+| CaaS        | Yes        |

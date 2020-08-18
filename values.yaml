@@ -1,15 +1,14 @@
 global:
   platform: kubernetes
-  project_prefix: "tif-"
-  storageclass: "gp2"
+  storageclass: gp2
   domain: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
   ingress:
     annotations: {}
-      # external-dns.alpha.kubernetes.io/target: ""
-      # kubernetes.io/ingress.class: ""
+      #external-dns.alpha.kubernetes.io/target: ""
+      #kubernetes.io/ingress.class: ""
 
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
   # no pull secret will be deployed
@@ -25,13 +24,19 @@ global:
 # This makes sense if you change configMaps or secrets and you
 # want your deployment to use the latest configuration
 #
-# templateChangeTriggers:
-#   - my-custom-configmap.yaml
-#   - my-custom-kong-plugin.yaml
+#templateChangeTriggers:
+#- my-custom-configmap.yaml
+#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-# image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
+#image: 
+  #repository: mtr.external.otc.telekomcloud.com
+  #organization: tif-public
+  #name: tif-kong-ee
+  #tag: 1.0.0
+# Or use the flattened string form:
+#image: mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0
 
 enterprise:
   license: ""
@@ -129,20 +134,24 @@ sslVerifyDepth: '1'
 
 disableUpstreamCache: false
 
-securityContext: {}
+securityContext:
+  privileged: false
+  runAsNonRoot: true
 
 jobs:
-  securityContext: {}
+  securityContext:
+    privileged: false
+    runAsNonRoot: true
 
 replicas: 1
 
 resources:
   limits:
-    cpu: 500m
-    memory: 1Gi
+    cpu: 0.5
+    memory: 500Mi
   requests:
-    cpu: 250m
-    memory: 256Mi
+    cpu: 50m
+    memory: 200Mi
 
 zipkin:
   enabled: false
@@ -171,19 +180,36 @@ prometheus:
 # communication
 jumper:
   enabled: true
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: jumper
+    #tag: 1.0.0
+  # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
 
-  securityContext: {}
+  securityContext:
+    privileged: false
+    runAsNonRoot: true
 
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 0.5
+      memory: 500Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 200Mi
 
 postgres:
+  # You can force using a specific image here:
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: postgres
+    #tag: 12.3-debian
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+
   # If set to true, the bundled PostgreSQL will not be deployed
   externalDatabase: 
     enabled: false
@@ -196,25 +222,29 @@ postgres:
   
   # Set host if you use an external database or service name is not sufficient
   # host: 'some-external-postgresql-database.example.com'
-  port: '5432'
+  port: 5432
   database: kong
   user: kong
-  password: "changeme"
-
-  # Specific confguration for the PostgreSQL bundled in this chart
-  configuration:
-    pvc:
-      keepOnDelete: false
-    # data_locations: '/var/lib/pgsql/data'
-
-    securityContext: {}
-
-    replicas: 1
-
+  password: changeme
+  
+  persistence:
+    keepOnDelete: false
+    #mountDir: '/var/lib/postgresql/data'
+    
     resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
       requests:
-        cpu: 100m
-        memory: 128Mi
+        storage: 1Gi
+
+  securityContext:
+    privileged: false
+    runAsNonRoot: true
+
+  replicas: 1
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 500Mi
+    requests:
+      cpu: 20m
+      memory: 200Mi

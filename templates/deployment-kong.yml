@@ -10,7 +10,13 @@ spec:
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
     metadata:
-      annotations: {{- include "kong.checksums" $ | nindent 8 }}
+      annotations: 
+      {{- include "kong.checksums" $ | indent 8 }}
+{{- if eq .Values.prometheus.enabled true }}
+        prometheus.io/path: '{{ .Values.prometheus.path | default "/metrics" }}'
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
+{{- end }}
       labels: {{ include "kong.labels" $ | nindent 8 }}
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -35,13 +41,13 @@ spec:
               name: {{ .Release.Name }}
               key: postgresPassword
         - name: KONG_PG_PORT
-          value: '{{ include "postgresql.port" $ }}'
+          value: '{{ .Values.postgres.port }}'
         - name: KONG_PG_HOST
           value: '{{ include "postgresql.host" $ }}'
         - name: KONG_PG_USER
-          value: '{{ include "postgresql.user" $ }}'
+          value: '{{ .Values.postgres.user }}'
         - name: KONG_PG_DATABASE
-          value: '{{ include "postgresql.database" $ }}'
+          value: '{{ .Values.postgres.database }}'
 {{- if eq .Values.postgres.externalDatabase.enabled true }}
 {{- if .Values.postgres.externalDatabase.ssl }}
         - name: KONG_PG_SSL
@@ -95,13 +101,13 @@ spec:
               name: {{ .Release.Name }}
               key: postgresPassword
         - name: KONG_PG_PORT
-          value: '{{ include "postgresql.port" $ }}'
+          value: '{{ .Values.postgres.port }}'
         - name: KONG_PG_HOST
           value: '{{ include "postgresql.host" $ }}'
         - name: KONG_PG_USER
-          value: '{{ include "postgresql.user" $ }}'
+          value: '{{ .Values.postgres.user }}'
         - name: KONG_PG_DATABASE
-          value: '{{ include "postgresql.database" $ }}'
+          value: '{{ .Values.postgres.database }}'
 {{- if eq .Values.postgres.externalDatabase.enabled true }}
 {{- if .Values.postgres.externalDatabase.ssl }}
         - name: KONG_PG_SSL

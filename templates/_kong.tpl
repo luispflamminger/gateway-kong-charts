@@ -1,11 +1,11 @@
 {{- define "kong.labels" -}}
-app: {{ .Chart.Name }}
-helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+app: {{ .Release.Name }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
 app.kubernetes.io/part-of: tif-runtime
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
 
@@ -13,10 +13,28 @@ app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 
-{{- define "kong.annotations.prometheus" -}}
-prometheus.io/path: '{{ .Values.prometheus.path | default "/metrics" }}'
-prometheus.io/scrape: 'true'
-prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
+{{- define "kong.image" -}}
+{{- $imageName := "kong" -}}
+{{- $imageTag := "2.0.3-alpine" -}}
+{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
+{{- $imageName = "kong-enterprise-edition" -}}
+{{- $imageTag = "1.3.0.2-alpine" -}}
+{{- end -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.image -}}
+  {{- if not (kindIs "string" .Values.image) -}}
+    {{ $imageRepository = .Values.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.image.name | default $imageName -}}
+    {{ $imageTag = .Values.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.isEnterprise" -}}
@@ -27,21 +45,23 @@ true
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.image" -}}
-{{- if .Values.image -}}
-{{ .Values.image }}
-{{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif-public/kong-enterprise-edition:1.3.0.2-alpine'
-{{- else -}}
-'mtr.external.otc.telekomcloud.com/tif-public/kong:2.0.3-alpine'
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.jumper.image" -}}
+{{- $imageName := "jumper" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
-{{ .Values.jumper.image }}
+  {{- if not (kindIs "string" .Values.jumper.image) -}}
+    {{ $imageRepository = .Values.jumper.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.jumper.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.jumper.image.name | default $imageName -}}
+    {{ $imageTag = .Values.jumper.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.jumper.image -}}
+  {{- end -}}
 {{- else -}}
-'mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0'
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
 {{- end -}}
 {{- end -}}
 

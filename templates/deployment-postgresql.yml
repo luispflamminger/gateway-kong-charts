@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}-postgresql
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
-  replicas: {{ .Values.postgres.configuration.replicas | default 1 }}
+  replicas: {{ .Values.postgres.replicas | default 1 }}
   selector:
     matchLabels: {{ include "postgresql.selector" $ | nindent 6 }}
   template:
@@ -15,12 +15,12 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
       - name: {{ .Release.Name }}-postgresql
-        image: {{ include "postgres.image" $ }}
+        image: {{ include "postgresql.image" $ }}
         imagePullPolicy: Always
-        securityContext: {{ .Values.postgres.configuration.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
         env:
         - name: PGDATA
-          value: {{ .Values.postgres.configuration.data_locations | default "/var/lib/pgsql/data" }}/pgdata
+          value: {{ .Values.postgres.mountDir | default "/var/lib/postgresql/data" }}/pgdata
         - name: POSTGRES_USER
           value: {{ .Values.postgres.user | default "kong" }}
         - name: POSTGRES_PASSWORD
@@ -42,14 +42,14 @@ spec:
           value: {{ .Values.postgres.database | default "kong" }}
         livenessProbe:
           tcpSocket:
-            port:  {{ include "postgresql.port" $ }}
+            port:  {{ .Values.postgres.port }}
           failureThreshold: 3
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
         ports:
-        - containerPort: {{ include "postgresql.port" $ }}
+        - containerPort: {{ .Values.postgres.port }}
           protocol: TCP
         readinessProbe:
           exec:
@@ -63,14 +63,14 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources:
-{{- toYaml .Values.postgres.configuration.resources | nindent 10 }}
+{{- toYaml .Values.postgres.resources | nindent 10 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         - mountPath: /tmp
           name: {{ .Release.Name }}-postgresql-tmp
         - mountPath: /var/run/postgresql
           name: {{ .Release.Name }}-postgresql-run
-        - mountPath: {{ .Values.postgres.configuration.data_locations | default "/var/lib/pgsql/data" }}
+        - mountPath: {{ .Values.postgres.mountDir | default "/var/lib/postgresql/data" }}
           name: {{ .Release.Name }}-postgresql-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
