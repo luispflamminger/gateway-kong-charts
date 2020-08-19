@@ -18,6 +18,9 @@ spec:
             servicePort: admin-ssl
 {{- else }}
             servicePort: admin
-{{- end -}}
+{{- end }}
+  tls:
+  - hosts:
+    - {{ include "kong.adminApi.host" . }}
 {{- end -}}
 {{- end -}}

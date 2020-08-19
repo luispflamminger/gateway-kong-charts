@@ -1,18 +1,40 @@
 {{- define "kong.labels" -}}
-app: {{ .Chart.Name }}
-helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+app: {{ .Release.Name }}
 app.kubernetes.io/name: kong
-app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
+app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
-app.kubernetes.io/part-of: {{ include "prefixed_release_name" $ }}
+app.kubernetes.io/part-of: tif-runtime
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
 
-{{- define "kong.annotations.prometheus" -}}
-prometheus.io/path: '{{ .Values.prometheus.path | default "/metrics" }}'
-prometheus.io/scrape: 'true'
-prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
+{{- define "kong.selector" -}}
+app.kubernetes.io/instance: {{ .Release.Name }}-kong
+{{- end -}}
+
+{{- define "kong.image" -}}
+{{- $imageName := "kong" -}}
+{{- $imageTag := "2.0.3-alpine" -}}
+{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
+{{- $imageName = "kong-enterprise-edition" -}}
+{{- $imageTag = "1.3.0.2-alpine" -}}
+{{- end -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.image -}}
+  {{- if not (kindIs "string" .Values.image) -}}
+    {{ $imageRepository = .Values.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.image.name | default $imageName -}}
+    {{ $imageTag = .Values.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.isEnterprise" -}}
@@ -23,26 +45,24 @@ true
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.image" -}}
-{{- if .Values.image -}}
-{{ .Values.image }}
-{{- else if eq (include "kong.isEnterprise" $ ) "true" -}}
-'mtr.external.otc.telekomcloud.com/tif-public/kong-enterprise-edition:1.3.0.2-alpine'
-{{- else -}}
-'mtr.external.otc.telekomcloud.com/tif-public/kong:2.0.3-alpine'
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.jumper.image" -}}
+{{- $imageName := "jumper" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
-{{ .Values.jumper.image }}
+  {{- if not (kindIs "string" .Values.jumper.image) -}}
+    {{ $imageRepository = .Values.jumper.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.jumper.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.jumper.image.name | default $imageName -}}
+    {{ $imageTag = .Values.jumper.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.jumper.image -}}
+  {{- end -}}
 {{- else -}}
-'mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0'
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
 {{- end -}}
-{{- end -}}
-
-{{- define "kong.selector" -}}
-app.kubernetes.io/instance: kong-{{ include "prefixed_release_name" $ }}
 {{- end -}}
 
 {{- define "kong.bundledTrustedCaCertificates" }}
@@ -60,6 +80,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumes" }}
+- name: kong-prefix-dir
+  emptyDir: {}
+- name: kong-tmp
+  emptyDir: {}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
@@ -75,7 +99,26 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.volumeMounts" }}
+- name: kong-prefix-dir
+  mountPath: /kong
+- name: kong-tmp
+  mountPath: /tmp
+- name: nginx-servers
+  mountPath: /opt/kong/nginx
+{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+- name: trusted-ca-certificates
+  mountPath: /opt/kong/tls
+{{- end -}}
+{{- if .Values.defaultTlsSecret }}            
+- name: server-certificate
+  mountPath: /opt/kong/default-https
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.init.volumes" }}
+- name: kong-init-tmp
+  emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   secret:
@@ -87,37 +130,36 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumeMounts" }}
+- name: kong-init-tmp
+  mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
-  mountPath: /usr/local/kong/tls
+  mountPath: /opt/kong/tls
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.volumeMounts" }}
-- name: nginx-servers
-  mountPath: /usr/local/kong/nginx
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
-- name: trusted-ca-certificates
-  mountPath: /usr/local/kong/tls
+{{- define "kong.jumper.volumes" }}
+- name: kong-jumper-tmp
+  emptyDir: {}
 {{- end -}}
-{{- if .Values.defaultTlsSecret }}            
-- name: server-certificate
-  mountPath: /usr/local/kong/default-https
-{{- end -}}
+
+{{- define "kong.jumper.volumeMounts" }}
+- name: kong-jumper-tmp
+  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_HTTP_INCLUDE
-  value: '/usr/local/kong/nginx/servers.conf'
+  value: '/opt/kong/nginx/servers.conf'
 {{- if .Values.defaultTlsSecret }}            
 - name: KONG_SSL_CERT
-  value: /usr/local/kong/default-https/tls.crt
+  value: /opt/kong/default-https/tls.crt
 - name: KONG_SSL_CERT_KEY
-  value: /usr/local/kong/default-https/tls.key
+  value: /opt/kong/default-https/tls.key
 {{- end }}
 {{- if eq .Values.sslVerify true }}
 - name: KONG_NGINX_PROXY_PROXY_SSL_TRUSTED_CERTIFICATE
-  value: '/usr/local/kong/tls/trusted-ca-certificates.pem'
+  value: '/opt/kong/tls/trusted-ca-certificates.pem'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY
   value: 'on'
 - name: KONG_NGINX_PROXY_PROXY_SSL_VERIFY_DEPTH
@@ -167,10 +209,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- else }}
 {{- printf "%s-admin-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
 {{- end -}}
-{{- end -}}
-
-{{- define "kong.adminApi.url" -}}
-{{- printf "https://%s" (include "kong.adminApi.host" . ) }}
 {{- end -}}
 
 {{- define "kong.adminApi.serviceHost" -}}

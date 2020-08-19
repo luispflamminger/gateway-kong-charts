@@ -1,37 +1,42 @@
 global:
   platform: kubernetes
-  project_prefix: "tif-"
-  storageclass: "gp2"
+  storageclass: gp2
   domain: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
   ingress:
     annotations: {}
-      # external-dns.alpha.kubernetes.io/target: ""
-      # kubernetes.io/ingress.class: ""
+      #external-dns.alpha.kubernetes.io/target: ""
+      #kubernetes.io/ingress.class: ""
 
-  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise no pull secret will be deployed
-  # If you use tif-infra-pipeline (TIF installer) this will be set automatically
-  # imagePullSecrets:
-  #   - name: mtr-tif-public
-  #     registry: https://mtr.external.otc.telekomcloud.com
-  #     username: changeme
-  #     password: changeme
+  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
+  # no pull secret will be deployed
+  # If you use Sapling for deployment this will be set automatically
   imagePullSecrets: []
+  #- name: mtr-tif-public
+  #  registry: https://mtr.external.otc.telekomcloud.com
+  #  username: changeme
+  #  password: changeme
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
 # This makes sense if you change configMaps or secrets and you
 # want your deployment to use the latest configuration
 #
-# templateChangeTriggers:
-#   - my-custom-configmap.yaml
-#   - my-custom-kong-plugin.yaml
+#templateChangeTriggers:
+#- my-custom-configmap.yaml
+#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-# image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
+#image: 
+  #repository: mtr.external.otc.telekomcloud.com
+  #organization: tif-public
+  #name: tif-kong-ee
+  #tag: 1.0.0
+# Or use the flattened string form:
+#image: mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0
 
 enterprise:
   license: ""
@@ -129,7 +134,20 @@ sslVerifyDepth: '1'
 
 disableUpstreamCache: false
 
+securityContext: {}
+
+jobs:
+  securityContext: {}
+
 replicas: 1
+
+resources:
+  limits:
+    cpu: 0.5
+    memory: 500Mi
+  requests:
+    cpu: 50m
+    memory: 200Mi
 
 zipkin:
   enabled: false
@@ -158,18 +176,34 @@ prometheus:
 # communication
 jumper:
   enabled: true
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: jumper
+    #tag: 1.0.0
+  # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
-  resources:
-    requests:
-      cpu: 110m
-      memory: 1Gi
 
-resources:
-  requests:
-    cpu: 750m
-    memory: 1024Mi
+  securityContext: {}
+
+  resources:
+    limits:
+      cpu: 0.5
+      memory: 500Mi
+    requests:
+      cpu: 50m
+      memory: 200Mi
 
 postgres:
+  # You can force using a specific image here:
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: postgres
+    #tag: 12.3-debian
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+
   # If set to true, the bundled PostgreSQL will not be deployed
   externalDatabase: 
     enabled: false
@@ -182,17 +216,27 @@ postgres:
   
   # Set host if you use an external database or service name is not sufficient
   # host: 'some-external-postgresql-database.example.com'
-  port: '5432'
+  port: 5432
   database: kong
   user: kong
-  password: "changeme"
-
-  # Specific confguration for the PostgreSQL bundled in this chart
-  configuration:
-    pvc:
-      keepOnDelete: false
-    # data_locations: '/var/lib/pgsql/data'
-    replicas: 1
+  password: changeme
+  
+  persistence:
+    keepOnDelete: false
+    #mountDir: '/var/lib/postgresql/data'
+    
     resources:
-      limits:
-        memory: "512Mi"
+      requests:
+        storage: 1Gi
+
+  securityContext: {}
+
+  replicas: 1
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 500Mi
+    requests:
+      cpu: 20m
+      memory: 200Mi

@@ -4,8 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-database-pvc
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
-{{- if .Values.postgres.configuration.pvc }}
-  {{- if .Values.postgres.configuration.pvc.keepOnDelete }}
+{{- if .Values.postgres.persistence }}
+  {{- if .Values.postgres.persistence.keepOnDelete }}
   annotations:
     "helm.sh/resource-policy": keep
   {{- end -}}
@@ -13,8 +13,6 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
   storageClassName: {{ .Values.global.storageclass | default "cns" }}
+  resources: {{ .Values.postgres.persistence.resources | toYaml | nindent 4 }}
 {{- end -}}

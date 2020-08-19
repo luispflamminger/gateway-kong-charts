@@ -23,6 +23,7 @@ spec:
       containers:
       - name: tif-base-image
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
         {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ADMIN_PASSWORD
@@ -48,7 +49,7 @@ spec:
               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
-              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default (include "prefixed_release_name" $) }}"
+              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
             else
                 echo "Kong Admin-API unreachable"
                 exit 1

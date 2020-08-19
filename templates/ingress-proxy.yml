@@ -15,5 +15,8 @@ spec:
           backend:
             serviceName: {{ .Release.Name }}-proxy
             servicePort: proxy-ssl
+  tls:
+  - hosts:
+    - {{ include "kong.proxy.host" . }}
 {{- end -}}
 {{- end -}}

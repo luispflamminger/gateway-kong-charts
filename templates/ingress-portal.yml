@@ -14,10 +14,13 @@ spec:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-portal
- {{- if .Values.portal.tls.enabled }}
+{{- if .Values.portal.tls.enabled }}
             servicePort: portal-ssl
- {{- else }}
+{{- else }}
             servicePort: portal
-{{- end -}}
+{{- end }}
+  tls:
+  - hosts:
+    - {{ include "kong.portal.host" . }}
 {{- end -}}
 {{- end -}}
