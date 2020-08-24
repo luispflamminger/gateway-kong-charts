@@ -20,7 +20,7 @@ spec:
         securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
         env:
         - name: PGDATA
-          value: {{ .Values.postgres.peristence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
+          value: {{ .Values.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
         - name: POSTGRES_USER
           value: {{ .Values.postgres.user | default "kong" }}
         - name: POSTGRES_PASSWORD
