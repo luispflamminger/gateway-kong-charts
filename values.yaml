@@ -19,6 +19,15 @@ global:
   #  username: changeme
   #  password: changeme
 
+  passwordRules:
+    enabled: false
+    length: 12
+    mustMatch:
+    - '[a-z]'
+    - '[A-Z]'
+    - '[0-9]'
+    - '[^a-zA-Z0-9]'
+
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
 # This makes sense if you change configMaps or secrets and you
