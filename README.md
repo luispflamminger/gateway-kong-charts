@@ -1,4 +1,4 @@
-# StarGate
+# StarGate Helm Chart
 
 **Table of contents**
 
