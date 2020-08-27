@@ -6,11 +6,13 @@ metadata:
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
-  - name: proxy
-    port: 8000
-    targetPort: 8000
-    protocol: TCP
+{{- if .Values.proxy.tls.enabled }}
   - name: proxy-ssl
     port: 8443
     targetPort: 8443
+{{- else }}
+  - name: proxy
+    port: 8000
+    targetPort: 8000
+{{- end }}
     protocol: TCP

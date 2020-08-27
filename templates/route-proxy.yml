@@ -9,13 +9,24 @@ metadata:
 spec:
   host: {{ include "kong.proxy.host" . }}
   port:
+{{- if .Values.proxy.tls.enabled }}
     targetPort: proxy-ssl
+{{- else }}
+    targetPort: proxy
+{{- end }}
   to:
     kind: Service
     name: {{ .Release.Name }}-proxy
     weight: 100
   tls:
+{{- $annotations := fromYaml (include "kong.merged.proxy.annotations" $) -}}
+{{- $passthrough := index $annotations "annotations" "nginx.ingress.kubernetes.io/ssl-passthrough" -}}
+{{- if eq (toString $passthrough) "true" }}
     termination: passthrough
+{{- else }}
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+{{- end }}  
 status:
   ingress:
     - host: ""

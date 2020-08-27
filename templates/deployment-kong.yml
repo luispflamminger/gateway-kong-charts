@@ -121,7 +121,11 @@ spec:
         - name: KONG_NGINX_WORKER_PROCESSES
           value: '1'
         - name: KONG_PROXY_LISTEN
-          value: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
+{{- if .Values.proxy.tls.enabled }}
+          value: '0.0.0.0:8443 ssl http2'
+{{- else }}
+          value: '0.0.0.0:8000'
+{{- end -}}
 {{- if .Values.adminApi.enabled }}
         - name: KONG_ADMIN_LISTEN
 {{- if .Values.adminApi.tls.enabled }}
@@ -191,12 +195,15 @@ spec:
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         resources: {{ .Values.resources | toYaml | nindent 10 }}
         ports:
-        - name: proxy
-          containerPort: 8000
-          protocol: TCP
+{{- if .Values.proxy.tls.enabled }}
         - name: proxy-ssl
           containerPort: 8443
           protocol: TCP
+{{- else }}
+        - name: proxy
+          containerPort: 8000
+          protocol: TCP
+{{- end -}}
 {{- if .Values.prometheus.enabled }}
         - name: metrics
           containerPort: {{ .Values.prometheus.port | default 9542 }}

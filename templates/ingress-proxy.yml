@@ -14,7 +14,11 @@ spec:
         - path: /
           backend:
             serviceName: {{ .Release.Name }}-proxy
+{{- if .Values.proxy.tls.enabled }}
             servicePort: proxy-ssl
+{{- else }}
+            servicePort: proxy
+{{- end }}
   tls:
   - hosts:
     - {{ include "kong.proxy.host" . }}
