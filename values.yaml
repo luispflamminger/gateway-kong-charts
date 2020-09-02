@@ -180,6 +180,13 @@ prometheus:
 # setupJob:
 #   backoffLimit: 20
 #   activeDeadlineSeconds: 300
+  podMonitor:   
+    enabled: false
+    # scheme: http
+    # interval: "15s"
+    # scrapeTimeout: "3s"
+    # honorLabels: ""
+
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication
