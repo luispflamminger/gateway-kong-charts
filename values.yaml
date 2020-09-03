@@ -152,8 +152,8 @@ replicas: 1
 
 resources:
   limits:
-    cpu: 0.5
-    memory: 500Mi
+    cpu: 1
+    memory: 2Gi
   requests:
     cpu: 50m
     memory: 200Mi
@@ -166,8 +166,8 @@ zipkin:
   #defaultServiceName: "kong-apigateway"
   # Set job retries and maximum runtime (default values preset)
   #setupJob:
-  #  backoffLimit: 20
-  #  activeDeadlineSeconds: 300
+  #  backoffLimit: 15
+  #  activeDeadlineSeconds: 3600
   #luaSslTrustedCertificate: |
   #  -----BEGIN CERTIFICATE-----
   #  <CA certificate in PEM format here>
@@ -178,8 +178,8 @@ prometheus:
  #port: 9542
  #path: /metrics
  #setupJob:
- #  backoffLimit: 20
- #  activeDeadlineSeconds: 300
+ #  backoffLimit: 15
+ #  activeDeadlineSeconds: 3600
 
 # Jumper is a component needed for Gateway-to-Gateway communication
 jumper:
@@ -197,7 +197,7 @@ jumper:
   resources:
     limits:
       cpu: 0.5
-      memory: 500Mi
+      memory: 1Gi
     requests:
       cpu: 50m
       memory: 200Mi
