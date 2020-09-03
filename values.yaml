@@ -175,13 +175,21 @@ zipkin:
 
 prometheus:
   enabled: true 
- #port: 9542
- #path: /metrics
- #setupJob:
- #  backoffLimit: 15
- #  activeDeadlineSeconds: 3600
+# port: 9542
+# path: /metrics
+# setupJob:
+#   backoffLimit: 20
+#   activeDeadlineSeconds: 300
+  podMonitor:   
+    enabled: false
+    # scheme: http
+    # interval: "15s"
+    # scrapeTimeout: "3s"
+    # honorLabels: ""
 
-# Jumper is a component needed for Gateway-to-Gateway communication
+
+# Jumper is a component needed for Gateway-to-Gateway
+# communication
 jumper:
   enabled: true
   #image: 
