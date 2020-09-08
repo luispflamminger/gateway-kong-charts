@@ -2,6 +2,13 @@
 
 [[_TOC_]]
 
+## 1.3.0
+
+ - Made CPU, RAM and persistence resources configurable
+ - Made the securityContext configurable
+ - Adjusted resource request and limit defaults
+ - Support for environments that prohibit writing to the root file system (like CaaS)
+
 ## 1.2.0
 
  - Allow setting of a Zipkin CA certificate
