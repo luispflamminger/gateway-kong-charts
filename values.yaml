@@ -1,37 +1,51 @@
 global:
   platform: kubernetes
-  project_prefix: "tif-"
-  storageclass: "gp2"
+  storageclass: gp2
   domain: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
   ingress:
     annotations: {}
-      # external-dns.alpha.kubernetes.io/target: ""
-      # kubernetes.io/ingress.class: ""
+      #external-dns.alpha.kubernetes.io/target: ""
+      #kubernetes.io/ingress.class: ""
 
-  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise no pull secret will be deployed
-  # If you use tif-infra-pipeline (TIF installer) this will be set automatically
-  # imagePullSecrets:
-  #   - name: mtr-tif-public
-  #     registry: https://mtr.external.otc.telekomcloud.com
-  #     username: changeme
-  #     password: changeme
+  # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
+  # no pull secret will be deployed
+  # If you use Sapling for deployment this will be set automatically
   imagePullSecrets: []
+  #- name: mtr-tif-public
+  #  registry: https://mtr.external.otc.telekomcloud.com
+  #  username: changeme
+  #  password: changeme
+
+  passwordRules:
+    enabled: false
+    length: 12
+    mustMatch:
+    - '[a-z]'
+    - '[A-Z]'
+    - '[0-9]'
+    - '[^a-zA-Z0-9]'
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
 # This makes sense if you change configMaps or secrets and you
 # want your deployment to use the latest configuration
 #
-# templateChangeTriggers:
-#   - my-custom-configmap.yaml
-#   - my-custom-kong-plugin.yaml
+#templateChangeTriggers:
+#- my-custom-configmap.yaml
+#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-# image: 'mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0'
+#image: 
+  #repository: mtr.external.otc.telekomcloud.com
+  #organization: tif-public
+  #name: tif-kong-ee
+  #tag: 1.0.0
+# Or use the flattened string form:
+#image: mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0
 
 enterprise:
   license: ""
@@ -53,11 +67,11 @@ rbac:
 # you can list the configMap yaml file in the templateChangeTriggers list above
 # to tigger a re-deployment of Kong
 #
-# customPlugins:
-#   - name: custom1
-#     configMap: kong-plugin-custom1-5e67ca89
-#   - name: custom2
-#     configMap: kong-plugin-custom2-6a2bc71b
+#customPlugins:
+#- name: custom1
+#  configMap: kong-plugin-custom1-5e67ca89
+#- name: custom2
+#  configMap: kong-plugin-custom2-6a2bc71b
 customPlugins: []
 
 # Enable Admin API and whether it is http or https
@@ -70,7 +84,7 @@ adminApi:
 # Activate Admin API ingress and set a dedicated hostname
   ingress:
     enabled: true
-    # hostname: ""
+    #hostname: ""
     annotations: {}
 
 # Configure Kong Manager
@@ -82,7 +96,7 @@ manager:
     secret: changeme
   ingress:
     enabled: true
-    # hostname: ""
+    #hostname: ""
     annotations: {}
 
 # Configure the Portal
@@ -94,16 +108,17 @@ portal:
     secret: changeme
   ingress:
     enabled: true
-    # hostname: ""
+    #hostname: ""
     annotations: {}
 
 # Activate proxy ingress and set a dedicated hostname
 proxy:
+  tls:
+    enabled: false
   ingress:
     enabled: true
-    # hostname: ""
-    annotations:
-      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    #hostname: ""
+    annotations: {}
 
 # values used by nginx directives
 sslVerify: false
@@ -111,40 +126,52 @@ sslVerifyDepth: '1'
 
 # You can define the truststore for SSL verification by setting your CAs in PEM format here 
 #
-# trustedCaCertificates: |
-#   -----BEGIN CERTIFICATE-----
-#   <CA certificate 01 in PEM format here>
-#   -----END CERTIFICATE-----
-#   -----BEGIN CERTIFICATE-----
-#   <CA certificate 02 in PEM format here>
-#   -----END CERTIFICATE-----
-#   -----BEGIN CERTIFICATE-----
-#   <CA certificate 03 in PEM format here>
-#   -----END CERTIFICATE-----
+#trustedCaCertificates: |
+#  -----BEGIN CERTIFICATE-----
+#  <CA certificate 01 in PEM format here>
+#  -----END CERTIFICATE-----
+#  -----BEGIN CERTIFICATE-----
+#  <CA certificate 02 in PEM format here>
+#  -----END CERTIFICATE-----
+#  -----BEGIN CERTIFICATE-----
+#  <CA certificate 03 in PEM format here>
+#  -----END CERTIFICATE-----
 
 # You can define the default HTTPS server certificate by specifing the secret with private-key/certificate here
 # Note: additional route-specific server certificates can by configured and assigned to SNIs at runtime. This is only a default certificate
-#
-# defaultTlsSecret: "mysecret"
+#defaultTlsSecret: "mysecret"
 
 disableUpstreamCache: false
 
+securityContext: {}
+
+jobs:
+  securityContext: {}
+
 replicas: 1
+
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 50m
+    memory: 200Mi
 
 zipkin:
   enabled: false
   collectorUrl: ""
-  # sampleRatio: 0.001
-  # includeCredential: "true"
-  # defaultServiceName: "kong-apigateway"
+  #sampleRatio: 0.001
+  #includeCredential: "true"
+  #defaultServiceName: "kong-apigateway"
   # Set job retries and maximum runtime (default values preset)
-  # setupJob:
-  #   backoffLimit: 20
-  #   activeDeadlineSeconds: 300
-  # luaSslTrustedCertificate: |
-  #   -----BEGIN CERTIFICATE-----
-  #   <CA certificate in PEM format here>
-  #   -----END CERTIFICATE-----
+  #setupJob:
+  #  backoffLimit: 15
+  #  activeDeadlineSeconds: 3600
+  #luaSslTrustedCertificate: |
+  #  -----BEGIN CERTIFICATE-----
+  #  <CA certificate in PEM format here>
+  #  -----END CERTIFICATE-----
 
 prometheus:
   enabled: true 
@@ -153,36 +180,79 @@ prometheus:
 # setupJob:
 #   backoffLimit: 20
 #   activeDeadlineSeconds: 300
+  podMonitor:   
+    enabled: false
+    # scheme: http
+    # interval: "15s"
+    # scrapeTimeout: "3s"
+    # honorLabels: ""
 
-resources:
-  requests:
-    cpu: 750m
-    memory: 1024Mi
+
+# Jumper is a component needed for Gateway-to-Gateway
+# communication
+jumper:
+  enabled: true
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: jumper
+    #tag: 1.0.0
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.0.0
+
+  securityContext: {}
+
+  resources:
+    limits:
+      cpu: 0.5
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 200Mi
 
 postgres:
+  # You can force using a specific image here:
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: postgres
+    #tag: 12.3-debian
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+
   # If set to true, the bundled PostgreSQL will not be deployed
   externalDatabase: 
     enabled: false
-    # ssl: false
-    # sslVerify: false
-    # luaSslTrustedCertificate: |
-    #   -----BEGIN CERTIFICATE-----
-    #   <CA certificate in PEM format here>
-    #   -----END CERTIFICATE-----
+    #ssl: false
+    #sslVerify: false
+    #luaSslTrustedCertificate: |
+    #  -----BEGIN CERTIFICATE-----
+    #  <CA certificate in PEM format here>
+    #  -----END CERTIFICATE-----
   
   # Set host if you use an external database or service name is not sufficient
-  # host: 'some-external-postgresql-database.example.com'
-  port: '5432'
+  #host: 'some-external-postgresql-database.example.com'
+  port: 5432
   database: kong
   user: kong
-  password: "changeme"
-
-  # Specific confguration for the PostgreSQL bundled in this chart
-  configuration:
-    pvc:
-      keepOnDelete: false
-    # data_locations: '/var/lib/pgsql/data'
-    replicas: 1
+  password: changeme
+  
+  persistence:
+    keepOnDelete: false
+    #mountDir: '/var/lib/postgresql/data'
+    
     resources:
-      limits:
-        memory: "512Mi"
+      requests:
+        storage: 1Gi
+
+  securityContext: {}
+
+  replicas: 1
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 500Mi
+    requests:
+      cpu: 20m
+      memory: 200Mi
