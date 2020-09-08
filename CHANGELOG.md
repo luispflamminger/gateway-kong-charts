@@ -8,6 +8,7 @@
  - Made the securityContext configurable
  - Adjusted resource request and limit defaults
  - Support for environments that prohibit writing to the root file system (like CaaS)
+ - Edge TLS termination is now the default for the proxy
 
 ## 1.2.0
 
