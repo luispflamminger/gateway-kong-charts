@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 1.3.1
+
+- Hotfix: Use "Recreate" strategy for database deployment
+
 ## 1.3.0
 
  - Made CPU, RAM and persistence resources configurable
