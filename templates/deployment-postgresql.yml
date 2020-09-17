@@ -5,7 +5,9 @@ metadata:
   name: {{ .Release.Name }}-postgresql
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
-  replicas: {{ .Values.postgres.replicas | default 1 }}
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels: {{ include "postgresql.selector" $ | nindent 6 }}
   template:
