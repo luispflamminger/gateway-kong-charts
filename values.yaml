@@ -187,6 +187,9 @@ prometheus:
     # scrapeTimeout: "3s"
     # honorLabels: ""
 
+kong_admin:
+  enabled: false
+#  token: changeme
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

@@ -33,7 +33,7 @@ spec:
               key: kongAdminPassword
         {{- end }}
         - name: KONG_ADMIN_TOKEN
-          value: {{ .Values.kong_admin.token | default kong-admin }}
+          value: {{ .Values.kong_admin.token | default "kong-admin" }}
         command:        
           - /bin/bash
           - -c
