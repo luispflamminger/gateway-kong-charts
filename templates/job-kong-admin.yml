@@ -1,4 +1,4 @@
-{{- if eq .Values.kong-admin.enabled true }}
+{{- if eq .Values.kong_admin.enabled true }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -33,7 +33,7 @@ spec:
               key: kongAdminPassword
         {{- end }}
         - name: KONG_ADMIN_TOKEN
-          value: {{ .Values.kong-admin.token | default kong-admin }}
+          value: {{ .Values.kong_admin.token | default kong-admin }}
         command:        
           - /bin/bash
           - -c
