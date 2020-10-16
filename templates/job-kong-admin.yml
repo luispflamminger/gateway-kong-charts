@@ -1,0 +1,68 @@
+{{- if eq .Values.kong-admin.enabled true }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-kong-admin-setup
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+{{- $defaultBackoffLimit := 20 }}
+{{- $defaultActiveDeadlineSeconds := 300 }}
+{{- if .Values.prometheus.setupJob }}
+  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
+{{- else }}
+  backoffLimit: {{ $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
+{{- end }}
+  template:
+    spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
+      containers:
+      - name: {{ .Release.Name }}-kong-admin-setup
+        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
+        env:
+        {{- if eq .Values.rbac.enabled true }}
+        - name: KONG_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: kongAdminPassword
+        {{- end }}
+        - name: KONG_ADMIN_TOKEN
+          value: {{ .Values.kong-admin.token | default kong-admin }}
+        command:        
+          - /bin/bash
+          - -c
+          - |-
+            echo "Enabling Kong admin via POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users"
+
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            if [ "$HTTP_RETURN_CODE" == "200" ]; then
+              curl \
+            {{- if eq .Values.rbac.enabled true }}
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+            {{- end }}
+              -H "Content-Type: application/json" \
+              -X POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users \
+              --data-raw '{
+                  "enabled": true,
+                  "name": "kong-admin",
+                  "user_token": "$KONG_ADMIN_TOKEN"
+                  }'
+              curl \
+            {{- if eq .Values.rbac.enabled true }}
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+            {{- end }}
+              -H "Content-Type: application/json" \
+              -X POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users/kong-admin/roles \
+              --data-raw '{"roles": "admin"}'
+            else
+                echo "Kong Admin-API unreachable"
+                exit 1
+            fi
+      restartPolicy: OnFailure
+{{- end -}}
