@@ -48,11 +48,11 @@ spec:
             {{- end }}
               -H "Content-Type: application/json" \
               -X POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users \
-              --data-raw '{
-                  "enabled": true,
-                  "name": "kong-admin",
-                  "user_token": "$KONG_ADMIN_TOKEN"
-                  }'
+              --data-raw "{
+                  \"enabled\": true,
+                  \"name\": \"kong-admin\",
+                  \"user_token\": \"$KONG_ADMIN_TOKEN\"
+                  }"
               curl \
             {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
