@@ -178,8 +178,8 @@ prometheus:
 # port: 9542
 # path: /metrics
 # setupJob:
-#   backoffLimit: 20
-#   activeDeadlineSeconds: 300
+#   backoffLimit: 15
+#   activeDeadlineSeconds: 3600
   podMonitor:   
     enabled: false
     # scheme: http
@@ -189,7 +189,10 @@ prometheus:
 
 kong_admin:
   enabled: false
-#  token: changeme
+  #token: changeme
+  #setupJob:
+  #  backoffLimit: 15
+  #  activeDeadlineSeconds: 3600
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

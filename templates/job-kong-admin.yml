@@ -8,11 +8,11 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-{{- $defaultBackoffLimit := 20 }}
-{{- $defaultActiveDeadlineSeconds := 300 }}
-{{- if .Values.prometheus.setupJob }}
-  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
+{{- $defaultBackoffLimit := 15 }}
+{{- $defaultActiveDeadlineSeconds := 3600 }}
+{{- if .Values.kong_admin.setupJob }}
+  backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default $defaultBackoffLimit }}
+  activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
 {{- else }}
   backoffLimit: {{ $defaultBackoffLimit }}
   activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
