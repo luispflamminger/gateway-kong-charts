@@ -182,6 +182,7 @@ prometheus:
 #   activeDeadlineSeconds: 3600
   podMonitor:   
     enabled: false
+    #selector: "guardians-raccoon"
     # scheme: http
     # interval: "15s"
     # scrapeTimeout: "3s"

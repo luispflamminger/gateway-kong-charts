@@ -5,6 +5,7 @@
 ## 0.0.0
 
  - Allow TLSv1.2 and TLSv1.3 only, removed TLSv1 support
+ - Make podmonitor selector configurable
 
 ## 1.3.1
 
