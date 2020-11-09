@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}-kong-admin-setup
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
 {{- $defaultBackoffLimit := 15 }}

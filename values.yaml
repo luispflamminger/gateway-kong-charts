@@ -166,6 +166,7 @@ zipkin:
   #defaultServiceName: "kong-apigateway"
   # Set job retries and maximum runtime (default values preset)
   #setupJob:
+  #  pluginId: 88c38a85-2571-4e0c-b2f5-62b13fb457a9
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
   #luaSslTrustedCertificate: |
@@ -178,6 +179,7 @@ prometheus:
 # port: 9542
 # path: /metrics
 # setupJob:
+#   pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
 #   backoffLimit: 15
 #   activeDeadlineSeconds: 3600
   podMonitor:   

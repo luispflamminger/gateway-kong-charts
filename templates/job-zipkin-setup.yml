@@ -44,7 +44,7 @@ spec:
               {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
               {{- end }}
-              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
+              -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId | default "88c38a85-2571-4e0c-b2f5-62b13fb457a9" }} \
               --data "name=zipkin" \
               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \

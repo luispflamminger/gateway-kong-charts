@@ -44,7 +44,7 @@ spec:
             {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
-              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
+              -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId | default "3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c" }} \
               --data "name=prometheus" 
             else
                 echo "Kong Admin-API unreachable"
