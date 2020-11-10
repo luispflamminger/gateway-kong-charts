@@ -159,8 +159,8 @@ resources:
     memory: 200Mi
 
 zipkin:
-  enabled: false
-  collectorUrl: ""
+  enabled: true
+  collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
   #sampleRatio: 0.001
   #includeCredential: "true"
   #defaultServiceName: "kong-apigateway"
@@ -189,7 +189,7 @@ prometheus:
     # honorLabels: ""
 
 kong_admin:
-  enabled: false
+  enabled: true
   #token: changeme
   #setupJob:
   #  backoffLimit: 15
