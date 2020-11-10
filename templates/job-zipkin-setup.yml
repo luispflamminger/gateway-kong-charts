@@ -8,15 +8,8 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-{{- $defaultBackoffLimit := 15 }}
-{{- $defaultActiveDeadlineSeconds := 3600 }}
-{{- if .Values.zipkin.setupJob }}
-  backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
-{{- else }}
-  backoffLimit: {{ $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
-{{- end }}
+  backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -44,7 +37,7 @@ spec:
               {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
               {{- end }}
-              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
+              -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
               --data "name=zipkin" \
               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \

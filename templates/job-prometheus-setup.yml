@@ -8,15 +8,8 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-{{- $defaultBackoffLimit := 15 }}
-{{- $defaultActiveDeadlineSeconds := 3600 }}
-{{- if .Values.prometheus.setupJob }}
-  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
-{{- else }}
-  backoffLimit: {{ $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
-{{- end }}
+  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -44,7 +37,7 @@ spec:
             {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
-              -X POST {{ include "kong.adminApi.serviceUrl" . }}/plugins \
+              -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
               --data "name=prometheus" 
             else
                 echo "Kong Admin-API unreachable"

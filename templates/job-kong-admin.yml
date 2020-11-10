@@ -5,18 +5,11 @@ metadata:
   name: {{ .Release.Name }}-kong-admin-setup
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-{{- $defaultBackoffLimit := 15 }}
-{{- $defaultActiveDeadlineSeconds := 3600 }}
-{{- if .Values.kong_admin.setupJob }}
-  backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default $defaultActiveDeadlineSeconds }}
-{{- else }}
-  backoffLimit: {{ $defaultBackoffLimit }}
-  activeDeadlineSeconds: {{ $defaultActiveDeadlineSeconds }}
-{{- end }}
+  backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
