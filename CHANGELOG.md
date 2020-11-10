@@ -2,10 +2,11 @@
 
 [[_TOC_]]
 
-## 0.0.0
+## 1.4.0
 
  - Allow TLSv1.2 and TLSv1.3 only, removed TLSv1 support
  - Make podmonitor selector configurable
+ - Zipkin and Prometheus plugin configuration changes will now be properly applied
 
 ## 1.3.1
 
