@@ -15,7 +15,7 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
       - name: tif-base-image
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:master
+        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
         {{- if eq .Values.rbac.enabled true }}
