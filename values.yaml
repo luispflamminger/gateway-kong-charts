@@ -159,34 +159,43 @@ resources:
     memory: 200Mi
 
 zipkin:
-  enabled: false
-  collectorUrl: ""
+  enabled: true
+  collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
   #sampleRatio: 0.001
   #includeCredential: "true"
   #defaultServiceName: "kong-apigateway"
   # Set job retries and maximum runtime (default values preset)
-  #setupJob:
-  #  backoffLimit: 15
-  #  activeDeadlineSeconds: 3600
-  #luaSslTrustedCertificate: |
-  #  -----BEGIN CERTIFICATE-----
-  #  <CA certificate in PEM format here>
-  #  -----END CERTIFICATE-----
+  setupJob:
+    pluginId: 88c38a85-2571-4e0c-b2f5-62b13fb457a9
+    #backoffLimit: 15
+    #activeDeadlineSeconds: 3600
+    #luaSslTrustedCertificate: |
+    #  -----BEGIN CERTIFICATE-----
+    #  <CA certificate in PEM format here>
+    #  -----END CERTIFICATE-----
 
 prometheus:
   enabled: true 
 # port: 9542
 # path: /metrics
-# setupJob:
-#   backoffLimit: 20
-#   activeDeadlineSeconds: 300
+  setupJob:
+    pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
+    #backoffLimit: 15
+    #activeDeadlineSeconds: 3600
   podMonitor:   
     enabled: false
+    #selector: "guardians-raccoon"
     # scheme: http
     # interval: "15s"
     # scrapeTimeout: "3s"
     # honorLabels: ""
 
+kong_admin:
+  enabled: true
+  #token: changeme
+  setupJob: {}
+  #  backoffLimit: 15
+  #  activeDeadlineSeconds: 3600
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

@@ -2,6 +2,12 @@
 
 [[_TOC_]]
 
+## 1.4.0
+
+ - Allow TLSv1.2 and TLSv1.3 only, removed TLSv1 support
+ - Make podmonitor selector configurable
+ - Zipkin and Prometheus plugin configuration changes will now be properly applied
+
 ## 1.3.1
 
 - Hotfix: Use "Recreate" strategy for database deployment
