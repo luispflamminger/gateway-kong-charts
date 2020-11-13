@@ -197,7 +197,6 @@ prometheus:
     #scrapeTimeout: "3s"
     #honorLabels: ""
 
-
 kong_admin:
   enabled: true
   #token: changeme
