@@ -182,13 +182,20 @@ prometheus:
     pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
     #backoffLimit: 15
     #activeDeadlineSeconds: 3600
+  serviceMonitor:   
+    enabled: true
+    #selector: "guardians-raccoon"
+    #scheme: http
+    #interval: "15s"
+    #scrapeTimeout: "3s"
+    #honorLabels: ""
   podMonitor:   
     enabled: false
     #selector: "guardians-raccoon"
-    # scheme: http
-    # interval: "15s"
-    # scrapeTimeout: "3s"
-    # honorLabels: ""
+    #scheme: http
+    #interval: "15s"
+    #scrapeTimeout: "3s"
+    #honorLabels: ""
 
 kong_admin:
   enabled: true

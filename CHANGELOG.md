@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.4.1
+ - Added ServiceMonitor which is now enabled by default. PodMonitor is now disabled by default
+
 ## 1.4.0
 
  - Allow TLSv1.2 and TLSv1.3 only, removed TLSv1 support
