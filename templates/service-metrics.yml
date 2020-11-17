@@ -1,0 +1,14 @@
+{{- if and (.Values.prometheus.enabled) (.Values.prometheus.serviceMonitor.enabled) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-metrics
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+spec:
+  selector: {{ include "kong.selector" $ | nindent 4 }}
+  ports:
+  - name: metrics
+    port: 9542
+    targetPort: metrics
+    protocol: TCP
+{{- end -}}

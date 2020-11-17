@@ -122,6 +122,16 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `prometheus.enabled`                 | Controls whether to annotate pods with prometheus scraping information or not  | `true`           |
 | `prometheus.port`                    | Sets the port at which metrics can be accessed                                 | `9542`           |
 | `prometheus.path`                    | Sets the endpoint at which at which metrics can be accessed                    | `/metrics`       |
+| `prometheus.podMonitor.enabled`        | Enables a podmonitor which can be used by the prometheus operator to collect metrics    | `false`          |
+| `prometheus.podMonitor.scheme`         | HTTP scheme to use for scraping                                                         | `http`           |
+| `prometheus.podMonitor.interval`       | Interval at which metrics should be scraped                                             | `15s`            |
+| `prometheus.podMonitor.scrapeTimeout`  | Timeout after which the scrape of prometheus is ended                                   | `3s`             |
+| `prometheus.podMonitor.honorLabels`    | HonorLabels chooses the metric’s labels on collisions with target labels                | `true`           |
+| `prometheus.serviceMonitor.enabled`        | Enables a servicemonitor which can be used by the prometheus operator to collect metrics    | `true`          |
+| `prometheus.serviceMonitor.scheme`         | HTTP scheme to use for scraping                                                         | `http`           |
+| `prometheus.serviceMonitor.interval`       | Interval at which metrics should be scraped                                             | `15s`            |
+| `prometheus.serviceMonitor.scrapeTimeout`  | Timeout after which the scrape of prometheus is ended                                   | `3s`             |
+| `prometheus.serviceMonitor.honorLabels`    | HonorLabels chooses the metric’s labels on collisions with target labels                | `true`           |
 | `postgres.enabled`                   | Enable Kong to run with PostrgeSQL as database                                 | `true`           |
 | `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |
@@ -134,6 +144,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `postgres.persistence.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted        | `false`               |
 | `postgres.replicas`               | Set the number of replicas                                          | `1`                   |
 | `postgres.resources`              | Assign ressources, e.g. limits, for Postgres                        | `Memory limits`       |
+
 
 ## Troubleshooting
 
