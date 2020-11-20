@@ -86,26 +86,34 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.labels`                      | Define global labels                                                           | `tif.telekom.de/group`|
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`                 |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`                 |
-| `rbac.enabled`                         | Security relevant. Role based access control for Admin API                   | `true`                |
-| `rbac.kongAdminPassword`               | Password for Kong Administrator                                              | `changeme`            |
+| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                   | `true`                |
+| `rbac.kongAdminPassword`             | Password for Kong Administrator                                              | `changeme`            |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`                |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`               |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`                |
 | `adminApi.ingress.hostname`          | Set dedicated hostname for Admin API ingress (or route), overwrites global URL | `nil`                 |
 | `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                | `nil`                 |
+| `adminApi.access_log`                | Set the log target for access log                                              | `/dev/stdout`         |
+| `adminApi.ingress.annotations`       | Set the log target for error log                                               | `/dev/stderr`         |
 | `manager.enabled`                    | Create service for accessing Kong Manager                                      | `true`                |
 | `manager.tls.enabled`                | Access Manager via https instead of http                                       | `false`               |
 | `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                            | `true`                |
 | `manager.ingress.hostname`           | Set dedicated hostname Manager ingress (or route), overwrites global URL       | `nil`                 |
 | `manager.ingress.annotations`        | Merges specific into global ingress annotations                                | `nil`                 |
+| `manager.access_log`                 | Set the log target for access log                                              | `/dev/stdout`         |
+| `manager.ingress.annotations`        | Set the log target for error log                                               | `/dev/stderr`         |
 | `portal.enabled`                     | Create service for accessing the Portal                                        | `false`               |
 | `portal.tls.enabled`                 | Access the Portal via https instead of http                                    | `false`               |
 | `portal.ingress.enabled`             | Create ingress (or route for OpenShift) for the Portal                         | `true`                |
 | `portal.ingress.hostname`            | Extend global ingress annotations                                              | `nil`                 |
 | `portal.ingress.annotations`         | Merges specific into global ingress annotations                                | `nil`                 |
+| `portal.access_log`                  | Set the log target for access log                                              | `/dev/stdout`         |
+| `portal.ingress.annotations`         | Set the log target for error log                                               | `/dev/stderr`         |
 | `proxy.ingress.enabled`              | Create ingress (or route for OpenShift) for proxy                              | `true`                |
 | `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL     | `nil`                 |
 | `proxy.ingress.annotations`          | Merges specific into global ingress annotations                                | `ssl-passthrough`     |
+| `proxy.access_log`                   | Set the log target for access log                                              | `/dev/stdout`         |
+| `proxy.ingress.annotations`          | Set the log target for error log                                               | `/dev/stderr`         |
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`                  |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`               |
 | `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`                   |
