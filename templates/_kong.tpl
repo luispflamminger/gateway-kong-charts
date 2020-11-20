@@ -244,6 +244,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: '{{ .Values.postgres.user }}'
 - name: KONG_PG_DATABASE
   value: '{{ .Values.postgres.database }}'
+- name: KONG_PROXY_ACCESS_LOG
+  value: {{ .Values.proxy.access_log | default "/dev/stdout" | quote }}
+- name: KONG_PROXY_ERROR_LOG
+  value: {{ .Values.proxy.error_log | default "/dev/stderr" | quote }}
 {{- if eq .Values.postgres.externalDatabase.enabled true }}
 {{- if .Values.postgres.externalDatabase.ssl }}
 - name: KONG_PG_SSL
@@ -274,7 +278,11 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- if .Values.adminApi.ingress.enabled }}
 - name: KONG_ADMIN_API_URI
   value: 'https://{{ include "kong.adminApi.host" . }}'
-{{- end -}}
+{{- end }}
+- name: KONG_ADMIN_ACCESS_LOG
+  value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
+- name: KONG_ADMIN_ERROR_LOG
+  value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
 {{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
 - name: KONG_ADMIN_GUI_LISTEN
@@ -285,6 +293,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end }}
 - name: KONG_ADMIN_GUI_URL
   value: 'https://{{ include "kong.manager.host" . }}'
+- name: KONG_ADMIN_GUI_ACCESS_LOG
+  value: {{ .Values.manager.access_log | default "/dev/stdout" | quote }}
+- name: KONG_ADMIN_GUI_ERROR_LOG
+  value: {{ .Values.manager.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
 {{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
 - name: KONG_PORTAL
@@ -309,6 +321,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: 'basic-auth'
 - name: KONG_PORTAL_SESSION_CONF
   value: '{"secret":"{{ .Values.portal.session.secret }}"}'
+- name: KONG_PORTAL_API_ACCESS_LOG
+  value: {{ .Values.portal.access_log | default "/dev/stdout" | quote }}
+- name: KONG_PORTAL_API_ERROR_LOG
+  value: {{ .Values.portal.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
 {{- end -}}
 {{- if eq .Values.rbac.enabled true }}
