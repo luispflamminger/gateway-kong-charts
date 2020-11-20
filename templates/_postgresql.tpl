@@ -33,6 +33,30 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- end -}}
 {{- end -}}
 
+{{- define "postgresql.env" }}
+- name: PGDATA
+  value: {{ .Values.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
+- name: POSTGRES_USER
+  value: {{ .Values.postgres.user | default "kong" }}
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+- name: POSTGRES_DB
+  value: {{ .Values.postgres.database | default "kong" }}
+# for centos and rhel we do have different environment variables
+- name: POSTGRESQL_USER
+  value: {{ .Values.postgres.user | default "kong" }}
+- name: POSTGRESQL_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+- name: POSTGRESQL_DATABASE
+  value: {{ .Values.postgres.database | default "kong" }}
+{{- end -}}
+
 {{- define "postgresql.serviceName" -}}
 {{ printf "%s-postgres" $.Release.Name }}
 {{- end -}}
