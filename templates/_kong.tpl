@@ -4,8 +4,6 @@ app.kubernetes.io/name: kong
 app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
 app.kubernetes.io/part-of: tif-runtime
-app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
-helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
 
@@ -69,6 +67,13 @@ true
 {{ include "kong.luaSslTrustedCertificates" $ }}
 {{ .Values.trustedCaCertificates }}
 {{ end -}}
+
+{{- define "kong.annotations" -}}
+ops.eni.telekom.de/pipeline-meta-ref: {{ .Release.Name }}-pipeline-metadata
+{{- if eq (toString .Values.global.metadata.pipeline.forceRedeploy) "true" }}
+ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
+{{- end -}}
+{{- end -}}
 
 {{- define "kong.checksums" -}}
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}

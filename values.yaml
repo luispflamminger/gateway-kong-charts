@@ -1,4 +1,7 @@
 global:
+  metadata:
+    pipeline: {}
+
   platform: kubernetes
   storageclass: gp2
   domain: ""
