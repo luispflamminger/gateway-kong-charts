@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 0.0.0
+ - Log settings options
+
 ## 1.4.1
  - Added ServiceMonitor which is now enabled by default. PodMonitor is now disabled by default
 

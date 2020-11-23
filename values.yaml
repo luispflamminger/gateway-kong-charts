@@ -89,6 +89,8 @@ adminApi:
     enabled: true
     #hostname: ""
     annotations: {}
+  #access_log: /dev/stdout
+  #error_log: /dev/stderr
 
 # Configure Kong Manager
 manager:
@@ -101,6 +103,8 @@ manager:
     enabled: true
     #hostname: ""
     annotations: {}
+  #access_log: /dev/stdout
+  #error_log: /dev/stderr
 
 # Configure the Portal
 portal:
@@ -113,6 +117,8 @@ portal:
     enabled: true
     #hostname: ""
     annotations: {}
+  #access_log: /dev/stdout
+  #error_log: /dev/stderr
 
 # Activate proxy ingress and set a dedicated hostname
 proxy:
@@ -122,6 +128,8 @@ proxy:
     enabled: true
     #hostname: ""
     annotations: {}
+  #access_log: /dev/stdout
+  #error_log: /dev/stderr
 
 # values used by nginx directives
 sslVerify: false

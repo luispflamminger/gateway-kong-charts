@@ -182,6 +182,172 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
+{{- define "kong.init.env" }}
+- name: KONG_DATABASE
+  value: postgres
+{{- if eq .Values.rbac.enabled true }}
+- name: KONG_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: kongAdminPassword
+{{- end }}
+- name: KONG_PG_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+- name: KONG_PG_PORT
+  value: '{{ .Values.postgres.port }}'
+- name: KONG_PG_HOST
+  value: '{{ include "postgresql.host" $ }}'
+- name: KONG_PG_USER
+  value: '{{ .Values.postgres.user }}'
+- name: KONG_PG_DATABASE
+  value: '{{ .Values.postgres.database }}'
+{{- if eq .Values.postgres.externalDatabase.enabled true }}
+{{- if .Values.postgres.externalDatabase.ssl }}
+- name: KONG_PG_SSL
+  value: 'on'
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: KONG_PG_SSL_VERIFY
+  value: 'on'
+- name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+  value: '/opt/kong/tls/init/lua-ssl-trusted-certificates.pem'
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if eq (include "kong.isEnterprise" $ ) "true" }}
+- name: KONG_LICENSE_DATA
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: license
+{{- end }}
+{{- end -}}
+
+{{- define "kong.env" }}
+- name: KONG_PREFIX
+  value: /kong
+- name: KONG_DATABASE
+  value: postgres
+- name: KONG_PG_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+- name: KONG_PG_PORT
+  value: '{{ .Values.postgres.port }}'
+- name: KONG_PG_HOST
+  value: '{{ include "postgresql.host" $ }}'
+- name: KONG_PG_USER
+  value: '{{ .Values.postgres.user }}'
+- name: KONG_PG_DATABASE
+  value: '{{ .Values.postgres.database }}'
+- name: KONG_PROXY_ACCESS_LOG
+  value: {{ .Values.proxy.access_log | default "/dev/stdout" | quote }}
+- name: KONG_PROXY_ERROR_LOG
+  value: {{ .Values.proxy.error_log | default "/dev/stderr" | quote }}
+{{- if eq .Values.postgres.externalDatabase.enabled true }}
+{{- if .Values.postgres.externalDatabase.ssl }}
+- name: KONG_PG_SSL
+  value: 'on'
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: KONG_PG_SSL_VERIFY
+  value: 'on'
+{{- end }}
+{{- end }}
+{{- end }}
+- name: KONG_NGINX_HTTP_SSL_PROTOCOLS
+  value: "TLSv1.2 TLSv1.3"
+- name: KONG_NGINX_WORKER_PROCESSES
+  value: '1'
+- name: KONG_PROXY_LISTEN
+{{- if .Values.proxy.tls.enabled }}
+  value: '0.0.0.0:8443 ssl http2'
+{{- else }}
+  value: '0.0.0.0:8000'
+{{- end -}}
+{{- if .Values.adminApi.enabled }}
+- name: KONG_ADMIN_LISTEN
+{{- if .Values.adminApi.tls.enabled }}
+  value: '0.0.0.0:8444 ssl'
+{{- else }}
+  value: '0.0.0.0:8001'
+{{- end -}}
+{{- if .Values.adminApi.ingress.enabled }}
+- name: KONG_ADMIN_API_URI
+  value: 'https://{{ include "kong.adminApi.host" . }}'
+{{- end }}
+- name: KONG_ADMIN_ACCESS_LOG
+  value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
+- name: KONG_ADMIN_ERROR_LOG
+  value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
+{{- end -}}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+- name: KONG_ADMIN_GUI_LISTEN
+{{- if .Values.manager.tls.enabled }}
+  value: '0.0.0.0:8445 ssl'
+{{- else }}
+  value: '0.0.0.0:8002'
+{{- end }}
+- name: KONG_ADMIN_GUI_URL
+  value: 'https://{{ include "kong.manager.host" . }}'
+- name: KONG_ADMIN_GUI_ACCESS_LOG
+  value: {{ .Values.manager.access_log | default "/dev/stdout" | quote }}
+- name: KONG_ADMIN_GUI_ERROR_LOG
+  value: {{ .Values.manager.error_log | default "/dev/stderr" | quote }}
+{{- end -}}
+{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+- name: KONG_PORTAL
+  value: 'on'
+{{- if .Values.portal.tls.enabled }}
+- name: KONG_PORTAL_GUI_LISTEN
+  value: '0.0.0.0:8446 ssl'
+- name: KONG_PORTAL_API_LISTEN
+  value: '0.0.0.0:8447 ssl'
+{{- else }}
+- name: KONG_PORTAL_GUI_LISTEN
+  value: '0.0.0.0:8003'
+- name: KONG_PORTAL_API_LISTEN
+  value: '0.0.0.0:8004'
+{{- end }}
+- name: KONG_PORTAL_GUI_HOST
+  value: '{{ include "kong.portal.host" . }}'
+- name: KONG_PORTAL_GUI_PROTOCOL
+  value: https
+{{- if eq .Values.rbac.enabled true }}
+- name: KONG_PORTAL_AUTH
+  value: 'basic-auth'
+- name: KONG_PORTAL_SESSION_CONF
+  value: '{"secret":"{{ .Values.portal.session.secret }}"}'
+- name: KONG_PORTAL_API_ACCESS_LOG
+  value: {{ .Values.portal.access_log | default "/dev/stdout" | quote }}
+- name: KONG_PORTAL_API_ERROR_LOG
+  value: {{ .Values.portal.error_log | default "/dev/stderr" | quote }}
+{{- end -}}
+{{- end -}}
+{{- if eq .Values.rbac.enabled true }}
+- name: KONG_ENFORCE_RBAC
+  value: 'on'
+- name: KONG_ADMIN_GUI_AUTH
+  value: 'basic-auth'
+- name: KONG_ADMIN_GUI_SESSION_CONF
+  value: '{"secret":"{{ .Values.manager.session.secret }}"}'
+{{- end -}}
+{{- if eq (include "kong.isEnterprise" $ ) "true" }}
+- name: KONG_LICENSE_DATA
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: license
+{{- end }}
+{{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+- name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+  value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
+{{- end }}
+{{- end -}}
+
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
 {{- range .Values.customPlugins -}}
