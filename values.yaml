@@ -159,6 +159,9 @@ securityContext: {}
 jobs:
   securityContext: {}
 
+#memCacheSize: 128m
+#nginxWorkerProcesses: auto
+
 replicas: 1
 
 resources:

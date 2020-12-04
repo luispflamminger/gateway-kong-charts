@@ -154,6 +154,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}
+- name: KONG_NGINX_WORKER_PROCESSES
+  value: '{{ .Values.nginxWorkerProcesses | default "auto" }}'
 - name: KONG_NGINX_HTTP_INCLUDE
   value: '/opt/kong/nginx/servers.conf'
 {{- if .Values.defaultTlsSecret }}            
@@ -227,6 +229,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.env" }}
+- name: KONG_MEM_CACHE_SIZE
+  value: '{{ .Values.memCacheSize | default "128m" }}'
 - name: KONG_PREFIX
   value: /kong
 - name: KONG_DATABASE
@@ -260,8 +264,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end }}
 - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
   value: "TLSv1.2 TLSv1.3"
-- name: KONG_NGINX_WORKER_PROCESSES
-  value: '1'
 - name: KONG_PROXY_LISTEN
 {{- if .Values.proxy.tls.enabled }}
   value: '0.0.0.0:8443 ssl http2'
