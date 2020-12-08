@@ -21,27 +21,7 @@ spec:
         imagePullPolicy: Always
         securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
         env:
-        - name: PGDATA
-          value: {{ .Values.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
-        - name: POSTGRES_USER
-          value: {{ .Values.postgres.user | default "kong" }}
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: postgresPassword
-        - name: POSTGRES_DB
-          value: {{ .Values.postgres.database | default "kong" }}
-        # for centos and rhel we do have different environment variables
-        - name: POSTGRESQL_USER
-          value: {{ .Values.postgres.user | default "kong" }}
-        - name: POSTGRESQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: postgresPassword
-        - name: POSTGRESQL_DATABASE
-          value: {{ .Values.postgres.database | default "kong" }}
+        {{- include "postgresql.env" $ | indent 8 }}
         livenessProbe:
           tcpSocket:
             port:  {{ .Values.postgres.port }}

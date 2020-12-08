@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 1.4.2
+ - Log settings options
+ - Added ConfigMap for pipeline meta data
+
 ## 1.4.1
  - Added ServiceMonitor which is now enabled by default. PodMonitor is now disabled by default
 
