@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.4.3
+  - Removed labels from Postgres
+
 ## 1.4.2
  - Log settings options
  - Added ConfigMap for pipeline meta data
