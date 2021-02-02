@@ -350,6 +350,11 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end }}
 {{- end -}}
 
+{{- define "kong.jumper.env" }}
+- name: JUMPER_ISSUER_URL
+  value: {{ .Values.jumper.issuerUrl }}
+{{- end -}}
+
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
 {{- range .Values.customPlugins -}}
