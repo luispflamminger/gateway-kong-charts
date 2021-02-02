@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 1.5.0
+  - Updated Jumper to 1.3.0
+  - Added JUMPER_ISSUER_URL env var
+
 ## 1.4.3
   - Removed labels from Postgres
 
