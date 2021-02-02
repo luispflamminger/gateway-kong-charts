@@ -240,6 +240,8 @@ jumper:
       cpu: 50m
       memory: 200Mi
 
+  issuerUrl: https://localhost:443
+
 postgres:
   # You can force using a specific image here:
   #image: 
