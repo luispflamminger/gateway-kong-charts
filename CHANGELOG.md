@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 0.0.0
+  - Updated Jumper to 1.3.1
+
 ## 1.5.0
   - Updated Jumper to 1.3.0
   - Added JUMPER_ISSUER_URL env var
