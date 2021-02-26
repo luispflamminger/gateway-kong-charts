@@ -3,6 +3,7 @@
 [[_TOC_]]
 
 ## 0.0.0
+  - Switch to Kong Community Edition
   - Updated Jumper to 1.3.1
 
 ## 1.5.0

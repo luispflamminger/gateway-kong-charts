@@ -13,7 +13,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "kong" -}}
-{{- $imageTag := "2.0.3-alpine" -}}
+{{- $imageTag := "2.3.2-alpine" -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" -}}
 {{- $imageName = "kong-enterprise-edition" -}}
 {{- $imageTag = "1.3.0.2-alpine" -}}
