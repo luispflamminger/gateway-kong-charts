@@ -3,6 +3,9 @@ include:
   file: '/helm/PublishChart.gitlab-ci.yml'
   ref: master
 
+variables:
+  DOCKER_AUTH_CONFIG: $DOCKER_AUTH_CONFIG_TIF
+
 stages:
 - bundle
 - test
@@ -13,7 +16,7 @@ default:
   - run_docker
 
 .get-plugin: &get-plugin
-  image: kong:2.3
+  image: mtr.external.otc.telekomcloud.com/tif/luarocks:latest
   script:
   - |
     mkdir -p $CI_PROJECT_DIR/plugins
