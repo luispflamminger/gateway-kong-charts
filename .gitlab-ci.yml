@@ -16,7 +16,7 @@ default:
   - run_docker
 
 .get-plugin: &get-plugin
-  image: mtr.external.otc.telekomcloud.com/tif/luarocks:1.0.0
+  image: mtr.external.otc.telekomcloud.com/tif/luarocks
   script:
   - |
     mkdir -p $CI_PROJECT_DIR/plugins
