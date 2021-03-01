@@ -376,7 +376,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- define "kong.customPlugins.volumes" }}
 - name: plugins
   configMap:
-    name: {{ .Release.Name }}-luarocks-modules
+    name: {{ .Release.Name }}-kong-plugins
 {{- end -}}
 
 {{- define "kong.customPlugins.volumeMounts" }}
