@@ -25,15 +25,15 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       initContainers:
       - name: kong-install-plugins
-        image: {{ include "kong.image" $ }}
+        image: {{ include "kongplugins.image" $ }}
         imagePullPolicy: Always
-        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.plugins.initContainer.securityContext | toYaml | nindent 10 }}
         command:
         - /bin/sh
         - -c
         - |-
-          {{- range .Values.enablePlugins }}
-          {{ printf "luarocks install --local /home/kong/plugins/kong-plugin-%s*" . }}
+          {{- range .Values.plugins.enabled }}
+          {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
           {{- end }}
         volumeMounts:
           {{- include "kong.init.volumeMounts" $ | indent 8 }}
@@ -129,12 +129,10 @@ spec:
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
-        {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
       volumes:
       {{- include "kong.init.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
-      {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30

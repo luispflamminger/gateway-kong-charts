@@ -38,7 +38,6 @@ global:
 #
 #templateChangeTriggers:
 #- my-custom-configmap.yaml
-#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
@@ -59,9 +58,6 @@ enterprise:
 rbac:
   enabled: true
   kongAdminPassword: "changeme"
-
-enablePlugins:
-- jwt-keycloak
 
 # Enable Admin API and whether it is http or https
 # Warning: 
@@ -203,6 +199,20 @@ kong_admin:
   setupJob: {}
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
+
+plugins:
+  enabled:
+  - jwt-keycloak
+  initContainer:
+    #image: 
+      #repository: mtr.external.otc.telekomcloud.com
+      #organization: tif-public
+      #name: kong-plugins
+      #tag: 1.0.0
+    # Or use the flattened string form:
+    #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:1.0.0
+  
+    securityContext: {}
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

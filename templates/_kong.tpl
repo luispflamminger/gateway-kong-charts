@@ -35,6 +35,26 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 {{- end -}}
 
+{{- define "kongplugins.image" -}}
+{{- $imageName := "kongplugins" -}}
+{{- $imageTag := "latest" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.plugins.initContainer.image -}}
+  {{- if not (kindIs "string" .Values.plugins.initContainer.image) -}}
+    {{ $imageRepository = .Values.plugins.initContainer.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.plugins.initContainer.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.plugins.initContainer.image.name | default $imageName -}}
+    {{ $imageTag = .Values.plugins.initContainer.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.plugins.initContainer.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.isEnterprise" -}}
 {{- if eq .Values.enterprise.license "" -}}
 false
@@ -75,8 +95,7 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.checksums" }}
-checksum/kong-plugins: {{ include (print $.Template.BasePath "/configmap-kong-plugins.yaml" ) $ | sha256sum }}
+{{- define "kong.checksums" -}}
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
@@ -364,24 +383,13 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
-{{- range .Values.enablePlugins -}}
+{{- range .Values.plugins.enabled -}}
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
   value: bundled{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
-{{- end -}}
-
-{{- define "kong.customPlugins.volumes" }}
-- name: plugins
-  configMap:
-    name: {{ .Release.Name }}-kong-plugins
-{{- end -}}
-
-{{- define "kong.customPlugins.volumeMounts" }}
-- name: plugins
-  mountPath: /home/kong/plugins
 {{- end -}}
 
 {{- define "kong.adminApi.host" -}}
