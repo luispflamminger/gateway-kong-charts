@@ -75,7 +75,8 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.checksums" -}}
+{{- define "kong.checksums" }}
+checksum/kong-plugins: {{ include (print $.Template.BasePath "/configmap-kong-plugins.yaml" ) $ | sha256sum }}
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
@@ -85,6 +86,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumes" }}
+- name: local-luarocks
+  emptyDir: {}
 - name: kong-prefix-dir
   emptyDir: {}
 - name: kong-tmp
@@ -105,6 +108,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
 - name: kong-prefix-dir
   mountPath: /kong
 - name: kong-tmp
@@ -122,6 +127,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumes" }}
+- name: local-luarocks
+  emptyDir: {}
 - name: kong-init-tmp
   emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -135,6 +142,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
 - name: kong-init-tmp
   mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -357,8 +366,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
-{{- range .Values.customPlugins -}}
-{{ $enabledPlugins = printf "%s,%s" $enabledPlugins .name }}
+{{- range .Values.enablePlugins -}}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
   value: bundled{{ $enabledPlugins }}
@@ -366,19 +375,15 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: "/opt/?.lua;;"
 {{- end -}}
 
-{{- define "kong.customPlugins.volumes" -}}
-{{- range .Values.customPlugins }}
-- name: kong-plugin-{{ .name }}
+{{- define "kong.customPlugins.volumes" }}
+- name: plugins
   configMap:
-    name: {{ .configMap }}
-{{- end -}}
+    name: {{ .Release.Name }}-luarocks-modules
 {{- end -}}
 
-{{- define "kong.customPlugins.volumeMounts" -}}
-{{- range .Values.customPlugins }}
-- name: kong-plugin-{{ .name }}
-  mountPath: /opt/kong/plugins/{{ .name }}
-{{- end -}}
+{{- define "kong.customPlugins.volumeMounts" }}
+- name: plugins
+  mountPath: /home/kong/plugins
 {{- end -}}
 
 {{- define "kong.adminApi.host" -}}

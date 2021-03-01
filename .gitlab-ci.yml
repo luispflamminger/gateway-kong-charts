@@ -1,4 +1,30 @@
 include:
-  - project: 'tif/gitlab-pipelines'
-    file: '/helm/PublishChart.gitlab-ci.yml'
-    ref: master
+- project: 'tif/gitlab-pipelines'
+  file: '/helm/PublishChart.gitlab-ci.yml'
+  ref: master
+
+stages:
+- bundle
+- test
+- publish
+
+default:
+  tags:
+  - run_docker
+
+.get-plugin: &get-plugin
+  image: kong:2.3
+  script:
+  - |
+    mkdir -p $CI_PROJECT_DIR/plugins
+    apk add --no-cache git zip && \
+    git config --global url.https://github.com/.insteadOf git://github.com/ && \
+    luarocks install kong-plugin-${PLUGIN_NAME} && \
+    luarocks pack kong-plugin-${PLUGIN_NAME} && \
+    cp kong-plugin-${PLUGIN_NAME}* $CI_PROJECT_DIR/plugins/
+
+bundle:jwt-keycloak:
+  stage: bundle
+  variables:
+    PLUGIN_NAME: jwt-keycloak
+  extends: .get-plugin

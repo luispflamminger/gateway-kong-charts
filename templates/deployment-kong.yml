@@ -24,6 +24,19 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       initContainers:
+      - name: kong-install-plugins
+        image: {{ include "kong.image" $ }}
+        imagePullPolicy: Always
+        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
+        command:
+        - /bin/sh
+        - -c
+        - |-
+          {{- range .Values.enablePlugins }}
+          {{ printf "luarocks install --local /home/kong/plugins/kong-plugin-%s*" . }}
+          {{- end }}
+        volumeMounts:
+          {{- include "kong.init.volumeMounts" $ | indent 8 }}
       - name: kong-init
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
