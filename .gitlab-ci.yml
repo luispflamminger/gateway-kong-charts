@@ -17,7 +17,6 @@ default:
   script:
   - |
     mkdir -p $CI_PROJECT_DIR/plugins
-    apk add --no-cache git zip && \
     git config --global url.https://github.com/.insteadOf git://github.com/ && \
     luarocks install kong-plugin-${PLUGIN_NAME} && \
     luarocks pack kong-plugin-${PLUGIN_NAME} && \
