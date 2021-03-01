@@ -30,3 +30,10 @@ bundle:jwt-keycloak:
   variables:
     PLUGIN_NAME: jwt-keycloak
   extends: .get-plugin
+  artifacts:
+    paths:
+    - $CI_PROJECT_DIR/plugins
+
+publish:chart:
+  dependencies:
+  - bundle:jwt-keycloak
