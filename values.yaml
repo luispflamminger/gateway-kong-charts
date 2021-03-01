@@ -50,6 +50,9 @@ templateChangeTriggers: []
 # Or use the flattened string form:
 #image: mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0
 
+# Comment in to determine the migrations behaviour
+migrations: bootstrap
+
 enterprise:
   license: ""
 

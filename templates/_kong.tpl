@@ -184,6 +184,20 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
+{{- define "kong.init.checkdatabase.env" }}
+- name: PGHOST
+  value: {{ include "postgresql.host" $ }}
+- name: PGDATABASE
+  value: {{ .Values.postgres.database }}
+- name: PGUSER
+  value: {{ .Values.postgres.user }}
+- name: PGPASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+{{- end -}}
+
 {{- define "kong.init.env" }}
 - name: KONG_DATABASE
   value: postgres
