@@ -19,11 +19,10 @@ default:
   image: mtr.external.otc.telekomcloud.com/tif/luarocks
   script:
   - |
-    mkdir -p $CI_PROJECT_DIR/plugins
+    mkdir -p $CI_PROJECT_DIR/plugins && cd $CI_PROJECT_DIR/plugins
     git config --global url.https://github.com/.insteadOf git://github.com/ && \
     luarocks install --local kong-plugin-${PLUGIN_NAME} && \
-    luarocks pack --local kong-plugin-${PLUGIN_NAME} && \
-    cp ~/luarocks/kong-plugin-${PLUGIN_NAME}* $CI_PROJECT_DIR/plugins/
+    luarocks pack --local kong-plugin-${PLUGIN_NAME}
 
 bundle:jwt-keycloak:
   stage: bundle
