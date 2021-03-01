@@ -22,15 +22,17 @@ spec:
         command: ['/bin/bash']
         args: ['-c', 'until pg_isready -U {{ .Values.postgres.user }}; do echo waiting for database; sleep 2; done;']
         env:
-        {{- include "kong.init.checkdatabase.env" $ | indent 8 }}
+        {{- include "kong.migrations.checkdatabase.env" $ | indent 8 }}
       - name: kong-upgrade-migrations
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
+        env:
+        {{- include "kong.migrations.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations finish" ]
         volumeMounts:
-          {{- include "kong.init.volumeMounts" $ | indent 8 }}
+          {{- include "kong.migrations.volumeMounts" $ | indent 8 }}
       restartPolicy: OnFailure
       volumes:
-      {{- include "kong.init.volumes" $ | indent 6 }}
+      {{- include "kong.migrations.volumes" $ | indent 6 }}
 {{- end -}}
 {{- end -}}

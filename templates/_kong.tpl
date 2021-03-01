@@ -121,7 +121,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.init.volumes" }}
+{{- define "kong.migrations.volumes" }}
 - name: kong-init-tmp
   emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -134,7 +134,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.init.volumeMounts" }}
+{{- define "kong.migrations.volumeMounts" }}
 - name: kong-init-tmp
   mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -184,7 +184,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
-{{- define "kong.init.checkdatabase.env" }}
+{{- define "kong.migrations.checkdatabase.env" }}
 - name: PGHOST
   value: {{ include "postgresql.host" $ }}
 - name: PGDATABASE
@@ -198,7 +198,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
       key: postgresPassword
 {{- end -}}
 
-{{- define "kong.init.env" }}
+{{- define "kong.migrations.env" }}
 - name: KONG_DATABASE
   value: postgres
 {{- if eq .Values.rbac.enabled true }}

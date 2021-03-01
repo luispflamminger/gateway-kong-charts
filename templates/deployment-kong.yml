@@ -31,10 +31,10 @@ spec:
         imagePullPolicy: Always
         securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
         env:
-        {{- include "kong.init.env" $ | indent 8 }}
+        {{- include "kong.migrations.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
         volumeMounts:
-          {{- include "kong.init.volumeMounts" $ | indent 8 }}
+          {{- include "kong.migrations.volumeMounts" $ | indent 8 }}
       {{- end }}
       {{- end }}
       containers:
@@ -122,7 +122,7 @@ spec:
         {{- include "kong.volumeMounts" $ | indent 8 }}
         {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
       volumes:
-      {{- include "kong.init.volumes" $ | indent 6 }}
+      {{- include "kong.migrations.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
