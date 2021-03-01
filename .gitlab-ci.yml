@@ -22,7 +22,8 @@ default:
     mkdir -p $CI_PROJECT_DIR/plugins && cd $CI_PROJECT_DIR/plugins
     git config --global url.https://github.com/.insteadOf git://github.com/ && \
     luarocks install --local kong-plugin-${PLUGIN_NAME} && \
-    luarocks pack --local kong-plugin-${PLUGIN_NAME}
+    luarocks pack --local kong-plugin-${PLUGIN_NAME} && \
+    ls -l $CI_PROJECT_DIR/plugins
 
 bundle:jwt-keycloak:
   stage: bundle
