@@ -85,9 +85,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`                 |
 | `global.labels`                      | Define global labels                                                           | `tif.telekom.de/group`|
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`                 |
+| `migrations`                         | Determine the migrations behaviuor for a new instance or upgrade               | `bootstrap`           |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`                 |
-| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                   | `true`                |
-| `rbac.kongAdminPassword`             | Password for Kong Administrator                                              | `changeme`            |
+| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                     | `true`                |
+| `rbac.kongAdminPassword`             | Password for Kong Administrator                                                | `changeme`            |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`                |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`               |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`                |

@@ -3,7 +3,8 @@
 [[_TOC_]]
 
 ## 0.0.0
-  - Switch to Kong Community Edition
+  - Added seperate jobs for bootrapping and upgrade
+  - Switch to Kong Community Edition 2.3.2
   - Updated Jumper to 1.3.1
 
 ## 1.5.0

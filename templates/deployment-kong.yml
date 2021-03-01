@@ -23,20 +23,6 @@ spec:
       labels: {{ include "kong.labels" $ | nindent 8 }}{{ include "status-monitor.labels" $ | nindent 8 }}
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      {{- if .Values.migrations -}}
-      {{- if eq .Values.migrations "bootstrap" }}
-      initContainers:
-      - name: kong-init
-        image: {{ include "kong.image" $ }}
-        imagePullPolicy: Always
-        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
-        env:
-        {{- include "kong.migrations.env" $ | indent 8 }}
-        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
-        volumeMounts:
-          {{- include "kong.migrations.volumeMounts" $ | indent 8 }}
-      {{- end }}
-      {{- end }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper
@@ -122,7 +108,6 @@ spec:
         {{- include "kong.volumeMounts" $ | indent 8 }}
         {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
       volumes:
-      {{- include "kong.migrations.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
