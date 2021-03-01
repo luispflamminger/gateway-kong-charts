@@ -127,8 +127,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.init.volumes" }}
-- name: local-luarocks
-  emptyDir: {}
 - name: kong-init-tmp
   emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
