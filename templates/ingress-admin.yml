@@ -1,5 +1,5 @@
 {{- if eq .Values.global.platform "kubernetes" -}}
-{{- if and .Values.adminApi.enabled .Values.adminApi.ingress.enabled }}
+{{- if and .Values.adminApi.enabled (eq (include "kong.adminApi.ingressDefault" $) "true") }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

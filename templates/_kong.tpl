@@ -440,6 +440,18 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.adminApi.ingressDefault" -}}
+{{- if hasKey .Values.adminApi.ingress "enabled" }}
+{{- printf "%s" (toString .Values.adminApi.ingress.enabled) -}}
+{{- else -}}
+{{- if eq (include "kong.isEnterprise" . ) "true" }}
+{{- printf "true" -}}
+{{- else -}}
+{{- printf "false" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.merged.adminApi.annotations" }}
 {{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
 {{- $localAnnotations := dict "annotations" .Values.adminApi.ingress.annotations -}}

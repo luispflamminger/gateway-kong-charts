@@ -89,8 +89,9 @@ adminApi:
   tls:
     enabled: false
 # Activate Admin API ingress and set a dedicated hostname
+# For EE (license) this is default true, for CE (no license) this is default false
   ingress:
-    enabled: true
+    #enabled: true
     #hostname: ""
     annotations: {}
   #access_log: /dev/stdout
