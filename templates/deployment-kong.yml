@@ -23,6 +23,20 @@ spec:
       labels: {{ include "kong.labels" $ | nindent 8 }}{{ include "status-monitor.labels" $ | nindent 8 }}
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
+      initContainers:
+      - name: kong-install-plugins
+        image: {{ include "kongplugins.image" $ }}
+        imagePullPolicy: Always
+        securityContext: {{ default .Values.plugins.initContainer.securityContext | toYaml | nindent 10 }}
+        command:
+        - /bin/sh
+        - -c
+        - |-
+          {{- range .Values.plugins.enabled }}
+          {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
+          {{- end }}
+        volumeMounts:
+          {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper
@@ -106,11 +120,10 @@ spec:
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
-        {{- include "kong.customPlugins.volumeMounts" $ | indent 8 }}
       volumes:
+      {{- include "kongplugins.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
-      {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30

@@ -38,7 +38,6 @@ global:
 #
 #templateChangeTriggers:
 #- my-custom-configmap.yaml
-#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
@@ -63,23 +62,6 @@ enterprise:
 rbac:
   enabled: true
   kongAdminPassword: "changeme"
-
-# You can add custom plugins here:
-# Note:
-# The plugins must be deployed as configmaps and correctly referenced here
-# You can either deploy the configmaps seperaty in a previous process
-# or you place the configmaps into the templates directory of this Helm chart
-#
-# Note: If your configMap name will not change with future updates of your Kong plugin (e.g.: no checksum in name)
-# you can list the configMap yaml file in the templateChangeTriggers list above
-# to tigger a re-deployment of Kong
-#
-#customPlugins:
-#- name: custom1
-#  configMap: kong-plugin-custom1-5e67ca89
-#- name: custom2
-#  configMap: kong-plugin-custom2-6a2bc71b
-customPlugins: []
 
 # Enable Admin API and whether it is http or https
 # Warning: 
@@ -222,6 +204,20 @@ kong_admin:
   setupJob: {}
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
+
+plugins:
+  enabled:
+  - jwt-keycloak
+  initContainer:
+    #image: 
+      #repository: mtr.external.otc.telekomcloud.com
+      #organization: tif-public
+      #name: kong-plugins
+      #tag: 1.0.0
+    # Or use the flattened string form:
+    #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:1.0.0
+  
+    securityContext: {}
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

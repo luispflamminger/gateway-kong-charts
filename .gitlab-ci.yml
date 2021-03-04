@@ -1,4 +1,4 @@
 include:
-  - project: 'tif/gitlab-pipelines'
-    file: '/helm/PublishChart.gitlab-ci.yml'
-    ref: master
+- project: 'tif/gitlab-pipelines'
+  file: '/helm/PublishChart.gitlab-ci.yml'
+  ref: master

@@ -35,6 +35,26 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 {{- end -}}
 
+{{- define "kongplugins.image" -}}
+{{- $imageName := "kong-plugins" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.plugins.initContainer.image -}}
+  {{- if not (kindIs "string" .Values.plugins.initContainer.image) -}}
+    {{ $imageRepository = .Values.plugins.initContainer.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.plugins.initContainer.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.plugins.initContainer.image.name | default $imageName -}}
+    {{ $imageTag = .Values.plugins.initContainer.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.plugins.initContainer.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.isEnterprise" -}}
 {{- if eq .Values.enterprise.license "" -}}
 false
@@ -84,7 +104,14 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kongplugins.volumes" }}
+- name: kongplugins-tmp
+  emptyDir: {}
+{{- end -}}
+
 {{- define "kong.volumes" }}
+- name: local-luarocks
+  emptyDir: {}
 - name: kong-prefix-dir
   emptyDir: {}
 - name: kong-tmp
@@ -105,6 +132,8 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
 - name: kong-prefix-dir
   mountPath: /kong
 - name: kong-tmp
@@ -119,6 +148,13 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: server-certificate
   mountPath: /opt/kong/default-https
 {{- end -}}
+{{- end -}}
+
+{{- define "kongplugins.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
+- name: kongplugins-tmp
+  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.migrations.volumes" }}
@@ -371,28 +407,13 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
-{{- range .Values.customPlugins -}}
-{{ $enabledPlugins = printf "%s,%s" $enabledPlugins .name }}
+{{- range .Values.plugins.enabled -}}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
   value: bundled{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
-{{- end -}}
-
-{{- define "kong.customPlugins.volumes" -}}
-{{- range .Values.customPlugins }}
-- name: kong-plugin-{{ .name }}
-  configMap:
-    name: {{ .configMap }}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.customPlugins.volumeMounts" -}}
-{{- range .Values.customPlugins }}
-- name: kong-plugin-{{ .name }}
-  mountPath: /opt/kong/plugins/{{ .name }}
-{{- end -}}
 {{- end -}}
 
 {{- define "kong.adminApi.host" -}}
