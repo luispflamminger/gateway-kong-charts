@@ -326,17 +326,15 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: '0.0.0.0:8444 ssl'
 {{- else }}
   value: '0.0.0.0:8001'
-{{- end -}}
-{{- if .Values.adminApi.ingress.enabled }}
-- name: KONG_ADMIN_API_URI
-  value: 'https://{{ include "kong.adminApi.host" . }}'
 {{- end }}
 - name: KONG_ADMIN_ACCESS_LOG
   value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.adminApi.ingress.enabled" $) "true") }}
+- name: KONG_ADMIN_API_URI
+  value: 'https://{{ include "kong.adminApi.host" . }}'
 - name: KONG_ADMIN_GUI_LISTEN
 {{- if .Values.manager.tls.enabled }}
   value: '0.0.0.0:8445 ssl'
@@ -458,6 +456,14 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- .Values.proxy.ingress.hostname -}}
 {{- else }}
 {{- printf "%s-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.adminApi.ingress.enabled" -}}
+{{- if and .Values.adminApi.enabled (eq (include "kong.adminApi.ingressDefault" $) "true") }}
+{{- printf "true" -}}
+{{- else -}}
+{{- printf "false" -}}
 {{- end -}}
 {{- end -}}
 
