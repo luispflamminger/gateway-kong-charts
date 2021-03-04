@@ -13,7 +13,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "kong" -}}
-{{- $imageTag := "2.0.3-alpine" -}}
+{{- $imageTag := "2.3.2-alpine" -}}
 {{- if eq (include "kong.isEnterprise" $ ) "true" -}}
 {{- $imageName = "kong-enterprise-edition" -}}
 {{- $imageTag = "1.3.0.2-alpine" -}}
@@ -121,7 +121,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.init.volumes" }}
+{{- define "kong.migrations.volumes" }}
 - name: kong-init-tmp
   emptyDir: {}
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -134,7 +134,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.init.volumeMounts" }}
+{{- define "kong.migrations.volumeMounts" }}
 - name: kong-init-tmp
   mountPath: /tmp
 {{- if .Values.postgres.externalDatabase.sslVerify }}
@@ -184,7 +184,21 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
-{{- define "kong.init.env" }}
+{{- define "kong.migrations.checkdatabase.env" }}
+- name: PGHOST
+  value: {{ include "postgresql.host" $ }}
+- name: PGDATABASE
+  value: {{ .Values.postgres.database }}
+- name: PGUSER
+  value: {{ .Values.postgres.user }}
+- name: PGPASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: postgresPassword
+{{- end -}}
+
+{{- define "kong.migrations.env" }}
 - name: KONG_DATABASE
   value: postgres
 {{- if eq .Values.rbac.enabled true }}
@@ -423,6 +437,18 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- .Values.proxy.ingress.hostname -}}
 {{- else }}
 {{- printf "%s-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.adminApi.ingressDefault" -}}
+{{- if hasKey .Values.adminApi.ingress "enabled" }}
+{{- printf "%s" (toString .Values.adminApi.ingress.enabled) -}}
+{{- else -}}
+{{- if eq (include "kong.isEnterprise" . ) "true" }}
+{{- printf "true" -}}
+{{- else -}}
+{{- printf "false" -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

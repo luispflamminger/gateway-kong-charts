@@ -3,6 +3,9 @@
 [[_TOC_]]
 
 ## 0.0.0
+  - Added seperate jobs for bootrapping and upgrade
+  - Switch to Kong Community Edition 2.3.2
+  - AdminApi ingress behaviour based on edition (CE or EE)
   - Updated Jumper to 1.3.1
 
 ## 1.5.0
