@@ -99,7 +99,7 @@ As a result `job-kong-pre-upgrade-migrations.yml` will be run before further rol
 
 **Warning:** Uncomment "`migrations: upgrade`" if you deploy again after a successfull deployment or set it to "`migrations: bootstrap`". Otherwise migrations will be executed again.
 
-**Note:** Those jobs are only be ment to be used for upgrading in the context of either Enterprise OR Community Edition.
+**Note:** Those jobs are only ment to be used for upgrading in the context of either Enterprise OR Community Edition.
 
 ## Parameters
 
