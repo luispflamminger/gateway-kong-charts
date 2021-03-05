@@ -83,6 +83,24 @@ kubectl create secret tls my-https-secret --key=key.pem --cert=cert.pem
 oc create secret generic my-https-secret-2 --from-file=tls.key=key.pem  --from-file=tls.crt=cert.pem
 ```
 
+## Bootstrap and Upgrade
+Setup and some upgrades require specific migration steps to be run before and after changing the Kong version via a newer image or starting it for the first time.
+There the chart provides specialised jobs for each of those steps.
+
+### Bootstrap
+Bootstrapping is required when Kong starts for the first time and needs to setup its database. This task is handled by the job `job-kong-bootstrap.yml`.
+It will be run if "`migrations: bootstrap`" is set in the `values.yaml`. This can be uncommented if no further execution is wished, but this is also prohibited by keeping the job itself.
+Running the job again will do no harm in any way, as the executed bootstrap recognises the database as already initialised.
+
+
+### Upgrade
+Upgrading to a newer version may require running migration steps (e.g. database changes). To run those jobs set "`migrations: upgrade`" in the `values.yaml`.
+As a result `job-kong-pre-upgrade-migrations.yml` will be run before further roll out of any deployment and `job-kong-post-upgrade-migrations.yml` will be run after successfull deployments to complete the upgrade.
+
+**Warning:** Uncomment "`migrations: upgrade`" if you deploy again after a successfull deployment or set it to "`migrations: bootstrap`". Otherwise migrations will be executed again.
+
+**Note:** Those jobs are only be ment to be used for upgrading in the context of either Enterprise OR Community Edition.
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.
