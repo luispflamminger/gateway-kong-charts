@@ -220,6 +220,14 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
+{{- define "kong.enterprise.license.env" }}
+- name: KONG_LICENSE_DATA
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: license
+{{- end -}}
+
 {{- define "kong.migrations.checkdatabase.env" }}
 - name: PGHOST
   value: {{ include "postgresql.host" $ }}
@@ -270,11 +278,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end }}
 {{- end }}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
-- name: KONG_LICENSE_DATA
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}
-      key: license
+{{- template "kong.enterprise.license.env" . }}
 {{- end }}
 {{- end -}}
 
@@ -332,7 +336,25 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.adminApi.ingress.enabled" $) "true") }}
+{{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+- name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
+  value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
+{{- end }}
+{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
+{{- template "kong.enterprise.env" . }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.enterprise.env" -}}
+{{- if eq .Values.rbac.enabled true }}
+- name: KONG_ENFORCE_RBAC
+  value: 'on'
+- name: KONG_ADMIN_GUI_AUTH
+  value: 'basic-auth'
+- name: KONG_ADMIN_GUI_SESSION_CONF
+  value: '{"secret":"{{ .Values.manager.session.secret }}"}'
+{{- end -}}
+{{- if and (eq .Values.manager.enabled true) (eq (include "kong.adminApi.ingress.enabled" $) "true") }}
 - name: KONG_ADMIN_API_URI
   value: 'https://{{ include "kong.adminApi.host" . }}'
 - name: KONG_ADMIN_GUI_LISTEN
@@ -348,7 +370,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: KONG_ADMIN_GUI_ERROR_LOG
   value: {{ .Values.manager.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
-{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") }}
+{{- if eq .Values.portal.enabled true }}
 - name: KONG_PORTAL
   value: 'on'
 {{- if .Values.portal.tls.enabled }}
@@ -377,25 +399,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: {{ .Values.portal.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
 {{- end -}}
-{{- if eq .Values.rbac.enabled true }}
-- name: KONG_ENFORCE_RBAC
-  value: 'on'
-- name: KONG_ADMIN_GUI_AUTH
-  value: 'basic-auth'
-- name: KONG_ADMIN_GUI_SESSION_CONF
-  value: '{"secret":"{{ .Values.manager.session.secret }}"}'
-{{- end -}}
-{{- if eq (include "kong.isEnterprise" $ ) "true" }}
-- name: KONG_LICENSE_DATA
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}
-      key: license
-{{- end }}
-{{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
-- name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-  value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
-{{- end }}
+{{- template "kong.enterprise.license.env" . }}
 {{- end -}}
 
 {{- define "kong.jumper.env" }}
