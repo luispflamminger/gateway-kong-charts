@@ -6,7 +6,7 @@ metadata:
   name: {{ .Release.Name }}-kong-pre-upgrade-migrations
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
-    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
