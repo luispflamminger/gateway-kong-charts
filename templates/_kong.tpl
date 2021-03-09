@@ -198,7 +198,12 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
-{{- define "kong.enterprise.license.env" }}
+{{- define "kong.env.prefix" }}
+- name: KONG_PREFIX
+  value: /kong
+{{- end -}}
+
+{{- define "kong.env.enterprise.license" }}
 - name: KONG_LICENSE_DATA
   valueFrom:
     secretKeyRef:
@@ -223,6 +228,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- define "kong.migrations.env" }}
 - name: KONG_DATABASE
   value: postgres
+{{- template "kong.env.prefix" . }}
 {{- if eq .Values.rbac.enabled true }}
 - name: KONG_PASSWORD
   valueFrom:
@@ -256,15 +262,14 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end }}
 {{- end }}
 {{- if eq (include "kong.isEnterprise" $ ) "true" }}
-{{- template "kong.enterprise.license.env" . }}
+{{- template "kong.env.enterprise.license" . }}
 {{- end }}
 {{- end -}}
 
 {{- define "kong.env" }}
 - name: KONG_MEM_CACHE_SIZE
   value: '{{ .Values.memCacheSize | default "128m" }}'
-- name: KONG_PREFIX
-  value: /kong
+{{- template "kong.env.prefix" . }}
 - name: KONG_DATABASE
   value: postgres
 - name: KONG_PG_PASSWORD
@@ -377,7 +382,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   value: {{ .Values.portal.error_log | default "/dev/stderr" | quote }}
 {{- end -}}
 {{- end -}}
-{{- template "kong.enterprise.license.env" . }}
+{{- template "kong.env.enterprise.license" . }}
 {{- end -}}
 
 {{- define "kong.jumper.env" }}
