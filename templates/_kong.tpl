@@ -104,9 +104,43 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.migrations.volumes" }}
+- name: kong-migrations-prefix-dir
+  emptyDir: {}
+- name: kong-migrations-tmp
+  emptyDir: {}
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificates
+  secret:
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
+    items:
+      - key: lua-ssl-trusted-certificates.pem
+        path: 'init/lua-ssl-trusted-certificates.pem'
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.migrations.volumeMounts" }}
+- name: kong-migrations-prefix-dir
+  mountPath: /kong
+- name: kong-migrations-tmp
+  mountPath: /tmp
+{{- if .Values.postgres.externalDatabase.sslVerify }}
+- name: lua-ssl-trusted-certificates
+  mountPath: /opt/kong/tls
+{{- end -}}
+{{- end -}}
+
+
 {{- define "kongplugins.volumes" }}
 - name: kongplugins-tmp
   emptyDir: {}
+{{- end -}}
+
+{{- define "kongplugins.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
+- name: kongplugins-tmp
+  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.volumes" }}
@@ -148,13 +182,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 - name: server-certificate
   mountPath: /opt/kong/default-https
 {{- end -}}
-{{- end -}}
-
-{{- define "kongplugins.volumeMounts" }}
-- name: local-luarocks
-  mountPath: /home/kong/.luarocks
-- name: kongplugins-tmp
-  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.jumper.volumes" }}
