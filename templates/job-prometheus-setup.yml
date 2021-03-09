@@ -6,7 +6,7 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
