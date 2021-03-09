@@ -11,7 +11,7 @@ spec:
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      containers:
+      initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
         imagePullPolicy: Always
@@ -20,6 +20,7 @@ spec:
         args: ['-c', 'until pg_isready -U {{ .Values.postgres.user }}; do echo waiting for database; sleep 2; done;']
         env:
         {{- include "kong.migrations.checkdatabase.env" $ | indent 8 }}
+      containers:
       - name: kong-bootstrap
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always
@@ -28,9 +29,9 @@ spec:
         {{- include "kong.migrations.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations bootstrap" ]
         volumeMounts:
-          {{- include "kong.migrations.volumeMounts" $ | indent 8 }}
+          {{- include "kong.volumeMounts" $ | indent 8 }}
       restartPolicy: OnFailure
       volumes:
-      {{- include "kong.migrations.volumes" $ | indent 6 }}
+      {{- include "kong.volumes" $ | indent 6 }}
 {{- end -}}
 {{- end -}}
