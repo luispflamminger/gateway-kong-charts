@@ -3,6 +3,7 @@
 [[_TOC_]]
 
 ## 0.0.0
+  - Added TargetLabels to ServiceMonitor 
   - Added seperate jobs for bootrapping and upgrade
   - Switch to Kong Community Edition 2.3.2
   - AdminApi ingress behaviour based on edition (CE or EE)
