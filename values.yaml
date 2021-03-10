@@ -16,7 +16,7 @@ global:
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
   # no pull secret will be deployed
   # If you use Sapling for deployment this will be set automatically
-  imagePullSecrets: []
+  imagePullSecrets: 
   #- name: mtr-tif-public
   #  registry: https://mtr.external.otc.telekomcloud.com
   #  username: changeme

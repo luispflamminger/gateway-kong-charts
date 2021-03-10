@@ -1,5 +1,4 @@
-{{- if .Values.migrations -}}
-{{- if eq .Values.migrations "bootstrap" -}}
+{{- if include "kong.isMigrationsBootstrap" $ -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -33,5 +32,4 @@ spec:
       restartPolicy: OnFailure
       volumes:
       {{- include "kong.migrations.volumes" $ | indent 6 }}
-{{- end -}}
 {{- end -}}

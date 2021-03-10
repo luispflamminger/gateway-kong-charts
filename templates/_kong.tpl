@@ -104,6 +104,26 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.isMigrationsBootstrap" -}}
+{{- if .Values.migrations -}}
+{{- if eq .Values.migrations "bootstrap" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.isMigrationsUpgrade" -}}
+{{- if .Values.migrations -}}
+{{- if eq .Values.migrations "upgrade" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.migrations.volumes" }}
 - name: kong-migrations-prefix-dir
   emptyDir: {}
@@ -129,7 +149,6 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
   mountPath: /opt/kong/tls
 {{- end -}}
 {{- end -}}
-
 
 {{- define "kongplugins.volumes" }}
 - name: kongplugins-tmp

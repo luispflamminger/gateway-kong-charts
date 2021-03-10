@@ -1,5 +1,4 @@
-{{- if .Values.migrations -}}
-{{- if eq .Values.migrations "upgrade" -}}
+{{- if include "kong.isMigrationsUpgrade" $ -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -13,7 +12,7 @@ spec:
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
-      {{- include "image_pull_secrets" $ | indent 6 }}
+      {{- include "image_pull_secrets.preRun" $ | indent 6 }}
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
@@ -36,5 +35,4 @@ spec:
       restartPolicy: OnFailure
       volumes:
       {{- include "kong.migrations.volumes" $ | indent 6 }}
-{{- end -}}
 {{- end -}}
