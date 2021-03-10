@@ -2,8 +2,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-kong-pre-upgrade-migrations
+  name: {{ .Release.Name }}-kong-pre-migrations-up
   labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
