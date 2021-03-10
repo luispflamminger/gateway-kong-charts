@@ -95,7 +95,7 @@ Running the job again will do no harm in any way, as the executed bootstrap reco
 
 ### Upgrade
 Upgrading to a newer version may require running migration steps (e.g. database changes). To run those jobs set "`migrations: upgrade`" in the `values.yaml`.
-As a result `job-kong-pre-upgrade-migrations.yml` will be run before further roll out of any deployment and `job-kong-post-upgrade-migrations.yml` will be run after successfull deployments to complete the upgrade.
+As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-upgrade-migrations.yml` will be run after successfull deployments to complete the upgrade.
 
 **Warning:** Uncomment "`migrations: upgrade`" if you deploy again after a successfull deployment or set it to "`migrations: bootstrap`". Otherwise migrations will be executed again.
 

@@ -4,15 +4,12 @@ kind: Job
 metadata:
   name: {{ .Release.Name }}-kong-pre-upgrade-migrations
   labels: {{ include "kong.labels" $ | nindent 4 }}
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
-      {{- include "image_pull_secrets.preRun" $ | indent 6 }}
+      {{- include "image_pull_secrets" $ | indent 6 }}
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
