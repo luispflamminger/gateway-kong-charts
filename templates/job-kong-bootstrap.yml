@@ -4,8 +4,6 @@ kind: Job
 metadata:
   name: {{ .Release.Name }}-kong-bootstrap
   labels: {{ include "kong.labels" $ | nindent 4 }}
-  annotations:
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
