@@ -124,6 +124,17 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.configuration.volumes" }}
+- name: kong-configuration
+  configMap:
+    name: {{ .Release.Name }}-kong-admin-api
+{{- end -}}
+
+{{- define "kong.configuration.volumeMounts" }}
+- name: kong-configuration
+  mountPath: /tmp
+{{- end -}}
+
 {{- define "kong.migrations.volumes" }}
 - name: kong-migrations-prefix-dir
   emptyDir: {}
