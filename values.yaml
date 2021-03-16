@@ -118,6 +118,9 @@ proxy:
   #access_log: /dev/stdout
   #error_log: /dev/stderr
 
+#configuration: |
+  #Place your curl commands here to configure via Admin-API on deploy time
+
 # values used by nginx directives
 sslVerify: false
 sslVerifyDepth: '1'

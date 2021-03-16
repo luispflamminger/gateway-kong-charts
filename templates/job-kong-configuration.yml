@@ -1,0 +1,31 @@
+{{- if eq (include "kong.isEnterprise" $ ) "false" -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-kong-configuration
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "5"
+spec:
+  backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
+  template:
+    spec:
+      {{- include "image_pull_secrets" $ | indent 6 }}
+      containers:
+      - name: {{ .Release.Name }}-kong-admin-route
+        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
+        command:
+          - /bin/bash
+          - -c
+          - |-
+            {{- if hasKey .Values "configuration" }}
+            {{- .Values.configuration | nindent 12 }}
+            {{- else }}
+            {{- .Files.Get "admin.conf" | nindent 12 }}
+            {{- end }}
+      restartPolicy: OnFailure
+{{- end -}}
