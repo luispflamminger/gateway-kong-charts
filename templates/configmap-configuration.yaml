@@ -33,7 +33,7 @@ data:
         "https"
       ],
       "hosts": [
-        "{{ include "kong.adminApi.host" . }}"
+        "{{ include "kong.proxy.host" . }}"
       ],
       "name": "admin-api",
       "paths": [
