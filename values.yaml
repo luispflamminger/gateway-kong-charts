@@ -78,6 +78,7 @@ adminApi:
     annotations: {}
   #access_log: /dev/stdout
   #error_log: /dev/stderr
+  allowedIss: https://changeme/auth/realms/default
 
 # Configure Kong Manager
 manager:

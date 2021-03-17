@@ -1,17 +1,19 @@
+{{- if (include "kong.configuration" $) true -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-kong-admin-api
+  name: {{ .Release.Name }}-configuration
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
   configuration.sh: |
     {{- if hasKey .Values "configuration" }}
     {{- .Values.configuration | nindent 4 }}
     {{- else }}
+    {{- $apiUrl := include "kong.adminApi.serviceUrl" . }}
     # 1
     # create service (upstream: http://localhost:8001)
     curl --request POST \
-      --url http://localhost:8001/services \
+      --url {{ $apiUrl }}/services \
       --header 'Content-Type: application/json' \
       --data '{
           "host": "localhost",
@@ -23,7 +25,7 @@ data:
     # 2
     # create route (/admin-api) variable: hosts
     curl --request POST \
-      --url http://localhost:8001/services/admin-api/routes \
+      --url {{ $apiUrl }}/services/admin-api/routes \
       --header 'Content-Type: application/json' \
       --data '{
       "protocols": [
@@ -31,7 +33,7 @@ data:
         "https"
       ],
       "hosts": [
-        "stargate-hyp-dev-zone-azure.dev.dhei.telekom.de"
+        "{{ include "kong.adminApi.host" . }}"
       ],
       "name": "admin-api",
       "paths": [
@@ -42,7 +44,7 @@ data:
     # 3
     # create consumer (rover)
     curl --request POST \
-      --url http://localhost:8001/consumers \
+      --url {{ $apiUrl }}/consumers \
       --header 'Content-Type: application/json' \
       --data '{
           "username" : "rover",
@@ -53,7 +55,7 @@ data:
     # apply acl plugin to route (/admin-api) 
     # and allow group (rover)
     curl --request POST \
-      --url http://localhost:8001/routes/admin-api/plugins \
+      --url {{ $apiUrl }}/routes/admin-api/plugins \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "acl",
@@ -66,7 +68,7 @@ data:
     # 5
     # add consumer (rover) to group (rover)
     curl --request POST \
-      --url http://localhost:8001/consumers/rover/acls \
+      --url {{ $apiUrl }}/consumers/rover/acls \
       --header 'Content-Type: application/json' \
       --data '{
       "group": "rover"
@@ -77,14 +79,15 @@ data:
     # setup plugin (jwt-keycloak)
     # variable [allowed_iss]
     curl --request POST \
-      --url http://localhost:8001/routes/admin-api/plugins \
+      --url {{ $apiUrl }}/routes/admin-api/plugins \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "jwt-keycloak",
       "config": {
-      "allowed_iss" : ["https://iris-hyp-dev-zone-azure.dev.dhei.telekom.de/auth/realms/default"],
+      "allowed_iss" : ["{{ .Values.adminApi.allowedIss }}"],
       "consumer_match" : true,
       "consumer_match_claim_custom_id" : true
       }
     }'
     {{- end -}}
+{{- end -}}
