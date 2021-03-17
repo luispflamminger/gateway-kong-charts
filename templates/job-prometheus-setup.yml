@@ -1,4 +1,4 @@
-{{- if eq .Values.prometheus.enabled true }}
+{{- if and (.Values.adminApi.enabled) (eq .Values.prometheus.enabled true) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
