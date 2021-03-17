@@ -128,12 +128,12 @@ false
 - name: kong-configuration
   configMap:
     name: {{ .Release.Name }}-kong-admin-api
+    defaultMode: 0555
 {{- end -}}
 
 {{- define "kong.configuration.volumeMounts" }}
 - name: kong-configuration
   mountPath: /tmp
-  defaultMode: 0555
 {{- end -}}
 
 {{- define "kong.migrations.volumes" }}
