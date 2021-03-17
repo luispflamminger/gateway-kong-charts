@@ -18,7 +18,8 @@ spec:
       - name: {{ .Release.Name }}-kong-admin-route
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
-        command: [ "/bin/sh", "-c", "tmp/configuration.sh" ]
+        command: [ "/bin/sh" ]
+        args: [ "-c", "/tmp/configuration.sh" ]
         volumeMounts:
           {{- include "kong.configuration.volumeMounts" $ | indent 8 }}
       restartPolicy: OnFailure
