@@ -8,6 +8,7 @@
   - Switch to Kong Community Edition 2.3.2
   - AdminApi ingress behaviour based on edition (CE or EE)
   - Updated Jumper to 1.3.1
+  - CE: Admin API protection via proxy
 
 ## 1.5.0
   - Updated Jumper to 1.3.0
