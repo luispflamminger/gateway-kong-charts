@@ -1,4 +1,4 @@
-{{- if eq .Values.kong_admin.enabled true }}
+{{- if and (.Values.adminApi.enabled) (eq (include "kong.isEnterprise" $ ) "true") (eq .Values.kong_admin.enabled true) }}
 apiVersion: batch/v1
 kind: Job
 metadata:

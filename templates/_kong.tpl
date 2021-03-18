@@ -104,6 +104,12 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.configuration" -}}
+{{- if and (eq .Values.adminApi.enabled true) ( or ((.Values.configuration)) (eq (include "kong.isEnterprise" $ ) "false") ) -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.isMigrationsBootstrap" -}}
 {{- if .Values.migrations -}}
 {{- if eq .Values.migrations "bootstrap" -}}
@@ -122,6 +128,18 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{- define "kong.configuration.volumes" }}
+- name: kong-configuration
+  configMap:
+    name: {{ .Release.Name }}-configuration
+    defaultMode: 0555
+{{- end -}}
+
+{{- define "kong.configuration.volumeMounts" }}
+- name: kong-configuration
+  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.migrations.volumes" }}

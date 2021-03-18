@@ -24,6 +24,10 @@ Place your license-JSON into at in the `enterprise` scope of the `values.yaml`. 
 
 No detailed configuration is necessary. PostgreSQL will be deployed together with StarGate. You should change the default passwords!
 
+### Routes, Services, etc. via job
+
+If you want to add routes, services, etc. you can set specific curl command to deploy you preferc configuration.
+
 ### External access
 
 StarGate can be accessed via created Ingress/Route. See the Parameters section for details.
@@ -43,6 +47,9 @@ By default, the ingress giving access to the Admin-API is enabled for Enterprise
 
 Be aware that exposing the Admin-API for Community Edition can be dangerous, as the API is not protected by any RBAC. Thus it can be accessed by anyone having access to the API url. \
 Therefore the Admin-API-Ingress is disabled. For Mor details see [External access](#External-access).
+
+By default, we protect the Admin API via a dedicated service and route together with the jwt-plugin. You need to add the used issuer.
+Be aware that if you set a configuration in the values.yaml, this Admin API setup will **not** be applied.
 
 ### SSL Verification
 
@@ -124,6 +131,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                  | `nil`                  |
 | `adminApi.access_log`                | Set the log target for access log                                                | `/dev/stdout`          |
 | `adminApi.ingress.annotations`       | Set the log target for error log                                                 | `/dev/stderr`          |
+| `adminApi.ingress.allowedIss`        | Set the Iris URL you want StarGate to use for Admin API athentication            | `https://changeme/auth/realms/default`|
 | `manager.enabled`                    | Create service for accessing Kong Manager                                        | `true`                 |
 | `manager.tls.enabled`                | Access Manager via https instead of http                                         | `false`                |
 | `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                              | `true`                 |
@@ -143,6 +151,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `proxy.ingress.annotations`          | Merges specific into global ingress annotations                                  | `ssl-passthrough`      |
 | `proxy.access_log`                   | Set the log target for access log                                                | `/dev/stdout`          |
 | `proxy.ingress.annotations`          | Set the log target for error log                                                 | `/dev/stderr`          |
+| `configuration`                      | Set a script to run after deployment for configuration of StarGate               | `default admin-api conf`|
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created     | `[]`                   |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates          | `false`                |
 | `sslVerifyDepth`                     | SSL Verification depth                                                           | `1`                    |

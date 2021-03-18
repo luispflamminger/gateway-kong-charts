@@ -1,4 +1,4 @@
-{{- if and .Values.zipkin.enabled ( not ( eq .Values.zipkin.collectorUrl "" )) }}
+{{- if and (.Values.adminApi.enabled) (.Values.zipkin.enabled) ( not ( eq .Values.zipkin.collectorUrl "" )) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
