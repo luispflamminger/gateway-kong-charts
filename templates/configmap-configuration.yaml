@@ -84,7 +84,7 @@ data:
       --data '{
       "name": "jwt-keycloak",
       "config": {
-      "allowed_iss" : ["{{ .Values.adminApi.allowedIss }}"],
+      "allowed_iss" : [{{ .Values.adminApi.allowedIss | default "https://changeme/auth/realms/default" | quote }}],
       "consumer_match" : true,
       "consumer_match_claim_custom_id" : true
       }
