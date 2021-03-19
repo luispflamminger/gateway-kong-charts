@@ -49,7 +49,6 @@ Be aware that exposing the Admin-API for Community Edition can be dangerous, as 
 Therefore the Admin-API-Ingress is disabled. For Mor details see [External access](#External-access).
 
 By default, we protect the Admin API via a dedicated service and route together with the jwt-plugin. You need to add the used issuer.
-Be aware that if you set a configuration in the values.yaml, this Admin API setup will **not** be applied.
 
 ### SSL Verification
 

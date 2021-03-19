@@ -19,13 +19,13 @@ data:
           "host": "localhost",
           "protocol": "http",
           "port": 8001,
-          "name": "admin-api"
+          "name": "{{ include "kong.adminApi.name" . }}"
     }'
 
     # 2
-    # create route (/admin-api) variable: hosts
+    # create route (/{{ include "kong.adminApi.name" . }}) variable: hosts
     curl --request POST \
-      --url {{ $apiUrl }}/services/admin-api/routes \
+      --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/routes \
       --header 'Content-Type: application/json' \
       --data '{
       "protocols": [
@@ -35,9 +35,9 @@ data:
       "hosts": [
         "{{ include "kong.proxy.host" . }}"
       ],
-      "name": "admin-api",
+      "name": "{{ include "kong.adminApi.name" . }}",
       "paths": [
-        "/admin-api"
+        "/{{ include "kong.adminApi.name" . }}"
       ]
     }'
 
@@ -52,10 +52,10 @@ data:
         }'
 
     # 4
-    # apply acl plugin to route (/admin-api) 
+    # apply acl plugin to route (/{{ include "kong.adminApi.name" . }}) 
     # and allow group (rover)
     curl --request POST \
-      --url {{ $apiUrl }}/routes/admin-api/plugins \
+      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "acl",
@@ -79,7 +79,7 @@ data:
     # setup plugin (jwt-keycloak)
     # variable [allowed_iss]
     curl --request POST \
-      --url {{ $apiUrl }}/routes/admin-api/plugins \
+      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "jwt-keycloak",
