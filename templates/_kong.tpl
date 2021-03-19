@@ -477,6 +477,18 @@ false
 {{- printf "%s-admin.%s" .Release.Name .Release.Namespace }}
 {{- end -}}
 
+{{- define "kong.adminApi.name" -}}
+admin-api
+{{- end -}}
+
+{{- define "kong.adminApi.ingress.path" -}}
+{{- if or (eq (include "kong.isEnterprise" $ ) "true") (hasKey .Values "configuration") -}}
+/
+{{- else -}}
+/{{ include "kong.adminApi.name" . }}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.adminApi.serviceUrl" -}}
 {{- $host := include "kong.adminApi.serviceHost" . -}}
 {{- if .Values.adminApi.tls.enabled }}
@@ -522,11 +534,7 @@ false
 {{- if hasKey .Values.adminApi.ingress "enabled" }}
 {{- printf "%s" (toString .Values.adminApi.ingress.enabled) -}}
 {{- else -}}
-{{- if eq (include "kong.isEnterprise" . ) "true" }}
 {{- printf "true" -}}
-{{- else -}}
-{{- printf "false" -}}
-{{- end -}}
 {{- end -}}
 {{- end -}}
 

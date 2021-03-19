@@ -11,13 +11,22 @@ spec:
   - host: {{ include "kong.adminApi.host" . }}
     http:
       paths:
-        - path: /
+        - path: {{ include "kong.adminApi.ingress.path" . }}
           backend:
+{{- if (eq (include "kong.isEnterprise" $ ) "true") }}
             serviceName: {{ .Release.Name }}-admin
 {{- if .Values.adminApi.tls.enabled }}
             servicePort: admin-ssl
 {{- else }}
             servicePort: admin
+{{- end }}
+{{- else }}
+            serviceName: {{ .Release.Name }}-proxy
+{{- if .Values.proxy.tls.enabled }}
+            servicePort: proxy-ssl
+{{- else }}
+            servicePort: proxy
+{{- end }}
 {{- end }}
   tls:
   - hosts:
