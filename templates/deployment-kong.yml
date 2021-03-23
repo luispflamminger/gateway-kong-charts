@@ -35,9 +35,7 @@ spec:
           {{- range .Values.plugins.enabled }}
           {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
           {{- end }}
-          {{- if eq .Values.jwtKeycloak.enabled true }}
           luarocks install --local ~/plugins/kong-plugin-jwt-keycloak*
-          {{- end }}
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:

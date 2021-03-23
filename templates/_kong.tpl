@@ -459,11 +459,8 @@ false
 {{- range .Values.plugins.enabled -}}
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
-{{- if eq .Values.jwtKeycloak.enabled true -}}
-{{ $enabledPlugins = printf "%s,%s" $enabledPlugins "jwtKeycloak" }}
-{{- end }}
 - name: KONG_PLUGINS
-  value: bundled{{ $enabledPlugins }}
+  value: bundled,jwtKeycloak{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
 {{- end -}}
