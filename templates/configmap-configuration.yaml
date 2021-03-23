@@ -78,20 +78,21 @@ data:
       "group": "rover"
     }'
 
-
+{{- if eq .Values.jwtKeycloak.enabled true }}
     # 6
     # setup plugin (jwt-keycloak)
     # variable [allowed_iss]
-    curl --request POST \
-      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins \
+    curl --request PUT \
+      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.jwtKeycloak.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "jwt-keycloak",
       "config": {
-      "allowed_iss" : [{{ .Values.adminApi.allowedIss | default "https://changeme/auth/realms/default" | quote }}],
+      "allowed_iss" : [{{- include "kong.jwtKeycloak.allowedIss" . -}}],
       "consumer_match" : true,
       "consumer_match_claim_custom_id" : true
       }
     }'
+{{- end -}}
     {{- end -}}
 {{- end -}}

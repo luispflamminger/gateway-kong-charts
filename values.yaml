@@ -78,7 +78,6 @@ adminApi:
     annotations: {}
   #access_log: /dev/stdout
   #error_log: /dev/stderr
-  #allowedIss: https://changeme/auth/realms/default
 
 # Configure Kong Manager
 manager:
@@ -201,6 +200,13 @@ prometheus:
     #interval: "15s"
     #scrapeTimeout: "3s"
     #honorLabels: ""
+    
+jwtKeycloak:
+  enabled: true
+  setupJob:
+    pluginId: 24f1d5a5-4d31-4abc-b539-bed6d3cd7f0a
+    allowedIss: 
+      - https://changeme/auth/realms/default
 
 kong_admin:
   enabled: true
@@ -210,8 +216,7 @@ kong_admin:
   #  activeDeadlineSeconds: 3600
 
 plugins:
-  enabled:
-  - jwt-keycloak
+  enabled: []
   initContainer:
     #image: 
       #repository: mtr.external.otc.telekomcloud.com

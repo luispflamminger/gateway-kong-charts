@@ -48,7 +48,7 @@ By default, the ingress giving access to the Admin-API is enabled for Enterprise
 Be aware that exposing the Admin-API for Community Edition can be dangerous, as the API is not protected by any RBAC. Thus it can be accessed by anyone having access to the API url. \
 Therefore the Admin-API-Ingress is disabled. For Mor details see [External access](#External-access).
 
-By default, we protect the Admin API via a dedicated service and route together with the jwt-plugin. You need to add the used issuer.
+By default, we protect the Admin API via a dedicated service and route together with the jwt-keycloak. You need to add the used issuer.
 
 ### SSL Verification
 
@@ -130,7 +130,6 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                  | `nil`                  |
 | `adminApi.access_log`                | Set the log target for access log                                                | `/dev/stdout`          |
 | `adminApi.ingress.annotations`       | Set the log target for error log                                                 | `/dev/stderr`          |
-| `adminApi.ingress.allowedIss`        | Set the Iris URL you want StarGate to use for Admin API athentication            | `https://changeme/auth/realms/default`|
 | `manager.enabled`                    | Create service for accessing Kong Manager                                        | `true`                 |
 | `manager.tls.enabled`                | Access Manager via https instead of http                                         | `false`                |
 | `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                              | `true`                 |
@@ -177,6 +176,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `prometheus.serviceMonitor.interval`       | Interval at which metrics should be scraped                                             | `15s`            |
 | `prometheus.serviceMonitor.scrapeTimeout`  | Timeout after which the scrape of prometheus is ended                                   | `3s`             |
 | `prometheus.serviceMonitor.honorLabels`    | HonorLabels chooses the metric’s labels on collisions with target labels                | `true`           |
+| `jwtKeycloak.enabled`                  | Activate or deactivate the jwt-keycloak plugin                                     | `true`|
+| `jwtKeycloak.setupJob`                 | Set required values for the provieded configuration. Can be ignored for costum config | |
+| `jwtKeycloak.setupJob.pluginId`        | If you want to alter the already configured plugin, set the pluginId                  | `24f1d5a5-4d31-4abc-b539-bed6d3cd7f0a`|
+| `jwtKeycloak.setupJob.allowedIss`      | Set the Iris URL you want StarGate to use for Admin API athentication                 | `https://changeme/auth/realms/default`|
 | `postgres.enabled`                   | Enable Kong to run with PostrgeSQL as database                                 | `true`           |
 | `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |

@@ -459,10 +459,21 @@ false
 {{- range .Values.plugins.enabled -}}
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
+{{- if eq .Values.jwtKeycloak.enabled true -}}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins "jwtKeycloak" }}
+{{- end }}
 - name: KONG_PLUGINS
   value: bundled{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
+{{- end -}}
+
+{{- define "kong.jwtKeycloak.allowedIss" -}}
+{{ $allowedIss := "" }}
+{{- range .Values.jwtKeycloak.setupJob.allowedIss -}}
+{{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
+{{- end }}
+{{- print (trimPrefix "," $allowedIss) }}
 {{- end -}}
 
 {{- define "kong.adminApi.host" -}}
