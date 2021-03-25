@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.6.1
+  - Fixed configuration overwrite
+
 ## 1.6.0
   - Added TargetLabels to ServiceMonitor 
   - Added seperate jobs for bootrapping and upgrade
