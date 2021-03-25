@@ -24,15 +24,31 @@ Place your license-JSON into at in the `enterprise` scope of the `values.yaml`. 
 
 No detailed configuration is necessary. PostgreSQL will be deployed together with StarGate. You should change the default passwords!
 
+### Routes, Services, etc. via job
+
+If you want to add routes, services, etc. you can set specific curl command to deploy you preferc configuration.
+
 ### External access
 
 StarGate can be accessed via created Ingress/Route. See the Parameters section for details.
 By default, URLs will have the format `<Release.Name>[-<Suffix>]-<.Release.Namespace>.<.Values.global.domain>`.
 Setting dedicated hostnames for an ingress will overwrite the created URL. The value set in `hostname` needs to be fully qualified, as `.Values.global.domain` will not be added automatically!
 
+The Admin-Ingress' default behaviour is determined by the used edition (Community or Enterprise). If you set a license, Admin-API-Ingress will activated if not set otherwise.
+If no license is given, thr Admin-API will not be exposed by Ingress and will only be accessable by service-url. This can also be overwritten.
+
 ## Security
 
-By default, the ingress giving access to the admin API is enabled. Access is secured by role based access control (RBAC).
+### Enterprise Edition
+
+By default, the ingress giving access to the Admin-API is enabled for Enterprise Edition. Access is secured by role based access control (RBAC).
+
+### Community Edition
+
+Be aware that exposing the Admin-API for Community Edition can be dangerous, as the API is not protected by any RBAC. Thus it can be accessed by anyone having access to the API url. \
+Therefore the Admin-API-Ingress is disabled. For Mor details see [External access](#External-access).
+
+By default, we protect the Admin API via a dedicated service and route together with the jwt-keycloak. You need to add the used issuer.
 
 ### SSL Verification
 
@@ -73,55 +89,75 @@ kubectl create secret tls my-https-secret --key=key.pem --cert=cert.pem
 oc create secret generic my-https-secret-2 --from-file=tls.key=key.pem  --from-file=tls.crt=cert.pem
 ```
 
+## Bootstrap and Upgrade
+Setup and some upgrades require specific migration steps to be run before and after changing the Kong version via a newer image or starting it for the first time.
+There the chart provides specialised jobs for each of those steps.
+
+### Bootstrap
+Bootstrapping is required when Kong starts for the first time and needs to setup its database. This task is handled by the job `job-kong-bootstrap.yml`.
+It will be run if "`migrations: bootstrap`" is set in the `values.yaml`. This can be uncommented if no further execution is wished, but this is also prohibited by keeping the job itself.
+Running the job again will do no harm in any way, as the executed bootstrap recognises the database as already initialised.
+
+
+### Upgrade
+Upgrading to a newer version may require running migration steps (e.g. database changes). To run those jobs set "`migrations: upgrade`" in the `values.yaml`.
+As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-upgrade-migrations.yml` will be run after successfull deployments to complete the upgrade.
+
+**Warning:** Uncomment "`migrations: upgrade`" if you deploy again after a successfull deployment or set it to "`migrations: bootstrap`". Otherwise migrations will be executed again.
+
+**Note:** Those jobs are only ment to be used for upgrading in the context of either Enterprise OR Community Edition.
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.
 
-| Parameter                            | Description                                                                    | Default               |
-|--------------------------------------|--------------------------------------------------------------------------------|-----------------------|
-| `global`                             | Common values for all TIF-Helm-Charts                                          |                       |
-| `global.platform`                    | Determines where the chart will be deployed                                    | `kubernetes`          |
-| `global.storageclass`                | Select storage class for the PVCs depending on your platform                   | `gp2`                 |
-| `global.domain`                      | URL for cluster external access set in Ingress/Route                           | `nil`                 |
-| `global.labels`                      | Define global labels                                                           | `tif.telekom.de/group`|
-| `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones      | `nil`                 |
-| `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                 | `nil`                 |
-| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                   | `true`                |
-| `rbac.kongAdminPassword`             | Password for Kong Administrator                                              | `changeme`            |
-| `adminApi.enabled`                   | Create service for accessing Kong Admin API                                    | `true`                |
-| `adminApi.tls.enabled`               | Access Admin API via https instead of http                                     | `false`               |
-| `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API                          | `true`                |
-| `adminApi.ingress.hostname`          | Set dedicated hostname for Admin API ingress (or route), overwrites global URL | `nil`                 |
-| `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                | `nil`                 |
-| `adminApi.access_log`                | Set the log target for access log                                              | `/dev/stdout`         |
-| `adminApi.ingress.annotations`       | Set the log target for error log                                               | `/dev/stderr`         |
-| `manager.enabled`                    | Create service for accessing Kong Manager                                      | `true`                |
-| `manager.tls.enabled`                | Access Manager via https instead of http                                       | `false`               |
-| `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                            | `true`                |
-| `manager.ingress.hostname`           | Set dedicated hostname Manager ingress (or route), overwrites global URL       | `nil`                 |
-| `manager.ingress.annotations`        | Merges specific into global ingress annotations                                | `nil`                 |
-| `manager.access_log`                 | Set the log target for access log                                              | `/dev/stdout`         |
-| `manager.ingress.annotations`        | Set the log target for error log                                               | `/dev/stderr`         |
-| `portal.enabled`                     | Create service for accessing the Portal                                        | `false`               |
-| `portal.tls.enabled`                 | Access the Portal via https instead of http                                    | `false`               |
-| `portal.ingress.enabled`             | Create ingress (or route for OpenShift) for the Portal                         | `true`                |
-| `portal.ingress.hostname`            | Extend global ingress annotations                                              | `nil`                 |
-| `portal.ingress.annotations`         | Merges specific into global ingress annotations                                | `nil`                 |
-| `portal.access_log`                  | Set the log target for access log                                              | `/dev/stdout`         |
-| `portal.ingress.annotations`         | Set the log target for error log                                               | `/dev/stderr`         |
-| `proxy.ingress.enabled`              | Create ingress (or route for OpenShift) for proxy                              | `true`                |
-| `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL     | `nil`                 |
-| `proxy.ingress.annotations`          | Merges specific into global ingress annotations                                | `ssl-passthrough`     |
-| `proxy.access_log`                   | Set the log target for access log                                              | `/dev/stdout`         |
-| `proxy.ingress.annotations`          | Set the log target for error log                                               | `/dev/stderr`         |
-| `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created   | `[]`                  |
-| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates        | `false`               |
-| `sslVerifyDepth`                     | SSL Verification depth                                                         | `1`                   |
-| `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                               | `false`               |
-| `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory         | `nil`                 |
-| `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`             |
-| `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`              |
-| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway` |
+| Parameter                            | Description                                                                      | Default                |
+|--------------------------------------|----------------------------------------------------------------------------------|------------------------|
+| `global`                             | Common values for all TIF-Helm-Charts                                            |                        |
+| `global.platform`                    | Determines where the chart will be deployed                                      | `kubernetes`           |
+| `global.storageclass`                | Select storage class for the PVCs depending on your platform                     | `gp2`                  |
+| `global.domain`                      | URL for cluster external access set in Ingress/Route                             | `nil`                  |
+| `global.labels`                      | Define global labels                                                             | `tif.telekom.de/group` |
+| `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones        | `nil`                  |
+| `migrations`                         | Determine the migrations behaviuor for a new instance or upgrade                 | `bootstrap`            |
+| `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                   | `nil`                  |
+| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                       | `true`                 |
+| `rbac.kongAdminPassword`             | Password for Kong Administrator                                                  | `changeme`             |
+| `adminApi.enabled`                   | Create service for accessing Kong Admin API                                      | `true`                 |
+| `adminApi.tls.enabled`               | Access Admin API via https instead of http                                       | `false`                |
+| `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API. Default depends on Edition| CE: `false`<br/>EE: `true`|
+| `adminApi.ingress.hostname`          | Set dedicated hostname for Admin API ingress (or route), overwrites global URL   | `nil`                  |
+| `adminApi.ingress.annotations`       | Merges specific into global ingress annotations                                  | `nil`                  |
+| `adminApi.access_log`                | Set the log target for access log                                                | `/dev/stdout`          |
+| `adminApi.ingress.annotations`       | Set the log target for error log                                                 | `/dev/stderr`          |
+| `manager.enabled`                    | Create service for accessing Kong Manager                                        | `true`                 |
+| `manager.tls.enabled`                | Access Manager via https instead of http                                         | `false`                |
+| `manager.ingress.enabled`            | Create ingress (or route for OpenShift) for Manager                              | `true`                 |
+| `manager.ingress.hostname`           | Set dedicated hostname Manager ingress (or route), overwrites global URL         | `nil`                  |
+| `manager.ingress.annotations`        | Merges specific into global ingress annotations                                  | `nil`                  |
+| `manager.access_log`                 | Set the log target for access log                                                | `/dev/stdout`          |
+| `manager.ingress.annotations`        | Set the log target for error log                                                 | `/dev/stderr`          |
+| `portal.enabled`                     | Create service for accessing the Portal                                          | `false`                |
+| `portal.tls.enabled`                 | Access the Portal via https instead of http                                      | `false`                |
+| `portal.ingress.enabled`             | Create ingress (or route for OpenShift) for the Portal                           | `true`                 |
+| `portal.ingress.hostname`            | Extend global ingress annotations                                                | `nil`                  |
+| `portal.ingress.annotations`         | Merges specific into global ingress annotations                                  | `nil`                  |
+| `portal.access_log`                  | Set the log target for access log                                                | `/dev/stdout`          |
+| `portal.ingress.annotations`         | Set the log target for error log                                                 | `/dev/stderr`          |
+| `proxy.ingress.enabled`              | Create ingress (or route for OpenShift) for proxy                                | `true`                 |
+| `proxy.ingress.hostname`             | Set dedicated hostname for proxy ingress (or route), overwrites global URL       | `nil`                  |
+| `proxy.ingress.annotations`          | Merges specific into global ingress annotations                                  | `ssl-passthrough`      |
+| `proxy.access_log`                   | Set the log target for access log                                                | `/dev/stdout`          |
+| `proxy.ingress.annotations`          | Set the log target for error log                                                 | `/dev/stderr`          |
+| `configuration`                      | Set a script to run after deployment for configuration of StarGate               | `default admin-api conf`|
+| `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created     | `[]`                   |
+| `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates          | `false`                |
+| `sslVerifyDepth`                     | SSL Verification depth                                                           | `1`                    |
+| `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                                 | `false`                |
+| `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory           | `nil`                  |
+| `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`              |
+| `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`               |
+| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway`  |
 | `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
 | `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
 | `zipkin.luaSslTrustedCertificate`    | CA certificate for the Zipkin-Collector-URL                                    | `nil`            |
@@ -140,6 +176,10 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `prometheus.serviceMonitor.interval`       | Interval at which metrics should be scraped                                             | `15s`            |
 | `prometheus.serviceMonitor.scrapeTimeout`  | Timeout after which the scrape of prometheus is ended                                   | `3s`             |
 | `prometheus.serviceMonitor.honorLabels`    | HonorLabels chooses the metric’s labels on collisions with target labels                | `true`           |
+| `jwtKeycloak.enabled`                  | Activate or deactivate the jwt-keycloak plugin                                     | `true`|
+| `jwtKeycloak.setupJob`                 | Set required values for the provieded configuration. Can be ignored for costum config | |
+| `jwtKeycloak.setupJob.pluginId`        | If you want to alter the already configured plugin, set the pluginId                  | `24f1d5a5-4d31-4abc-b539-bed6d3cd7f0a`|
+| `jwtKeycloak.setupJob.allowedIss`      | Set the Iris URL you want StarGate to use for Admin API athentication                 | `https://changeme/auth/realms/default`|
 | `postgres.enabled`                   | Enable Kong to run with PostrgeSQL as database                                 | `true`           |
 | `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |

@@ -16,7 +16,7 @@ global:
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
   # no pull secret will be deployed
   # If you use Sapling for deployment this will be set automatically
-  imagePullSecrets: []
+  imagePullSecrets: 
   #- name: mtr-tif-public
   #  registry: https://mtr.external.otc.telekomcloud.com
   #  username: changeme
@@ -38,17 +38,20 @@ global:
 #
 #templateChangeTriggers:
 #- my-custom-configmap.yaml
-#- my-custom-kong-plugin.yaml
 templateChangeTriggers: []
 
 # You can force using a specific image here:
 #image: 
   #repository: mtr.external.otc.telekomcloud.com
   #organization: tif-public
-  #name: tif-kong-ee
-  #tag: 1.0.0
+  #name: kong
+  #tag: 2.3.2-alpine-ce
 # Or use the flattened string form:
-#image: mtr.external.otc.telekomcloud.com/tif-public/tif-kong-ee:1.0.0
+#image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.3.2-alpine-ce
+
+# Determine the migrations behaviour (bootstrap or upgrade)
+# Comment out if none of the options are needed
+migrations: bootstrap
 
 enterprise:
   license: ""
@@ -60,23 +63,6 @@ rbac:
   enabled: true
   kongAdminPassword: "changeme"
 
-# You can add custom plugins here:
-# Note:
-# The plugins must be deployed as configmaps and correctly referenced here
-# You can either deploy the configmaps seperaty in a previous process
-# or you place the configmaps into the templates directory of this Helm chart
-#
-# Note: If your configMap name will not change with future updates of your Kong plugin (e.g.: no checksum in name)
-# you can list the configMap yaml file in the templateChangeTriggers list above
-# to tigger a re-deployment of Kong
-#
-#customPlugins:
-#- name: custom1
-#  configMap: kong-plugin-custom1-5e67ca89
-#- name: custom2
-#  configMap: kong-plugin-custom2-6a2bc71b
-customPlugins: []
-
 # Enable Admin API and whether it is http or https
 # Warning: 
 # Enabled Admin API with disabled RBAC can be dangerous
@@ -85,6 +71,7 @@ adminApi:
   tls:
     enabled: false
 # Activate Admin API ingress and set a dedicated hostname
+# For EE (license) this is default true, for CE (no license) this is default false
   ingress:
     enabled: true
     #hostname: ""
@@ -130,6 +117,9 @@ proxy:
     annotations: {}
   #access_log: /dev/stdout
   #error_log: /dev/stderr
+
+#configuration: |
+  #Place your curl commands here to configure via Admin-API on deploy time
 
 # values used by nginx directives
 sslVerify: false
@@ -210,6 +200,13 @@ prometheus:
     #interval: "15s"
     #scrapeTimeout: "3s"
     #honorLabels: ""
+    
+jwtKeycloak:
+  enabled: true
+  setupJob:
+    pluginId: b864d58b-7183-4889-8b32-0b92d6c4d513
+    allowedIss: 
+      - https://changeme/auth/realms/default
 
 kong_admin:
   enabled: true
@@ -217,6 +214,19 @@ kong_admin:
   setupJob: {}
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
+
+plugins:
+  enabled: []
+  initContainer:
+    #image: 
+      #repository: mtr.external.otc.telekomcloud.com
+      #organization: tif-public
+      #name: kong-plugins
+      #tag: 1.0.0
+    # Or use the flattened string form:
+    #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:1.0.0
+  
+    securityContext: {}
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication
@@ -226,9 +236,10 @@ jumper:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: jumper
-    #tag: 1.3.0
+    #tag: 1.3.5
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.3.0
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.3.5
+  issuerUrl: https://localhost:443
 
   securityContext: {}
 
@@ -239,8 +250,6 @@ jumper:
     requests:
       cpu: 50m
       memory: 200Mi
-
-  issuerUrl: https://localhost:443
 
 postgres:
   # You can force using a specific image here:

@@ -2,6 +2,15 @@
 
 [[_TOC_]]
 
+## 1.6.0
+  - Added TargetLabels to ServiceMonitor 
+  - Added seperate jobs for bootrapping and upgrade
+  - Switch to Kong Community Edition 2.3.2
+  - AdminApi ingress behaviour based on edition (CE or EE)
+  - Updated Jumper to 1.3.5
+  - CE: Admin API protection via proxy
+  - Admin API backend and path depending on config and edition
+
 ## 1.5.0
   - Updated Jumper to 1.3.0
   - Added JUMPER_ISSUER_URL env var

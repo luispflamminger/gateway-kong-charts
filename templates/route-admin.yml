@@ -1,5 +1,5 @@
 {{- if eq .Values.global.platform "openshift" -}}
-{{- if and .Values.adminApi.enabled .Values.adminApi.ingress.enabled }}
+{{- if eq (include "kong.adminApi.ingress.enabled" $) "true" }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:

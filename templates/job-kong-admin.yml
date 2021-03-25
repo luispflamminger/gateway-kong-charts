@@ -1,4 +1,4 @@
-{{- if eq .Values.kong_admin.enabled true }}
+{{- if and (.Values.adminApi.enabled) (eq (include "kong.isEnterprise" $ ) "true") (eq .Values.kong_admin.enabled true) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}

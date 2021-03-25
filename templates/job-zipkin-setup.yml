@@ -1,4 +1,4 @@
-{{- if and .Values.zipkin.enabled ( not ( eq .Values.zipkin.collectorUrl "" )) }}
+{{- if and (.Values.adminApi.enabled) (.Values.zipkin.enabled) ( not ( eq .Values.zipkin.collectorUrl "" )) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default 3600 }}
@@ -29,7 +29,7 @@ spec:
           - /bin/bash
           - -c
           - |- 
-            echo "Enabling Kong plugin via POST {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+            echo "Enabling Kong plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
             HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
