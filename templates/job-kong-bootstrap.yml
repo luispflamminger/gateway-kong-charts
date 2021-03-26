@@ -7,10 +7,10 @@ metadata:
 spec:
   backoffLimit: {{ .Values.kong_admin.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.kong_admin.setupJob.activeDeadlineSeconds | default 3600 }}
+  ttlSecondsAfterFinished: 60
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      ttlSecondsAfterFinished: 60
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
