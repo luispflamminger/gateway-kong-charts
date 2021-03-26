@@ -10,6 +10,7 @@ spec:
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
+      ttlSecondsAfterFinished: 60
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
