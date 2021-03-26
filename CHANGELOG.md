@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## Changes
+  - Auto job deletion for non-hook jobs
+
 ## 1.6.1
   - Fixed configuration overwrite
 
