@@ -19,7 +19,6 @@ data:
           "host": "localhost",
           "protocol": "http",
           "port": 8001,
-          "tags": ["ei__telekom__de--tracing__disabled---true"],
           "name": "{{ include "kong.adminApi.name" . }}"
     }'
 
