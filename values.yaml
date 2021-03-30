@@ -168,6 +168,8 @@ zipkin:
   #sampleRatio: 0.001
   #includeCredential: "true"
   #defaultServiceName: "kong-apigateway"
+  ignoreServices:
+    - admin-api
   # Set job retries and maximum runtime (default values preset)
   setupJob:
     pluginId: 88c38a85-2571-4e0c-b2f5-62b13fb457a9
@@ -200,6 +202,10 @@ prometheus:
     #interval: "15s"
     #scrapeTimeout: "3s"
     #honorLabels: ""
+
+acl:
+  setupJob:
+    pluginId: bc823d55-83b5-4184-b03f-ce63cd3b75c7
     
 jwtKeycloak:
   enabled: true
