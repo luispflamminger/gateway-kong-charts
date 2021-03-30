@@ -170,7 +170,7 @@ zipkin:
   #overwriteServiceName: "stargate"
   # Set job retries and maximum runtime (default values preset)
   setupJob:
-    pluginId: 420f4a55-d035-4e7b-b491-f2f53f4e38d1 
+    pluginId: e8ff1211-816f-4d93-9011-a4b194586073
     #backoffLimit: 15
     #activeDeadlineSeconds: 3600
     #luaSslTrustedCertificate: |
