@@ -32,8 +32,8 @@ spec:
         - /bin/sh
         - -c
         - |-
-          luarocks install --local /usr/local/kong/plugins/kong-plugin-jwt-keycloak*
-          luarocks install --local /usr/local/kong/plugins/kong-plugin-eni-zipkin*
+          luarocks install --local --only-server=/usr/local/kong/plugins kong-plugin-jwt-keycloak
+          luarocks install --local --only-server=/usr/local/kong/plugins kong-plugin-eni-zipkin
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
