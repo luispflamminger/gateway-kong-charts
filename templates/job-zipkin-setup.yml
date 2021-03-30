@@ -43,9 +43,6 @@ spec:
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
               --data "config.overwrite_service_name={{ .Values.zipkin.overwriteServiceName | default .Release.Name }}"
-              {{- range .Values.zipkin.ignoreServices }}
-              --data "config.ignore_services[]={{ . }}"
-              {{- end }}
             else
                 echo "Kong Admin-API unreachable"
                 exit 1
