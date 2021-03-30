@@ -32,13 +32,7 @@ spec:
         - /bin/sh
         - -c
         - |-
-          {{- range .Values.plugins.enabled }}
-          {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
-          {{- end }}
-          luarocks install --local ~/plugins/lua-cjson*
-          luarocks install --local ~/plugins/lua-resty-http*
-          luarocks install --local ~/plugins/kong-plugin-jwt-keycloak*
-          luarocks install --local ~/plugins/kong-plugin-eni-zipkin*
+          cp -a ~/plugins/. /home/kong/.luarocks/
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
