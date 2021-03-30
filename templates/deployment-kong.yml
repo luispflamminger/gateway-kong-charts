@@ -36,6 +36,7 @@ spec:
           {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
           {{- end }}
           luarocks install --local ~/plugins/kong-plugin-jwt-keycloak*
+          luarocks install --local ~/plugins/kong-plugin-eni-zipkin*
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
