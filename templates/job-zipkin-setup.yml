@@ -38,11 +38,11 @@ spec:
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
               {{- end }}
               -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
-              --data "name=zipkin" \
+              --data "name=eni-zipkin" \
               --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
               --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
               --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
-              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
+              --data "config.overwrite_service_name={{ .Values.zipkin.overwriteServiceName | default .Release.Name }}"
               {{- range .Values.zipkin.ignoreServices }}
               --data "config.ignore_services[]={{ . }}"
               {{- end }}
