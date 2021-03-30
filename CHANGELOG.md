@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.7.1
+  - Removed: Allow dedicated ignoreServices for our own Zipkin plugin
+
 ## 1.7.0
   - Auto job deletion for non-hook jobs
   - Allow dedicated ignoreServices for our own Zipkin plugin
