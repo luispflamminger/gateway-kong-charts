@@ -35,8 +35,8 @@ spec:
           {{- range .Values.plugins.enabled }}
           {{ printf "luarocks install --local ~/plugins/kong-plugin-%s*" . }}
           {{- end }}
-          luarocks install --local lua-cjson
-          luarocks install --local lua-resty-http
+          luarocks install --local ~/plugins/lua-cjson*
+          luarocks install --local ~/plugins/lua-resty-http*
           luarocks install --local ~/plugins/kong-plugin-jwt-keycloak*
           luarocks install --local ~/plugins/kong-plugin-eni-zipkin*
         volumeMounts:
