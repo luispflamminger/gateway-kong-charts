@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.8.0
+  - Using eni-zipkin plugin instead of zipkin
+
 ## 1.7.1
   - Removed: Allow dedicated ignoreServices for our own Zipkin plugin
 
