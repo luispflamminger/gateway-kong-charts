@@ -167,7 +167,7 @@ zipkin:
   collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
   #sampleRatio: 0.001
   #includeCredential: "true"
-  #overwriteServiceName: "stargate"
+  #defaultServiceName: "stargate"
   # Set job retries and maximum runtime (default values preset)
   setupJob:
     pluginId: e8ff1211-816f-4d93-9011-a4b194586073

@@ -157,7 +157,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory           | `nil`                  |
 | `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`              |
 | `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`               |
-| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway`  |
+| `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `stargate`  |
 | `zipkin.ignoreServices`              | Deny Zipkin of creating traces for certain services                            | `admin-api`  |
 | `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
 | `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
