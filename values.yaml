@@ -167,10 +167,10 @@ zipkin:
   collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
   #sampleRatio: 0.001
   #includeCredential: "true"
-  #defaultServiceName: "kong-apigateway"
+  #defaultServiceName: "stargate"
   # Set job retries and maximum runtime (default values preset)
   setupJob:
-    pluginId: 88c38a85-2571-4e0c-b2f5-62b13fb457a9
+    pluginId: e8ff1211-816f-4d93-9011-a4b194586073
     #backoffLimit: 15
     #activeDeadlineSeconds: 3600
     #luaSslTrustedCertificate: |
