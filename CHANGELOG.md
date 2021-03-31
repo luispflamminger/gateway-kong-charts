@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.8.1
+  - Security context related fixes for CaaS compatibility 
+
 ## 1.8.0
   - Using eni-zipkin plugin instead of zipkin
 
