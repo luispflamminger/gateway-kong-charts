@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## Changes
+## 1.8.0
   - Using eni-zipkin plugin instead of zipkin
 
 ## 1.7.1
