@@ -4,6 +4,9 @@
 
 [[_TOC_]]
 
+## TL;DR
+Not much to read, read everything!
+
 ## Requirements
 
 ### License
@@ -107,6 +110,28 @@ As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-up
 
 **Note:** Those jobs are only ment to be used for upgrading in the context of either Enterprise OR Community Edition.
 
+## Upgrade Advice
+The following section contains special advice for dedicated updates and maybe necessary steps to be taken if updating from a certain version to another.
+Although updates in minor versions, whilst keeping the same major verison, do not contain breaking changes, implications may occour.
+
+### From 1.5.x and lower to 1.6.x
+With introduction of Kong CE, a dedicated Admin-API handling has been introduced to proted the Admin-API. This required changes to the ingress of the Admin-API.
+Those changes are only reflected in the ```ingress-admin.yml``` and not in the ```route-admin.yml```. Using Kong CE will work, but deploying
+the Admin-API-Route will provide unsecured access to the Admin-API.
+
+### From 1.7.x and lower to 1.8.x and up
+The bundled Zipkin-plugin has been replaced by the ENI-Zipkin pluging. Behaviour and configuration differ slightly to the used one.
+To avoid complications, we strongly recommend removing the existing Zipkin-Plugin before upgrading. This can be done via a DELETE call on the Admin-API (Token required).
+
+Lookup all plugins and find the Zipkin-Plugin-ID:
+```
+via GET on https://admin-api-url.me/plugins
+```
+Deleting the existing plugin:
+```
+via DELETE on https://admin-api-url.me/plugins/<zipkinPluginId>
+```
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.
@@ -153,7 +178,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created     | `[]`                   |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates          | `false`                |
 | `sslVerifyDepth`                     | SSL Verification depth                                                           | `1`                    |
-| `zipkin.enabled`                     | Enable tracing via Zipkin-Plugin                                                 | `false`                |
+| `zipkin.enabled`                     | Enable tracing via ENI-Zipkin-Plugin                                             | `false`                |
 | `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory           | `nil`                  |
 | `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`              |
 | `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`               |
