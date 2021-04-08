@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 0.0.0
+  - Kong-plugins 1.2.0
+  - Corrected acl plugin 
+
 ## 1.8.1
   - Security context related fixes for CaaS compatibility 
 
