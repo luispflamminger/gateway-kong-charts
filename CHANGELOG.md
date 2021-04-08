@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.8.2
+  - Corrected acl plugin
+
 ## 1.8.1
   - Security context related fixes for CaaS compatibility 
 
