@@ -59,7 +59,7 @@ data:
     # apply acl plugin to route (/{{ include "kong.adminApi.name" . }}) 
     # and allow group (rover)
     curl --request PUT \
-      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/{{ .Values.acl.setupJob.pluginId }} \
+      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.acl.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
       --data '{
       "name": "acl",
