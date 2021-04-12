@@ -313,6 +313,8 @@ false
   value: '{{ .Values.postgres.user }}'
 - name: KONG_PG_DATABASE
   value: '{{ .Values.postgres.database }}'
+- name: KONG_PG_SCHEMA
+  value: '{{ .Values.postgres.schema }}'
 {{- if eq .Values.postgres.externalDatabase.enabled true }}
 {{- if .Values.postgres.externalDatabase.ssl }}
 - name: KONG_PG_SSL
