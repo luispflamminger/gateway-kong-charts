@@ -33,6 +33,7 @@ spec:
   - tardis.telekom.de/subproduct
   - tardis.telekom.de/namespace
   - tardis.telekom.de/team
+  - tardis.telekom.de/environment
   - app
   - type
   - routeId
