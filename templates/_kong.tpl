@@ -313,6 +313,8 @@ false
   value: '{{ .Values.postgres.user }}'
 - name: KONG_PG_DATABASE
   value: '{{ .Values.postgres.database }}'
+- name: KONG_PG_SCHEMA
+  value: '{{ .Values.postgres.schema }}'
 {{- if eq .Values.postgres.externalDatabase.enabled true }}
 {{- if .Values.postgres.externalDatabase.ssl }}
 - name: KONG_PG_SSL
@@ -349,6 +351,8 @@ false
   value: '{{ .Values.postgres.user }}'
 - name: KONG_PG_DATABASE
   value: '{{ .Values.postgres.database }}'
+- name: KONG_PG_SCHEMA
+  value: '{{ .Values.postgres.schema }}'
 - name: KONG_PROXY_ACCESS_LOG
   value: {{ .Values.proxy.access_log | default "/dev/stdout" | quote }}
 - name: KONG_PROXY_ERROR_LOG

@@ -2,6 +2,10 @@
 
 [[_TOC_]]
 
+## 1.10.0
+  - Added environment label for service monitor
+  - Allow database schema configuration via KONG_PG_SCHEMA
+
 ## 1.9.0
   - Kong-plugins 1.2.0
 

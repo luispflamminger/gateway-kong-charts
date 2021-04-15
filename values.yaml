@@ -279,6 +279,7 @@ postgres:
   #host: 'some-external-postgresql-database.example.com'
   port: 5432
   database: kong
+  schema: public
   user: kong
   password: changeme
   
