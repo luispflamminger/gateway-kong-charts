@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 0.0.0
+  - Allow database schema configuration via KONG_PG_SCHEMA 
+
 ## 1.9.0
   - Kong-plugins 1.2.0
 
