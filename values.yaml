@@ -255,6 +255,27 @@ jumper:
       cpu: 50m
       memory: 200Mi
 
+issuerService:
+  enabled: true
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: issuer-service
+    #tag: 1.0.0
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.0.0
+  baseUrl: https://localhost:443
+
+  securityContext: {}
+
+  resources:
+    limits:
+      cpu: 0.5
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 200Mi
+
 postgres:
   # You can force using a specific image here:
   #image: 
