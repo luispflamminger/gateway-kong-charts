@@ -88,15 +88,15 @@ true
 {{- $imageTag := "1.0.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
-{{- if .Values.jumper.image -}}
-  {{- if not (kindIs "string" .Values.jumper.image) -}}
-    {{ $imageRepository = .Values.jumper.image.repository | default $imageRepository -}}
-    {{ $imageOrganization = .Values.jumper.image.organization | default $imageOrganization -}}
-    {{ $imageName = .Values.jumper.image.name | default $imageName -}}
-    {{ $imageTag = .Values.jumper.image.tag | default $imageTag -}}
+{{- if .Values.issuerService.image -}}
+  {{- if not (kindIs "string" .Values.issuerService.image) -}}
+    {{ $imageRepository = .Values.issuerService.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.issuerService.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.issuerService.image.name | default $imageName -}}
+    {{ $imageTag = .Values.issuerService.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.jumper.image -}}
+    {{- .Values.issuerService.image -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
