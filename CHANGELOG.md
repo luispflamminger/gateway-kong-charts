@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.11.1
+  - Set default migrations to none
+
 ## 1.11.0
   - Jumper 1.5.5
 

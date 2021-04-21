@@ -50,8 +50,8 @@ templateChangeTriggers: []
 #image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.3.2-alpine-ce
 
 # Determine the migrations behaviour (bootstrap or upgrade)
-# Comment out if none of the options are needed
-migrations: bootstrap
+# Comment out or set to none if none of the options are needed
+migrations: none
 
 enterprise:
   license: ""
