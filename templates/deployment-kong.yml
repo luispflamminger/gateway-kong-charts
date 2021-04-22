@@ -134,6 +134,7 @@ spec:
       {{- include "kong.init.volumes" $ | indent 6 }}
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
+      {{- include "kong.issuerService.volumes" $ | indent 6 }}
       {{- include "kong.customPlugins.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
