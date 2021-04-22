@@ -49,6 +49,19 @@ spec:
         env:
         {{- include "kong.jumper.env" $ | indent 8 }}
 {{- end }}
+{{- if eq .Values.issuerService.enabled true }}
+      - name: issuer-service
+        image: {{ include "kong.issuerService.image" $ }}
+        imagePullPolicy: Always
+        securityContext: {{ default .Values.issuerService.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
+        ports:
+        - containerPort: {{ .Values.issuerService.port | default 8081 }} 
+          name: issuer-service
+          protocol: TCP
+        volumeMounts:
+          {{- include "kong.issuerService.volumeMounts" $ | indent 8 }}
+{{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: Always

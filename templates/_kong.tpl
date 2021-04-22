@@ -63,6 +63,26 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.issuerService.image" -}}
+{{- $imageName := "issuer-service" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.issuerService.image -}}
+  {{- if not (kindIs "string" .Values.issuerService.image) -}}
+    {{ $imageRepository = .Values.issuerService.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.issuerService.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.issuerService.image.name | default $imageName -}}
+    {{ $imageTag = .Values.issuerService.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.issuerService.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.bundledTrustedCaCertificates" }}
 {{ include "kong.luaSslTrustedCertificates" $ }}
 {{ .Values.trustedCaCertificates }}
@@ -150,6 +170,16 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 
 {{- define "kong.jumper.volumeMounts" }}
 - name: kong-jumper-tmp
+  mountPath: /tmp
+{{- end -}}
+
+{{- define "kong.issuerService.volumes" }}
+- name: kong-issuer-tmp
+  emptyDir: {}
+{{- end -}}
+
+{{- define "kong.issuerService.volumeMounts" }}
+- name: kong-issuer-tmp
   mountPath: /tmp
 {{- end -}}
 

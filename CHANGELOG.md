@@ -4,7 +4,8 @@
 
 ## 1.5.1
   - Updated Jumper to 1.5.5
-  - Added TargetLabels to ServiceMonitor 
+  - Added TargetLabels to ServiceMonitor
+  - Introduced issuer-service container
 
 ## 1.5.0
   - Updated Jumper to 1.3.0
