@@ -488,11 +488,6 @@ false
   value: {{ .Values.jumper.issuerUrl }}
 {{- end -}}
 
-{{- define "kong.issuerService.env" }}
-- name: ISSUER_BASE_URL
-  value: {{ .Values.issuerService.baseUrl }}
-{{- end -}}
-
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
 {{- range .Values.plugins.enabled -}}

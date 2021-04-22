@@ -70,8 +70,6 @@ spec:
           protocol: TCP
         volumeMounts:
           {{- include "kong.issuerService.volumeMounts" $ | indent 8 }}
-        env:
-        {{- include "kong.issuerService.env" $ | indent 8 }}
 {{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
