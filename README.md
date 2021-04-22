@@ -100,7 +100,7 @@ There the chart provides specialised jobs for each of those steps.
 Bootstrapping is required when Kong starts for the first time and needs to setup its database. This task is handled by the job `job-kong-bootstrap.yml`.
 It will be run if "`migrations: bootstrap`" is set in the `values.yaml`. This can be uncommented if no further execution is wished, but this is also prohibited by keeping the job itself.
 Running the job again will do no harm in any way, as the executed bootstrap recognises the database as already initialised.
-
+If you deploy a new instance of StarGate, make sure migrations is set to `bootstrap`.
 
 ### Upgrade
 Upgrading to a newer version may require running migration steps (e.g. database changes). To run those jobs set "`migrations: upgrade`" in the `values.yaml`.

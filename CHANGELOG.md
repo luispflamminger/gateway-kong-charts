@@ -5,6 +5,12 @@
 ## 0.0.0
   - Introduced issuer-service container
 
+## 1.11.1
+  - Set default migrations to none
+
+## 1.11.0
+  - Jumper 1.5.5
+
 ## 1.10.0
   - Added environment label for service monitor
   - Allow database schema configuration via KONG_PG_SCHEMA
