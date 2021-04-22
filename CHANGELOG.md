@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## 0.0.0
+## 1.12.0
   - Introduced issuer-service container
 
 ## 1.11.1
