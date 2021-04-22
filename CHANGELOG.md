@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 0.0.0
+  - Introduced issuer-service container
+
 ## 1.11.1
   - Set default migrations to none
 
