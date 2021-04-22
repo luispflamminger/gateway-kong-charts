@@ -205,6 +205,8 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `jwtKeycloak.setupJob`                 | Set required values for the provieded configuration. Can be ignored for costum config | |
 | `jwtKeycloak.setupJob.pluginId`        | If you want to alter the already configured plugin, set the pluginId                  | `24f1d5a5-4d31-4abc-b539-bed6d3cd7f0a`|
 | `jwtKeycloak.setupJob.allowedIss`      | Set the Iris URL you want StarGate to use for Admin API athentication                 | `https://changeme/auth/realms/default`|
+| `jumper`                               | Configure the Jumper (by Hyperion)                                                    | `1.5.5` |
+| `issuerService`                        | Confgiure the Issuer-Service (by Hyperion)                                            | `1.0.0` |
 | `postgres.enabled`                   | Enable Kong to run with PostrgeSQL as database                                 | `true`           |
 | `postgres.externalDatabase.enabled`            | If you don't want the bundled Postgres to be used. Set host for accessing external database. | `false` |
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |
