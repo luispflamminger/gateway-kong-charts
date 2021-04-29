@@ -261,9 +261,9 @@ issuerService:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: issuer-service
-    #tag: 1.0.0
+    #tag: 1.5.0
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.0.0
+  #image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.5.0
 
   securityContext: {}
 
