@@ -85,7 +85,7 @@ true
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.0.0" -}}
+{{- $imageTag := "1.5.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.issuerService.image -}}

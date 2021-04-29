@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.12.1
+  - Issuer-service 1.5.0 with fixed certificate
+
 ## 1.12.0
   - Introduced issuer-service container
 
