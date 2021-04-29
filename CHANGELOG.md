@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.5.2
+  - Issuer-service 1.5.0 with fixed certificate
+
 ## 1.5.1
   - Updated Jumper to 1.5.5
   - Added TargetLabels to ServiceMonitor
