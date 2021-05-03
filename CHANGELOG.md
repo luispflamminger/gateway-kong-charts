@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.5.3
+  - Using release namespace for namespace
+
 ## 1.5.2
   - Issuer-service 1.5.0 with fixed certificate
 
