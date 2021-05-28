@@ -103,6 +103,11 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.issuerService.env" }}
+- name: JUMPER_ISSUER_URL
+  value: {{ .Values.jumper.issuerUrl }}
+{{- end -}}
+
 {{- define "kong.bundledTrustedCaCertificates" }}
 {{ include "kong.luaSslTrustedCertificates" $ }}
 {{ .Values.trustedCaCertificates }}
