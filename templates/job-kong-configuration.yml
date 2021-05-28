@@ -1,4 +1,4 @@
-{{- if (include "kong.configuration" $) true -}}
+{{- if eq (include "kong.configuration" $) "true" }}
 apiVersion: batch/v1
 kind: Job
 metadata:

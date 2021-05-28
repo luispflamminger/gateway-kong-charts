@@ -125,8 +125,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.configuration" -}}
-{{- if and (eq .Values.adminApi.enabled true) ( or ((.Values.configuration)) (eq (include "kong.isEnterprise" $ ) "false") ) -}}
+{{- if and (eq .Values.adminApi.enabled true) (or .Values.configuration (eq (include "kong.isEnterprise" $ ) "false") ) -}}
 true
+{{- else }}
+false
 {{- end -}}
 {{- end -}}
 
