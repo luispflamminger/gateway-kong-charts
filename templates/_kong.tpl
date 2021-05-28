@@ -212,7 +212,7 @@ false
 {{- if eq (include "kong.isEnterprise" $ ) "false" }}
 - name: nginx-kong-conf
   configMap:
-    secretName: {{ .Release.Name }}-nginx-kong-conf
+    name: {{ .Release.Name }}-nginx-kong-conf
 - name: htpasswd
   secret:
     secretName: {{ .Release.Name }}-htpasswd
