@@ -237,7 +237,7 @@ false
 {{- if eq (include "kong.isEnterprise" $ ) "false" }}
 - name: nginx-kong-conf
   mountPath: /kong/nginx-kong.conf
-  subpath: nginx-kong.conf
+  subPath: nginx-kong.conf
 {{- end }}
 - name: nginx-servers
   mountPath: /opt/kong/nginx
