@@ -207,6 +207,11 @@ false
   emptyDir: {}
 - name: kong-tmp
   emptyDir: {}
+{{- if eq (include "kong.isEnterprise" $ ) "false" }}
+- name: nginx-kong-conf
+  secret:
+    secretName: {{ .Release.Name }}-nginx-kong-conf
+{{- end }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
@@ -229,6 +234,11 @@ false
   mountPath: /kong
 - name: kong-tmp
   mountPath: /tmp
+{{- if eq (include "kong.isEnterprise" $ ) "false" }}
+- name: nginx-kong-conf
+  mountPath: /kong/nginx-kong.conf
+  subpath: nginx-kong.conf
+{{- end }}
 - name: nginx-servers
   mountPath: /opt/kong/nginx
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
