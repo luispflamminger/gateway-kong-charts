@@ -211,8 +211,11 @@ false
   emptyDir: {}
 {{- if eq (include "kong.isEnterprise" $ ) "false" }}
 - name: nginx-kong-conf
-  secret:
+  configMap:
     secretName: {{ .Release.Name }}-nginx-kong-conf
+- name: htpasswd
+  secret:
+    secretName: {{ .Release.Name }}-htpasswd
 {{- end }}
 - name: nginx-servers
   configMap:
@@ -240,6 +243,9 @@ false
 - name: nginx-kong-conf
   mountPath: /kong/nginx-kong.conf
   subPath: nginx-kong.conf
+- name: htpasswd
+  mountPath: /opt/kong/.htpasswd
+  subPath: .htpasswd
 {{- end }}
 - name: nginx-servers
   mountPath: /opt/kong/nginx

@@ -27,7 +27,7 @@ data:
     curl --request PUT \ 
     --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
     --data "name=request-transformer"  \
-    --data "config.add.headers=x-tardis-gateway-admin-api-key:$X_TARDIS_GATEWAY_ADMIN_API_KEY" \
+    --data "config.add.headers=authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
 
     # 3
     # create route (/{{ include "kong.adminApi.name" . }}) variable: hosts
