@@ -65,7 +65,7 @@ true
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.5.5" -}}
+{{- $imageTag := "1.7.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -85,7 +85,7 @@ true
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.5.0" -}}
+{{- $imageTag := "1.7.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.issuerService.image -}}
