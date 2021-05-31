@@ -14,9 +14,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "kong.image" -}}
 {{- $imageName := "kong" -}}
 {{- $imageTag := "2.3.2-alpine" -}}
-{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
+{{- if or (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
 {{- $imageName = "kong-enterprise-edition" -}}
-{{- $imageTag = "1.3.0.2-alpine" -}}
+{{- $imageTag = "2.3.2.0-alpine" -}}
 {{- end -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
@@ -55,11 +55,20 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 {{- end -}}
 
+# hasLicense
 {{- define "kong.isEnterprise" -}}
 {{- if eq .Values.enterprise.license "" -}}
 false
 {{- else -}}
 true
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.isEnterpriseImage" -}}
+{{- if eq .Values.enterprise.useEnterpriseImage true -}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 
