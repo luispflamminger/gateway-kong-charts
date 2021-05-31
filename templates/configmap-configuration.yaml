@@ -21,15 +21,15 @@ data:
           "protocol": "http",
           "port": 8001,
           "name": "{{ include "kong.adminApi.name" . }}"
-    }'
+      }'
 
     echo 2
     echo "create request transformer plugin for setting api key header"
-    curl --request PUT \ 
-      --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
+    curl --request PUT \
+      --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \
       --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-      --data "name=request-transformer"  \
-      --data "config.replace.headers=Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64"
+      --data 'name=request-transformer' \
+      --data 'config.replace.headers=Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64'
 
     echo 3
     echo "create route (/{{ include "kong.adminApi.name" . }}) variable: hosts"
