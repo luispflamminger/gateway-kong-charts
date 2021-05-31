@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-kong-conf
+  labels: {{ include "kong.labels" $ | nindent 4 }}
+data:
+  nginx-kong.conf: |
+  {{- .Files.Get "conf/nginx-kong.conf" | indent 4}}
