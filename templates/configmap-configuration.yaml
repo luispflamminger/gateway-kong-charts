@@ -10,8 +10,8 @@ data:
     {{- .Values.configuration | nindent 4 }}
     {{- else }}
     {{- $apiUrl := include "kong.adminApi.serviceUrl" . }}
-    # 1
-    # create service (upstream: http://localhost:8001)
+    echo 1
+    echo "create service (upstream: http://localhost:8001)"
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
@@ -23,16 +23,16 @@ data:
           "name": "{{ include "kong.adminApi.name" . }}"
     }'
 
-    # 2
-    # create request transformer plugin for setting api key header
+    echo 2
+    echo "create request transformer plugin for setting api key header"
     curl --request PUT \ 
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
       --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
       --data "name=request-transformer"  \
       --data "config.replace.headers=Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64"
 
-    # 3
-    # create route (/{{ include "kong.adminApi.name" . }}) variable: hosts
+    echo 3
+    echo "create route (/{{ include "kong.adminApi.name" . }}) variable: hosts"
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/routes/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
@@ -55,8 +55,8 @@ data:
       ]
     }'
 
-    # 4
-    # create consumer (rover)
+    echo 4
+    echo "create consumer (rover)"
     curl --request PUT \
       --url {{ $apiUrl }}/consumers/rover \
       --header 'Content-Type: application/json' \
@@ -66,9 +66,9 @@ data:
           "custom_id": "rover"
         }'
 
-    # 5
-    # apply acl plugin to route (/{{ include "kong.adminApi.name" . }}) 
-    # and allow group (rover)
+    echo 5
+    echo "apply acl plugin to route (/{{ include "kong.adminApi.name" . }})"
+    echo "and allow group (rover)"
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.acl.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
@@ -81,8 +81,8 @@ data:
       }
     }'
 
-    # 6
-    # add consumer (rover) to group (rover)
+    echo 6
+    echo "add consumer (rover) to group (rover)"
     curl --request POST \
       --url {{ $apiUrl }}/consumers/rover/acls \
       --header 'Content-Type: application/json' \
@@ -92,9 +92,9 @@ data:
     }'
 
 {{- if eq .Values.jwtKeycloak.enabled true }}
-    # 7
-    # setup plugin (jwt-keycloak)
-    # variable [allowed_iss]
+    echo 7
+    echo "setup plugin (jwt-keycloak)"
+    echo "variable [allowed_iss]"
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.jwtKeycloak.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
