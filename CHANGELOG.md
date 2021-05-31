@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## 1.12.2
+## 1.13.0
   - Admin API related security fixes
   - Updated jumper and issuer-service to 1.7.0
 

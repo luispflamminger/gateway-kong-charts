@@ -18,6 +18,11 @@ spec:
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
+        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}
+              key: gatewayAdminBase64
         {{- if eq .Values.rbac.enabled true }}
         - name: KONG_ADMIN_PASSWORD
           valueFrom:
@@ -31,9 +36,10 @@ spec:
           - |- 
             echo "Enabling Kong eni-zipkin plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
               curl \
+              -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
               {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
               {{- end }}

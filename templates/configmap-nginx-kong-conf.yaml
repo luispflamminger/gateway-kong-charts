@@ -5,4 +5,8 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
   nginx-kong.conf: |
-  {{- .Files.Get "conf/nginx-kong.conf" | indent 4}}
+  {{- if (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
+  {{- .Files.Get "conf/nginx-kong-ee.conf" | nindent 4 }}
+  {{- else }}
+  {{ .Files.Get "conf/nginx-kong.conf" | nindent 4 }}
+  {{- end -}}
