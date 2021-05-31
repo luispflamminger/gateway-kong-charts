@@ -4,6 +4,7 @@
 
 ## 1.12.2
   - Admin API related security fixes
+  - Updated jumper and issuer-service to 1.7.0
 
 ## 1.12.1
   - Issuer-service 1.5.0 with fixed certificate
