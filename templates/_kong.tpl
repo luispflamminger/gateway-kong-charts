@@ -103,6 +103,11 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.issuerService.env" }}
+- name: JUMPER_ISSUER_URL
+  value: {{ .Values.jumper.issuerUrl }}
+{{- end -}}
+
 {{- define "kong.bundledTrustedCaCertificates" }}
 {{ include "kong.luaSslTrustedCertificates" $ }}
 {{ .Values.trustedCaCertificates }}
@@ -125,8 +130,10 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.configuration" -}}
-{{- if and (eq .Values.adminApi.enabled true) ( or ((.Values.configuration)) (eq (include "kong.isEnterprise" $ ) "false") ) -}}
+{{- if and (eq .Values.adminApi.enabled true) (or .Values.configuration (eq (include "kong.isEnterprise" $ ) "false") ) -}}
 true
+{{- else }}
+false
 {{- end -}}
 {{- end -}}
 
@@ -207,6 +214,14 @@ false
   emptyDir: {}
 - name: kong-tmp
   emptyDir: {}
+{{- if eq (include "kong.isEnterprise" $ ) "false" }}
+- name: nginx-kong-conf
+  configMap:
+    name: {{ .Release.Name }}-nginx-kong-conf
+- name: htpasswd
+  secret:
+    secretName: {{ .Release.Name }}-htpasswd
+{{- end }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
@@ -229,6 +244,14 @@ false
   mountPath: /kong
 - name: kong-tmp
   mountPath: /tmp
+{{- if eq (include "kong.isEnterprise" $ ) "false" }}
+- name: nginx-kong-conf
+  mountPath: /kong/nginx-kong.conf
+  subPath: nginx-kong.conf
+- name: htpasswd
+  mountPath: /opt/kong/.htpasswd
+  subPath: .htpasswd
+{{- end }}
 - name: nginx-servers
   mountPath: /opt/kong/nginx
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
