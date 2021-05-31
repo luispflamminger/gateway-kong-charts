@@ -15,6 +15,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
           "host": "localhost",
           "protocol": "http",
@@ -26,6 +27,7 @@ data:
     # create request transformer plugin for setting api key header
     curl --request PUT \ 
     --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
+    --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
     --data "name=request-transformer"  \
     --data "config.add.headers=authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
 
@@ -34,6 +36,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/routes/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
       "protocols": [
         "http",
@@ -57,6 +60,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/consumers/rover \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
           "username" : "rover",
           "custom_id": "rover"
@@ -68,6 +72,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.acl.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
       "name": "acl",
       "config": {
@@ -81,6 +86,7 @@ data:
     curl --request POST \
       --url {{ $apiUrl }}/consumers/rover/acls \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
       "group": "rover"
     }'
@@ -92,6 +98,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.jwtKeycloak.setupJob.pluginId }} \
       --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64 \
       --data '{
       "name": "jwt-keycloak",
       "config": {
