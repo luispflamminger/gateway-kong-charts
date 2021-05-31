@@ -39,6 +39,7 @@ spec:
             HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
               curl \
+              -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
             {{- if eq .Values.rbac.enabled true }}
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
