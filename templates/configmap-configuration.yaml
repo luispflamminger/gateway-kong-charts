@@ -26,10 +26,10 @@ data:
     # 2
     # create request transformer plugin for setting api key header
     curl --request PUT \ 
-    --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
-    --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-    --data "name=request-transformer"  \
-    --data "config.replace.headers=Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64"
+      --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.requestTransformer.setupJob.pluginId }} \    
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data "name=request-transformer"  \
+      --data "config.replace.headers=Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64"
 
     # 3
     # create route (/{{ include "kong.adminApi.name" . }}) variable: hosts
