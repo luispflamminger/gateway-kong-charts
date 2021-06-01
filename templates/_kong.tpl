@@ -130,7 +130,7 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 {{- end -}}
 
 {{- define "kong.checksums" -}}
-checksum/kong-secret: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
+checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
