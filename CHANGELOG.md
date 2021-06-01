@@ -4,6 +4,7 @@
 
 ## 1.13.0
   - Admin API related security fixes
+  - Trigger redeploy on secret-kong change
   - Updated jumper and issuer-service to 1.7.0
 
 ## 1.12.1
