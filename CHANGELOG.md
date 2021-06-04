@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.13.1
+  - Updated jumper to 1.7.1
+
 ## 1.13.0
   - Admin API related security fixes
   - Trigger redeploy on secret-kong change
