@@ -21,7 +21,7 @@ global:
   #  registry: https://mtr.external.otc.telekomcloud.com
   #  username: changeme
   #  password: changeme
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
 
   passwordRules:
     enabled: false
