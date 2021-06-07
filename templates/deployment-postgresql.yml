@@ -21,7 +21,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgresql.image" $ }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
         env:
         {{- include "postgresql.env" $ | indent 8 }}
