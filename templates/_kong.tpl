@@ -37,7 +37,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kongplugins.image" -}}
 {{- $imageName := "kong-plugins" -}}
-{{- $imageTag := "1.2.0" -}}
+{{- $imageTag := "eni-prometheus" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.plugins.initContainer.image -}}
@@ -527,7 +527,7 @@ false
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
-  value: bundled,eni-zipkin,jwt-keycloak{{ $enabledPlugins }}
+  value: bundled,eni-zipkin,jwt-keycloak,eni-prometheus{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
 {{- end -}}

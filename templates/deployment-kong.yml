@@ -40,6 +40,7 @@ spec:
           luarocks-admin make-manifest /tmp/plugins
           luarocks --from=/tmp/plugins install --local kong-plugin-jwt-keycloak
           luarocks --from=/tmp/plugins install --local kong-plugin-eni-zipkin
+          luarocks --from=/tmp/plugins install --local kong-plugin-eni-prometheus
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
