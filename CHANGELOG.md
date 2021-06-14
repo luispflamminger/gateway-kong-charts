@@ -2,6 +2,11 @@
 
 [[_TOC_]]
 
+## 1.14.0-RC
+   - Allow pull policy changing
+   - Pull policy IfNotPresent as default
+   - AntiPodAffinity for node distribution
+
 ## 1.13.1
   - Updated jumper to 1.7.1
 
