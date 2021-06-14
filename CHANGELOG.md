@@ -5,6 +5,7 @@
 ## 0.0.0
    - Allow pull policy changing
    - Pull policy IfNotPresent as default
+   - AntiPodAffinity for node distribution
 
 ## 1.13.1
   - Updated jumper to 1.7.1
