@@ -2,7 +2,7 @@
 
 [[_TOC_]]
 
-## 0.0.0
+## 1.14.0-RC
    - Allow pull policy changing
    - Pull policy IfNotPresent as default
    - AntiPodAffinity for node distribution
