@@ -162,7 +162,7 @@ autoscaling:
   enabled: false
   #minReplicas: $replicas
   #maxReplicas: 10
-  #cpuUtilizationPercentage: 70
+  #cpuUtilizationPercentage: 80
 
 resources:
   limits:

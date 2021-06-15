@@ -11,4 +11,4 @@ spec:
   minReplicas: {{ .Values.autoscaling.minReplicas | default .Values.replicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas | default 10 }}
   targetCPUUtilizationPercentage: {{ .Values.autoscaling.cpuUtilizationPercentage | default 80 }}
-{{- end -}}
+{{- end }}
