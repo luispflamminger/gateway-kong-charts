@@ -7,7 +7,9 @@ metadata:
   {{- include "kong.checksums" $ | nindent 4 }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
+{{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicas | default 1 }}
+{{- end }}
   selector: 
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
@@ -95,6 +97,27 @@ spec:
         {{- include "kong.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         resources: {{ .Values.resources | toYaml | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+
         ports:
 {{- if .Values.proxy.tls.enabled }}
         - name: proxy-ssl
@@ -149,6 +172,9 @@ spec:
           protocol: TCP
 {{- end -}}
 {{- end }}
+        - name: status
+          containerPort: 8100
+          protocol: TCP
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}

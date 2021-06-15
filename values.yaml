@@ -158,6 +158,12 @@ jobs:
 
 replicas: 1
 
+autoscaling:
+  enabled: false
+  #minReplicas: $replicas
+  #maxReplicas: 10
+  #cpuUtilizationPercentage: 70
+
 resources:
   limits:
     cpu: 1

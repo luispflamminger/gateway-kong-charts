@@ -212,14 +212,18 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `postgres.externalDatabase.ssl`            | Toggles client-server TLS connections between Kong and PostgreSQL.	. | `false` |
 | `postgres.externalDatabase.sslVerify`            | Toggles server certificate verification if ssl is enabled. See the lua_ssl_trusted_certificate setting to specify a certificate authority. | `false` |
 | `postgres.externalDatabase.luaSslTrustedCertificate`            | Specified certificate authority for TLS connection between Kong and PostgreSQL. | `changeme` |
-| `postgres.port`                        | Port of the database                                                         | `5432`                |
-| `postgres.database`                    | Name of the database                                                         | `kong`                |
-| `postgres.user`                        | Username for accessing the database                                          | `kong`                |
-| `postgres.password`                    | The users password                                                           | `changeme`            |
-| `postgres.persistence.keepOnDelete`       | Prevent the PVC of Postgres and therefore data to be deleted        | `false`               |
-| `postgres.replicas`               | Set the number of replicas                                          | `1`                   |
-| `postgres.resources`              | Assign ressources, e.g. limits, for Postgres                        | `Memory limits`       |
-
+| `postgres.port`                         | Port of the database                                           | `5432`              |
+| `postgres.database`                     | Name of the database                                           | `kong`              |
+| `postgres.user`                         | Username for accessing the database                            | `kong`              |
+| `postgres.password`                     | The users password                                             | `changeme`          |
+| `postgres.persistence.keepOnDelete`     | Prevent the PVC of Postgres and therefore data to be deleted   | `false`             |
+| `postgres.replicas`                     | Set the number of replicas                                     | `1`                 |
+| `postgres.resources`                    | Assign ressources, e.g. limits, for Postgres                   | `Memory limits`     |
+| `replicas`                              | Set the number of Stargate replicas                            | `1`                 |
+| `autoscaling.enabled`                   | Enables Pod Autoscaling with Target CPU usage                  | `false`             |
+| `autoscaling.minReplicas`               | Minimum number of replicas if autoscaling is enabled           | `$replicas`         | 
+| `autoscaling.maxReplicas`               | Maximum number of replicas if autoscaling is enabled           | `10`                |
+| `autoscaling.cpuUtilizationPercentage`  | Number of target CPU Utilization                               | `80`                |
 
 ## Troubleshooting
 
