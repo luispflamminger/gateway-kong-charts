@@ -8,7 +8,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}
-  minReplicas: {{ .Values.autoscaling.minReplicas | default .Values.replicas }}
+  minReplicas: {{ .Values.autoscaling.minReplicas | default .Values.replicas | default 3 }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas | default 10 }}
   targetCPUUtilizationPercentage: {{ .Values.autoscaling.cpuUtilizationPercentage | default 80 }}
 {{- end }}

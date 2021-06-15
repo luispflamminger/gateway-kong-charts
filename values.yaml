@@ -159,7 +159,8 @@ jobs:
 replicas: 1
 
 autoscaling:
-  enabled: false
+  enabled: true
+  # minReplicas is using replicas as default, if replicas is not set, default is 3 
   #minReplicas: $replicas
   #maxReplicas: 10
   #cpuUtilizationPercentage: 80
