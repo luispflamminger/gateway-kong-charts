@@ -45,6 +45,7 @@ spec:
         image: {{ include "kongplugins.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.plugins.initContainer.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.plugins.initContainer.resources | toYaml | nindent 10 }}
         command:
         - /bin/sh
         - -c
