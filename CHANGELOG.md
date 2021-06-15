@@ -2,6 +2,11 @@
 
 [[_TOC_]]
 
+## 0.0.0
+  - Added Liveness probe
+  - Added Rediness probe
+  - Added possibility for horizontal pod autoscaling
+  
 ## 1.14.0-RC
   - Allow pull policy changing
   - Pull policy IfNotPresent as default
