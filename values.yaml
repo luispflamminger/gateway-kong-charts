@@ -158,6 +158,14 @@ jobs:
 
 replicas: 1
 
+autoscaling:
+  enabled: false
+  # minReplicas is using replicas as default, if replicas is not set, default is 3 
+  #minReplicas: $replicas
+  #maxReplicas: 10
+  #cpuUtilizationPercentage: 80
+  #memoryUtilizationPercentage: 80
+
 resources:
   limits:
     cpu: 1
@@ -238,7 +246,13 @@ plugins:
     # Or use the flattened string form:
     #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:1.2.0
     #imagePullPolicy: IfNotPresent
-  
+    resources:
+      limits:
+        cpu: 0.5
+        memory: 500Mi
+      requests:
+        cpu: 50m
+        memory: 200Mi
     securityContext: {}
 
 # Jumper is a component needed for Gateway-to-Gateway

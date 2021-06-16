@@ -7,7 +7,9 @@ metadata:
   {{- include "kong.checksums" $ | nindent 4 }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
+{{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicas | default 1 }}
+{{- end }}
   selector: 
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:
@@ -43,6 +45,7 @@ spec:
         image: {{ include "kongplugins.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.plugins.initContainer.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.plugins.initContainer.resources | toYaml | nindent 10 }}
         command:
         - /bin/sh
         - -c
