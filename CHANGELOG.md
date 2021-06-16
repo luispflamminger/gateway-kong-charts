@@ -2,9 +2,7 @@
 
 [[_TOC_]]
 
-## 0.0.0
-  - Added Liveness probe
-  - Added Rediness probe
+## 1.14.0-RC.2
   - Added possibility for horizontal pod autoscaling
   
 ## 1.14.0-RC
