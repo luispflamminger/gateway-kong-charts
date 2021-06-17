@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.14.0-RC.3
+  - (Remove when release) Removed memory autoscaling
+
 ## 1.14.0-RC.2
   - Added possibility for horizontal pod autoscaling
   
