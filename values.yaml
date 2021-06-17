@@ -164,7 +164,6 @@ autoscaling:
   #minReplicas: $replicas
   #maxReplicas: 10
   #cpuUtilizationPercentage: 80
-  #memoryUtilizationPercentage: 80
 
 resources:
   limits:
