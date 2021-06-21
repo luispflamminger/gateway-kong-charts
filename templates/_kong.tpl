@@ -225,9 +225,9 @@ false
 - name: kong-tmp
   emptyDir: {}
 {{- if eq (include "kong.isEnterprise" $ ) "false" }}
-- name: nginx-kong-conf
+- name: nginx-kong-template
   configMap:
-    name: {{ .Release.Name }}-nginx-kong-conf
+    name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
     secretName: {{ .Release.Name }}-htpasswd
@@ -255,9 +255,9 @@ false
 - name: kong-tmp
   mountPath: /tmp
 {{- if eq (include "kong.isEnterprise" $ ) "false" }}
-- name: nginx-kong-conf
-  mountPath: /kong/nginx-kong.conf
-  subPath: nginx-kong.conf
+- name: nginx-kong-template
+  mountPath: /usr/local/share/lua/5.1/kong/templates/nginx_kong.lua
+  subPath: nginx_kong.lua
 - name: htpasswd
   mountPath: /opt/kong/.htpasswd
   subPath: .htpasswd
