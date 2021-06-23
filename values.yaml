@@ -167,11 +167,11 @@ autoscaling:
 
 resources:
   limits:
+    cpu: 3
+    memory: 4Gi
+  requests:
     cpu: 1
     memory: 2Gi
-  requests:
-    cpu: 50m
-    memory: 200Mi
 
 zipkin:
   enabled: true
@@ -272,11 +272,11 @@ jumper:
 
   resources:
     limits:
-      cpu: 0.5
+      cpu: 4
       memory: 1Gi
     requests:
-      cpu: 50m
-      memory: 200Mi
+      cpu: 2
+      memory: 500Mi
 
 issuerService:
   enabled: true
