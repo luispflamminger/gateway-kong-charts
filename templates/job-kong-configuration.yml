@@ -17,6 +17,7 @@ spec:
       containers:
       - name: {{ .Release.Name }}-kong-admin-route
         image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        imagePullPolicy: {{ .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         command: [ "/bin/sh" ]
         args: [ "-c", "/tmp/configuration.sh" ]

@@ -21,6 +21,7 @@ global:
   #  registry: https://mtr.external.otc.telekomcloud.com
   #  username: changeme
   #  password: changeme
+  imagePullPolicy: IfNotPresent
 
   passwordRules:
     enabled: false
@@ -48,6 +49,7 @@ templateChangeTriggers: []
   #tag: 2.3.2-alpine
 # Or use the flattened string form:
 #image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.3.2-alpine
+#imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap or upgrade)
 # Comment out or set to none if none of the options are needed
@@ -156,6 +158,13 @@ jobs:
 
 replicas: 1
 
+autoscaling:
+  enabled: false
+  # minReplicas is using replicas as default, if replicas is not set, default is 3 
+  #minReplicas: $replicas
+  #maxReplicas: 10
+  #cpuUtilizationPercentage: 80
+
 resources:
   limits:
     cpu: 1
@@ -235,7 +244,14 @@ plugins:
       #tag: 1.2.0
     # Or use the flattened string form:
     #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:1.2.0
-  
+    #imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 0.5
+        memory: 500Mi
+      requests:
+        cpu: 50m
+        memory: 200Mi
     securityContext: {}
 
 # Jumper is a component needed for Gateway-to-Gateway
@@ -249,6 +265,7 @@ jumper:
     #tag: 1.7.1
   # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.7.1
+  #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
 
   securityContext: {}
@@ -270,6 +287,7 @@ issuerService:
     #tag: 1.7.0
   # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.7.0
+  #imagePullPolicy: IfNotPresent
 
   securityContext: {}
 
@@ -290,6 +308,7 @@ postgres:
     #tag: 12.3-debian
   # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+  #imagePullPolicy: IfNotPresent
 
   # If set to true, the bundled PostgreSQL will not be deployed
   externalDatabase: 

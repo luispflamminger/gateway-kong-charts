@@ -2,6 +2,17 @@
 
 [[_TOC_]]
 
+## 1.14.0-RC.3
+  - (Remove when release) Removed memory autoscaling
+
+## 1.14.0-RC.2
+  - Added possibility for horizontal pod autoscaling
+  
+## 1.14.0-RC
+  - Allow pull policy changing
+  - Pull policy IfNotPresent as default
+  - PodAntiAffinity for node distribution
+
 ## 1.13.1
   - Updated jumper to 1.7.1
 

@@ -449,7 +449,7 @@ false
   value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
-{{- end -}}
+{{- end }}
 {{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
   value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
