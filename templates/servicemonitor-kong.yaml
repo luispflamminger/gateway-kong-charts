@@ -15,6 +15,10 @@ spec:
   endpoints:
     - port: metrics
       path: {{ .Values.prometheus.path | default "/metrics" }}
+      metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: "kong_eni_(.+)"
+        action: drop
       {{- if .Values.prometheus.serviceMonitor.scheme }}
       scheme: {{ .Values.prometheus.serviceMonitor.scheme }}
       {{- end }}
