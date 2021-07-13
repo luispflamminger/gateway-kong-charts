@@ -3,6 +3,9 @@
 [[_TOC_]]
  
 ## 1.15.0
+  - fixed lua templates
+
+## 1.14.1
   - Updated jumper to 1.9.5
   - added environment variable tracingUrl for jumper to write traces
 
