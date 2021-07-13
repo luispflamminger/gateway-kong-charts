@@ -267,7 +267,7 @@ jumper:
   #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.7.1
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
-  tracingUrl: "http://guardians-drax-collector.skoll:9411
+  tracingUrl: http://guardians-drax-collector.skoll:9411
 
   securityContext: {}
 
