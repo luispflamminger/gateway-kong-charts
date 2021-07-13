@@ -1,15 +1,19 @@
+return [[
 charset UTF-8;
 server_tokens off;
 
-error_log /dev/stderr notice;
+error_log ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
 
-lua_package_path       '/opt/?.lua;;;;;';
-lua_package_cpath      ';;;';
-lua_socket_pool_size   30;
+lua_package_path       '${{LUA_PACKAGE_PATH}};;';
+lua_package_cpath      '${{LUA_PACKAGE_CPATH}};;';
+lua_socket_pool_size   ${{LUA_SOCKET_POOL_SIZE}};
 lua_socket_log_errors  off;
 lua_max_running_timers 4096;
 lua_max_pending_timers 16384;
-lua_ssl_verify_depth   1;
+lua_ssl_verify_depth   ${{LUA_SSL_VERIFY_DEPTH}};
+> if lua_ssl_trusted_certificate_combined then
+lua_ssl_trusted_certificate '${{LUA_SSL_TRUSTED_CERTIFICATE_COMBINED}}';
+> end
 
 lua_shared_dict kong                        5m;
 lua_shared_dict kong_locks                  8m;
@@ -17,33 +21,29 @@ lua_shared_dict kong_healthchecks           5m;
 lua_shared_dict kong_process_events         5m;
 lua_shared_dict kong_cluster_events         5m;
 lua_shared_dict kong_rate_limiting_counters 12m;
-lua_shared_dict kong_core_db_cache          2048m;
+lua_shared_dict kong_core_db_cache          ${{MEM_CACHE_SIZE}};
 lua_shared_dict kong_core_db_cache_miss     12m;
-lua_shared_dict kong_db_cache               2048m;
+lua_shared_dict kong_db_cache               ${{MEM_CACHE_SIZE}};
 lua_shared_dict kong_db_cache_miss          12m;
-
-lua_shared_dict kong_vitals_counters 50m;
-lua_shared_dict kong_vitals_lists   1m;
-lua_shared_dict kong_vitals 1m;
-lua_shared_dict kong_counters   1m;
-lua_shared_dict kong_reports_consumers       10m;
-lua_shared_dict kong_reports_routes          1m;
-lua_shared_dict kong_reports_services        1m;
-lua_shared_dict kong_reports_workspaces 1m;
-lua_shared_dict kong_keyring 5m;
+> if database == "off" then
+lua_shared_dict kong_core_db_cache_2        ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_core_db_cache_miss_2   12m;
+lua_shared_dict kong_db_cache_2             ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_db_cache_miss_2        12m;
+> end
+> if database == "cassandra" then
+lua_shared_dict kong_cassandra              5m;
+> end
 
 underscores_in_headers on;
-ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+> if ssl_ciphers then
+ssl_ciphers ${{SSL_CIPHERS}};
+> end
 
 # injected nginx_http_* directives
-client_body_buffer_size 8k;
-client_max_body_size 0;
-include /opt/kong/nginx/servers.conf;
-lua_shared_dict prometheus_metrics 5m;
-ssl_prefer_server_ciphers off;
-ssl_protocols TLSv1.2 TLSv1.3;
-ssl_session_tickets on;
-ssl_session_timeout 1d;
+> for _, el in ipairs(nginx_http_directives) do
+$(el.name) $(el.value);
+> end
 
 init_by_lua_block {
     Kong = require 'kong'
@@ -54,10 +54,14 @@ init_worker_by_lua_block {
     Kong.init_worker()
 }
 
+> if (role == "traditional" or role == "data_plane") and #proxy_listeners > 0 then
 upstream kong_upstream {
     server 0.0.0.1;
 
     # injected nginx_upstream_* directives
+> for _, el in ipairs(nginx_upstream_directives) do
+    $(el.name) $(el.value);
+> end
 
     balancer_by_lua_block {
         Kong.balancer()
@@ -66,18 +70,34 @@ upstream kong_upstream {
 
 server {
     server_name kong;
-    listen 0.0.0.0:8000;
+> for _, entry in ipairs(proxy_listeners) do
+    listen $(entry.listener);
+> end
 
     error_page 400 404 408 411 412 413 414 417 494 /kong_error_handler;
     error_page 500 502 503 504                     /kong_error_handler;
 
-    access_log /dev/stdout;
-    error_log  /dev/stderr notice;
+    access_log ${{PROXY_ACCESS_LOG}};
+    error_log  ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
 
+> if proxy_ssl_enabled then
+> for i = 1, #ssl_cert do
+    ssl_certificate     $(ssl_cert[i]);
+    ssl_certificate_key $(ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:SSL:10m;
+    ssl_certificate_by_lua_block {
+        Kong.ssl_certificate()
+    }
+> end
 
     # injected nginx_proxy_* directives
-    real_ip_header X-Real-IP;
-    real_ip_recursive off;
+> for _, el in ipairs(nginx_proxy_directives) do
+    $(el.name) $(el.value);
+> end
+> for _, ip in ipairs(trusted_ips) do
+    set_real_ip_from $(ip);
+> end
 
     rewrite_by_lua_block {
         Kong.rewrite()
@@ -136,6 +156,10 @@ server {
         proxy_pass_header     Date;
         proxy_ssl_name        $upstream_host;
         proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
@@ -163,6 +187,10 @@ server {
         proxy_pass_header     Date;
         proxy_ssl_name        $upstream_host;
         proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
@@ -190,6 +218,10 @@ server {
         proxy_pass_header     Date;
         proxy_ssl_name        $upstream_host;
         proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
@@ -217,6 +249,10 @@ server {
         proxy_pass_header     Date;
         proxy_ssl_name        $upstream_host;
         proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
@@ -237,6 +273,10 @@ server {
         grpc_pass_header     Date;
         grpc_ssl_name        $upstream_host;
         grpc_ssl_server_name on;
+> if client_ssl then
+        grpc_ssl_certificate ${{CLIENT_SSL_CERT}};
+        grpc_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         grpc_pass            $upstream_scheme://kong_upstream;
     }
 
@@ -267,6 +307,10 @@ server {
         proxy_pass_header     Date;
         proxy_ssl_name        $upstream_host;
         proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
         proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
@@ -284,111 +328,39 @@ server {
         }
     }
 }
+> end -- (role == "traditional" or role == "data_plane") and #proxy_listeners > 0
 
-server {
-    server_name kong_gui;
-    listen 0.0.0.0:8002;
-    listen 0.0.0.0:8445 ssl;
-
-    ssl_certificate     /kong/ssl/admin-gui-kong-default.crt;
-    ssl_certificate_key /kong/ssl/admin-gui-kong-default.key;
-    ssl_certificate     /kong/ssl/admin-gui-kong-default-ecdsa.crt;
-    ssl_certificate_key /kong/ssl/admin-gui-kong-default-ecdsa.key;
-    ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
-
-    client_max_body_size 10m;
-    client_body_buffer_size 10m;
-
-    types {
-      text/html                             html htm shtml;
-      text/css                              css;
-      text/xml                              xml;
-      image/gif                             gif;
-      image/jpeg                            jpeg jpg;
-      application/javascript                js;
-      application/json                      json;
-      image/png                             png;
-      image/tiff                            tif tiff;
-      image/x-icon                          ico;
-      image/x-jng                           jng;
-      image/x-ms-bmp                        bmp;
-      image/svg+xml                         svg svgz;
-      image/webp                            webp;
-    }
-
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript;
-
-    location ~* \.(jpg|jpeg|png|gif|ico|css|ttf|js)$ {
-        root gui;
-
-        expires 90d;
-        add_header Cache-Control 'public';
-        add_header X-Frame-Options 'sameorigin';
-        add_header X-XSS-Protection '1; mode=block';
-        add_header X-Content-Type-Options 'nosniff';
-        add_header X-Permitted-Cross-Domain-Policies 'master-only';
-        etag off;
-    }
-
-    location / {
-        root gui;
-
-        try_files $uri /index.html;
-
-        add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
-        add_header X-Frame-Options 'sameorigin';
-        add_header X-XSS-Protection '1; mode=block';
-        add_header X-Content-Type-Options 'nosniff';
-        add_header X-Permitted-Cross-Domain-Policies 'master-only';
-        etag off;
-
-        access_log logs/admin_gui_access.log;
-        error_log logs/admin_gui_error.log;
-    }
-
-    location /robots.txt {
-        return 200 'User-agent: *\nDisallow: /';
-    }
-
-    location = /kconfig.js {
-        root gui_config;
-        expires -1;
-    }
-}
-
-
-
+> if (role == "control_plane" or role == "traditional") and #admin_listeners > 0 then
 server {
     server_name kong_admin;
-    listen 0.0.0.0:8001;
+> for _, entry in ipairs(admin_listeners) do
+    listen $(entry.listener);
+> end
 
-    access_log /dev/stdout;
-    error_log  /dev/stderr notice;
+    access_log ${{ADMIN_ACCESS_LOG}};
+    error_log  ${{ADMIN_ERROR_LOG}} ${{LOG_LEVEL}};
 
-    real_ip_header     X-Real-IP;
-    real_ip_recursive  off;
-
+> if admin_ssl_enabled then
+> for i = 1, #admin_ssl_cert do
+    ssl_certificate     $(admin_ssl_cert[i]);
+    ssl_certificate_key $(admin_ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:AdminSSL:10m;
+> end
 
     # injected nginx_admin_* directives
-    client_body_buffer_size 10m;
-    client_max_body_size 10m;
+> for _, el in ipairs(nginx_admin_directives) do
+    $(el.name) $(el.value);
+> end
 
     location / {
+        # added by Team Io
         auth_basic "TARDIS Administrator’s Area";
         auth_basic_user_file /opt/kong/.htpasswd;
 
         default_type application/json;
         content_by_lua_block {
-            Kong.admin_content({
-                acah = "Content-Type, Kong-Admin-Token, Kong-Request-Type, Cache-Control",
-            })
-        }
-
-        log_by_lua_block {
-            local audit_log = require "kong.enterprise_edition.audit_log"
-            audit_log.admin_log_handler()
-            require("kong.tracing").flush()
+            Kong.admin_content()
         }
         header_filter_by_lua_block {
             Kong.admin_header_filter()
@@ -405,3 +377,78 @@ server {
         return 200 'User-agent: *\nDisallow: /';
     }
 }
+> end -- (role == "control_plane" or role == "traditional") and #admin_listeners > 0
+
+> if #status_listeners > 0 then
+server {
+    server_name kong_status;
+> for _, entry in ipairs(status_listeners) do
+    listen $(entry.listener);
+> end
+
+    access_log ${{STATUS_ACCESS_LOG}};
+    error_log  ${{STATUS_ERROR_LOG}} ${{LOG_LEVEL}};
+
+> if status_ssl_enabled then
+> for i = 1, #status_ssl_cert do
+    ssl_certificate     $(status_ssl_cert[i]);
+    ssl_certificate_key $(status_ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:StatusSSL:1m;
+> end
+
+    # injected nginx_status_* directives
+> for _, el in ipairs(nginx_status_directives) do
+    $(el.name) $(el.value);
+> end
+
+    location / {
+        default_type application/json;
+        content_by_lua_block {
+            Kong.status_content()
+        }
+        header_filter_by_lua_block {
+            Kong.status_header_filter()
+        }
+    }
+
+    location /nginx_status {
+        internal;
+        access_log off;
+        stub_status;
+    }
+
+    location /robots.txt {
+        return 200 'User-agent: *\nDisallow: /';
+    }
+}
+> end
+
+> if role == "control_plane" then
+server {
+    server_name kong_cluster_listener;
+> for _, entry in ipairs(cluster_listeners) do
+    listen $(entry.listener) ssl;
+> end
+
+    access_log ${{ADMIN_ACCESS_LOG}};
+
+> if cluster_mtls == "shared" then
+    ssl_verify_client   optional_no_ca;
+> else
+    ssl_verify_client   on;
+    ssl_client_certificate ${{CLUSTER_CA_CERT}};
+    ssl_verify_depth     4;
+> end
+    ssl_certificate     ${{CLUSTER_CERT}};
+    ssl_certificate_key ${{CLUSTER_CERT_KEY}};
+    ssl_session_cache   shared:ClusterSSL:10m;
+
+    location = /v1/outlet {
+        content_by_lua_block {
+            Kong.serve_cluster_listener()
+        }
+    }
+}
+> end -- role == "control_plane"
+]]

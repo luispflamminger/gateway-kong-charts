@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-nginx-kong-conf
+  name: {{ .Release.Name }}-nginx-kong-template
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
-  nginx-kong.conf: |
+  nginx_kong.lua: |
   {{- if (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
-  {{- .Files.Get "conf/nginx-kong-ee.conf" | nindent 4 }}
+  {{- .Files.Get "nginx/nginx_kong_ee.lua" | nindent 4 }}
   {{- else }}
-  {{ .Files.Get "conf/nginx-kong.conf" | nindent 4 }}
+  {{ .Files.Get "nginx/nginx_kong.lua" | nindent 4 }}
   {{- end -}}

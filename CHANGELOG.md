@@ -1,17 +1,19 @@
 **Table of contents**
 
 [[_TOC_]]
+ 
+## 1.15.0
+  - fixed lua templates
 
-## 1.14.0-RC.3
-  - (Remove when release) Removed memory autoscaling
+## 1.14.1
+  - Updated jumper to 1.9.5
+  - added environment variable tracingUrl for jumper to write traces
 
-## 1.14.0-RC.2
-  - Added possibility for horizontal pod autoscaling
-  
-## 1.14.0-RC
+## 1.14.0
   - Allow pull policy changing
   - Pull policy IfNotPresent as default
   - PodAntiAffinity for node distribution
+  - Added possibility for horizontal pod autoscaling
 
 ## 1.13.1
   - Updated jumper to 1.7.1
