@@ -74,7 +74,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.7.1" -}}
+{{- $imageTag := "1.9.5" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -519,6 +519,8 @@ false
 {{- define "kong.jumper.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
+- name: TRACING_URL
+  value: {{ .Values.jumper.tracingUrl }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
