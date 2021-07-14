@@ -4,6 +4,7 @@
  
 ## 1.15.0
   - fixed lua templates
+  - kong-plugins 1.3.0
 
 ## 1.14.1
   - Updated jumper to 1.9.5
