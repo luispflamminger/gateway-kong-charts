@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+
+## 1.16.0-RC
+  - Updated jumper to 1.9.7
  
 ## 1.15.0
   - fixed lua templates

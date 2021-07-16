@@ -262,9 +262,9 @@ jumper:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: jumper
-    #tag: 1.7.1
+    #tag: 1.9.7
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.7.1
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.9.7
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   tracingUrl: http://guardians-drax-collector.skoll:9411

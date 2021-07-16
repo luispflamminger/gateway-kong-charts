@@ -74,7 +74,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.9.5" -}}
+{{- $imageTag := "1.9.7" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
