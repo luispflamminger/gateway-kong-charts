@@ -188,6 +188,13 @@ server {
         grpc_pass grpc://kong_upstream;
     }
 
+    location @grpcs {
+        internal;
+
+        set $kong_proxy_mode       'grpcs';
+        grpc_pass grpcs://kong_upstream;
+    }
+
     location = /kong_error_handler {
         internal;
         uninitialized_variable_warn off;
