@@ -195,6 +195,7 @@ prometheus:
 # path: /metrics
   setupJob:
     pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
+    #customer_facing: false
     #backoffLimit: 15
     #activeDeadlineSeconds: 3600
   serviceMonitor:   

@@ -44,7 +44,16 @@ spec:
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
               -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
-              --data "name=prometheus" 
+              --header 'Content-Type: application/json' \
+              --data \
+              '{
+                "name" : "eni-prometheus",
+                "tags" : ["tardis","eni-prometheus"],
+                "config" : {
+                  "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
+                  "eni_stat" : "true"
+                }
+              }'
             else
                 echo "Kong Admin-API unreachable"
                 exit 1
