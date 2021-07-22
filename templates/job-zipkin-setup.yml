@@ -45,7 +45,7 @@ spec:
               {{- end }}
               -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
               --header 'Content-Type: application/json' \
-              --data \ 
+              --data \
               '{
                 "name" : "eni-zipkin",
                 "tags" : ["tardis","eni-zipkin"],
@@ -55,7 +55,7 @@ spec:
                   "include_credential" : {{ .Values.zipkin.includeCredential | default true }},
                   "default_service_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}",
                   "local_component_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
-                }  
+                }
               }'
             else
                 echo "Kong Admin-API unreachable"
