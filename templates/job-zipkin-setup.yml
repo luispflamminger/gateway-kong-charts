@@ -52,7 +52,7 @@ spec:
                 "config" : {
                   "http_endpoint" : "{{ .Values.zipkin.collectorUrl }}",
                   "sample_ratio" : {{ .Values.zipkin.sampleRatio | default 0.001 }},
-                  "include_credential" : "{{ .Values.zipkin.includeCredential | default "true" }}",
+                  "include_credential" : {{ .Values.zipkin.includeCredential | default true }},
                   "default_service_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}",
                   "local_component_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
                 }  
