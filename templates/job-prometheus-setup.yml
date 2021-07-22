@@ -51,7 +51,7 @@ spec:
                 "tags" : ["tardis","eni-prometheus"],
                 "config" : {
                   "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
-                  "eni_stat" : "true"
+                  "eni_stat" : true
                 }
               }'
             else
