@@ -74,7 +74,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.9.7" -}}
+{{- $imageTag := "1.9.8" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -445,6 +445,8 @@ false
 {{- else }}
   value: '0.0.0.0:8001'
 {{- end }}
+- name: KONG_STATUS_LISTEN
+  value: '0.0.0.0:8100'
 - name: KONG_ADMIN_ACCESS_LOG
   value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
 - name: KONG_ADMIN_ERROR_LOG

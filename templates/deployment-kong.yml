@@ -73,6 +73,22 @@ spec:
           {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
         env:
         {{- include "kong.jumper.env" $ | indent 8 }}
+        livenessProbe:
+          tcpSocket:
+            port: jumper
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: jumper
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
 {{- end }}
 {{- if eq .Values.issuerService.enabled true }}
       - name: issuer-service
@@ -153,6 +169,30 @@ spec:
           protocol: TCP
 {{- end -}}
 {{- end }}
+        - name: status
+          containerPort: 8100
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
