@@ -76,19 +76,19 @@ spec:
         livenessProbe:
           tcpSocket:
             port: jumper
-          initialDelaySeconds: 15
+          initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
-          failureThreshold: 3
+          failureThreshold: 6
         readinessProbe:
           tcpSocket:
             port: jumper
-          initialDelaySeconds: 15
+          initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
-          failureThreshold: 3
+          failureThreshold: 6
 {{- end }}
 {{- if eq .Values.issuerService.enabled true }}
       - name: issuer-service
