@@ -1,66 +1,57 @@
 return [[
 charset UTF-8;
-
-> if anonymous_reports then
-${{SYSLOG_REPORTS}}
-> end
+server_tokens off;
 
 error_log ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
 
-> if nginx_optimizations then
->-- send_timeout 60s;          # default value
->-- keepalive_timeout 75s;     # default value
->-- client_body_timeout 60s;   # default value
->-- client_header_timeout 60s; # default value
->-- tcp_nopush on;             # disabled until benchmarked
->-- proxy_buffer_size 128k;    # disabled until benchmarked
->-- proxy_buffers 4 256k;      # disabled until benchmarked
->-- proxy_busy_buffers_size 256k; # disabled until benchmarked
->-- reset_timedout_connection on; # disabled until benchmarked
-> end
-
-client_max_body_size ${{CLIENT_MAX_BODY_SIZE}};
-proxy_ssl_server_name on;
-underscores_in_headers on;
-
-lua_package_path '${{LUA_PACKAGE_PATH}};;';
-lua_package_cpath '${{LUA_PACKAGE_CPATH}};;';
-lua_socket_pool_size ${{LUA_SOCKET_POOL_SIZE}};
+lua_package_path       '${{LUA_PACKAGE_PATH}};;';
+lua_package_cpath      '${{LUA_PACKAGE_CPATH}};;';
+lua_socket_pool_size   ${{LUA_SOCKET_POOL_SIZE}};
+lua_socket_log_errors  off;
 lua_max_running_timers 4096;
 lua_max_pending_timers 16384;
-lua_shared_dict kong                5m;
-lua_shared_dict kong_db_cache       ${{MEM_CACHE_SIZE}};
-> if database == "off" then
-lua_shared_dict kong_db_cache_2     ${{MEM_CACHE_SIZE}};
+lua_ssl_verify_depth   ${{LUA_SSL_VERIFY_DEPTH}};
+> if lua_ssl_trusted_certificate_combined then
+lua_ssl_trusted_certificate '${{LUA_SSL_TRUSTED_CERTIFICATE_COMBINED}}';
 > end
-lua_shared_dict kong_db_cache_miss 12m;
+
+lua_shared_dict kong                        5m;
+lua_shared_dict kong_locks                  8m;
+lua_shared_dict kong_healthchecks           5m;
+lua_shared_dict kong_process_events         5m;
+lua_shared_dict kong_cluster_events         5m;
+lua_shared_dict kong_rate_limiting_counters 12m;
+lua_shared_dict kong_core_db_cache          ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_core_db_cache_miss     12m;
+lua_shared_dict kong_db_cache               ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_db_cache_miss          12m;
 > if database == "off" then
-lua_shared_dict kong_db_cache_miss_2 12m;
+lua_shared_dict kong_core_db_cache_2        ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_core_db_cache_miss_2   12m;
+lua_shared_dict kong_db_cache_2             ${{MEM_CACHE_SIZE}};
+lua_shared_dict kong_db_cache_miss_2        12m;
 > end
-lua_shared_dict kong_locks          8m;
-lua_shared_dict kong_process_events 5m;
-lua_shared_dict kong_cluster_events 5m;
+> if database == "cassandra" then
+lua_shared_dict kong_cassandra              5m;
+> end
+
 lua_shared_dict kong_vitals_counters 50m;
 lua_shared_dict kong_vitals_lists   1m;
+lua_shared_dict kong_vitals 1m;
 lua_shared_dict kong_counters   1m;
-lua_shared_dict kong_healthchecks   5m;
-lua_shared_dict kong_rate_limiting_counters 12m;
 lua_shared_dict kong_reports_consumers       10m;
 lua_shared_dict kong_reports_routes          1m;
 lua_shared_dict kong_reports_services        1m;
 lua_shared_dict kong_reports_workspaces 1m;
 lua_shared_dict kong_keyring 5m;
-> if database == "cassandra" then
-lua_shared_dict kong_cassandra      5m;
+
+underscores_in_headers on;
+> if ssl_ciphers then
+ssl_ciphers ${{SSL_CIPHERS}};
 > end
-lua_socket_log_errors off;
-> if lua_ssl_trusted_certificate then
-lua_ssl_trusted_certificate '${{LUA_SSL_TRUSTED_CERTIFICATE}}';
-> end
-lua_ssl_verify_depth ${{LUA_SSL_VERIFY_DEPTH}};
 
 # injected nginx_http_* directives
-> for _, el in ipairs(nginx_http_directives)  do
+> for _, el in ipairs(nginx_http_directives) do
 $(el.name) $(el.value);
 > end
 
@@ -73,60 +64,49 @@ init_worker_by_lua_block {
     Kong.init_worker()
 }
 
-
-> if #proxy_listeners > 0 then
+> if (role == "traditional" or role == "data_plane") and #proxy_listeners > 0 then
 upstream kong_upstream {
     server 0.0.0.1;
+
+    # injected nginx_upstream_* directives
+> for _, el in ipairs(nginx_upstream_directives) do
+    $(el.name) $(el.value);
+> end
+
     balancer_by_lua_block {
         Kong.balancer()
     }
-
-# injected nginx_http_upstream_* directives
-> for _, el in ipairs(nginx_http_upstream_directives) do
-    $(el.name) $(el.value);
-> end
 }
 
 server {
     server_name kong;
-> for i = 1, #proxy_listeners do
-    listen $(proxy_listeners[i].listener);
+> for _, entry in ipairs(proxy_listeners) do
+    listen $(entry.listener);
 > end
+
     error_page 400 404 408 411 412 413 414 417 494 /kong_error_handler;
-    error_page 500 502 503 504 /kong_error_handler;
+    error_page 500 502 503 504                     /kong_error_handler;
 
     access_log ${{PROXY_ACCESS_LOG}};
-    error_log ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
-
-    client_body_buffer_size ${{CLIENT_BODY_BUFFER_SIZE}};
+    error_log  ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
 
 > if proxy_ssl_enabled then
-    ssl_certificate ${{SSL_CERT}};
-    ssl_certificate_key ${{SSL_CERT_KEY}};
+> for i = 1, #ssl_cert do
+    ssl_certificate     $(ssl_cert[i]);
+    ssl_certificate_key $(ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:SSL:10m;
     ssl_certificate_by_lua_block {
         Kong.ssl_certificate()
     }
-
-    ssl_session_cache shared:SSL:10m;
-    ssl_session_timeout 10m;
-    ssl_prefer_server_ciphers on;
-    ssl_ciphers ${{SSL_CIPHERS}};
-> end
-
-> if client_ssl then
-    proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
-    proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
-> end
-
-    real_ip_header     ${{REAL_IP_HEADER}};
-    real_ip_recursive  ${{REAL_IP_RECURSIVE}};
-> for i = 1, #trusted_ips do
-    set_real_ip_from   $(trusted_ips[i]);
 > end
 
     # injected nginx_proxy_* directives
 > for _, el in ipairs(nginx_proxy_directives)  do
     $(el.name) $(el.value);
+> end
+> for _, ip in ipairs(trusted_ips) do
+    set_real_ip_from $(ip);
 > end
 
     rewrite_by_lua_block {
@@ -163,29 +143,185 @@ server {
         set $upstream_x_forwarded_proto  '';
         set $upstream_x_forwarded_host   '';
         set $upstream_x_forwarded_port   '';
+        set $upstream_x_forwarded_path   '';
+        set $upstream_x_forwarded_prefix '';
         set $kong_proxy_mode             'http';
 
-        proxy_http_version 1.1;
-        proxy_set_header   TE                $upstream_te;
-        proxy_set_header   Host              $upstream_host;
-        proxy_set_header   Upgrade           $upstream_upgrade;
-        proxy_set_header   Connection        $upstream_connection;
-        proxy_set_header   X-Forwarded-For   $upstream_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $upstream_x_forwarded_proto;
-        proxy_set_header   X-Forwarded-Host  $upstream_x_forwarded_host;
-        proxy_set_header   X-Forwarded-Port  $upstream_x_forwarded_port;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_pass_header  Server;
-        proxy_pass_header  Date;
-        proxy_ssl_name     $upstream_host;
-        proxy_pass         $upstream_scheme://kong_upstream$upstream_uri;
+        proxy_http_version      1.1;
+        proxy_buffering          on;
+        proxy_request_buffering  on;
+
+        proxy_set_header      TE                 $upstream_te;
+        proxy_set_header      Host               $upstream_host;
+        proxy_set_header      Upgrade            $upstream_upgrade;
+        proxy_set_header      Connection         $upstream_connection;
+        proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        proxy_set_header      X-Real-IP          $remote_addr;
+        proxy_pass_header     Server;
+        proxy_pass_header     Date;
+        proxy_ssl_name        $upstream_host;
+        proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+    }
+
+    location @unbuffered {
+        internal;
+        default_type         '';
+        set $kong_proxy_mode 'unbuffered';
+
+        proxy_http_version      1.1;
+        proxy_buffering         off;
+        proxy_request_buffering off;
+
+        proxy_set_header      TE                 $upstream_te;
+        proxy_set_header      Host               $upstream_host;
+        proxy_set_header      Upgrade            $upstream_upgrade;
+        proxy_set_header      Connection         $upstream_connection;
+        proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        proxy_set_header      X-Real-IP          $remote_addr;
+        proxy_pass_header     Server;
+        proxy_pass_header     Date;
+        proxy_ssl_name        $upstream_host;
+        proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+    }
+
+    location @unbuffered_request {
+        internal;
+        default_type         '';
+        set $kong_proxy_mode 'unbuffered';
+
+        proxy_http_version      1.1;
+        proxy_buffering          on;
+        proxy_request_buffering off;
+
+        proxy_set_header      TE                 $upstream_te;
+        proxy_set_header      Host               $upstream_host;
+        proxy_set_header      Upgrade            $upstream_upgrade;
+        proxy_set_header      Connection         $upstream_connection;
+        proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        proxy_set_header      X-Real-IP          $remote_addr;
+        proxy_pass_header     Server;
+        proxy_pass_header     Date;
+        proxy_ssl_name        $upstream_host;
+        proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+    }
+
+    location @unbuffered_response {
+        internal;
+        default_type         '';
+        set $kong_proxy_mode 'unbuffered';
+
+        proxy_http_version      1.1;
+        proxy_buffering         off;
+        proxy_request_buffering  on;
+
+        proxy_set_header      TE                 $upstream_te;
+        proxy_set_header      Host               $upstream_host;
+        proxy_set_header      Upgrade            $upstream_upgrade;
+        proxy_set_header      Connection         $upstream_connection;
+        proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        proxy_set_header      X-Real-IP          $remote_addr;
+        proxy_pass_header     Server;
+        proxy_pass_header     Date;
+        proxy_ssl_name        $upstream_host;
+        proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
     location @grpc {
         internal;
+        default_type         '';
+        set $kong_proxy_mode 'grpc';
 
-        set $kong_proxy_mode       'grpc';
-        grpc_pass grpc://kong_upstream;
+        grpc_set_header      TE                 $upstream_te;
+        grpc_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        grpc_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        grpc_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        grpc_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        grpc_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        grpc_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        grpc_set_header      X-Real-IP          $remote_addr;
+        grpc_pass_header     Server;
+        grpc_pass_header     Date;
+        grpc_ssl_name        $upstream_host;
+        grpc_ssl_server_name on;
+> if client_ssl then
+        grpc_ssl_certificate ${{CLIENT_SSL_CERT}};
+        grpc_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        grpc_pass            $upstream_scheme://kong_upstream;
+    }
+
+    location = /kong_buffered_http {
+        internal;
+        default_type         '';
+        set $kong_proxy_mode 'http';
+
+        rewrite_by_lua_block       {;}
+        access_by_lua_block        {;}
+        header_filter_by_lua_block {;}
+        body_filter_by_lua_block   {;}
+        log_by_lua_block           {;}
+
+        proxy_http_version 1.1;
+        proxy_set_header      TE                 $upstream_te;
+        proxy_set_header      Host               $upstream_host;
+        proxy_set_header      Upgrade            $upstream_upgrade;
+        proxy_set_header      Connection         $upstream_connection;
+        proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+        proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+        proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+        proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+        proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+        proxy_set_header      X-Real-IP          $remote_addr;
+        proxy_pass_header     Server;
+        proxy_pass_header     Date;
+        proxy_ssl_name        $upstream_host;
+        proxy_ssl_server_name on;
+> if client_ssl then
+        proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+        proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+> end
+        proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
     }
 
     location @grpcs {
@@ -197,21 +333,21 @@ server {
 
     location = /kong_error_handler {
         internal;
-        uninitialized_variable_warn off;
+        default_type                 '';
+
+        uninitialized_variable_warn  off;
 
         rewrite_by_lua_block {;}
-
-        access_by_lua_block {;}
+        access_by_lua_block  {;}
 
         content_by_lua_block {
             Kong.handle_error()
         }
     }
 }
-> end
+> end -- (role == "traditional" or role == "data_plane") and #proxy_listeners > 0
 
-
-> if #admin_listen > 0 and #admin_gui_listeners > 0 then
+> if (role == "control_plane" or role == "traditional") and #admin_listen > 0 and #admin_gui_listeners > 0 then
 server {
     server_name kong_gui;
 > for i = 1, #admin_gui_listeners do
@@ -219,8 +355,10 @@ server {
 > end
 
 > if admin_gui_ssl_enabled then
-    ssl_certificate ${{ADMIN_GUI_SSL_CERT}};
-    ssl_certificate_key ${{ADMIN_GUI_SSL_CERT_KEY}};
+> for i = 1, #admin_gui_ssl_cert do
+    ssl_certificate     $(admin_gui_ssl_cert[i]);
+    ssl_certificate_key $(admin_gui_ssl_cert_key[i]);
+> end
     ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
 > end
 
@@ -228,20 +366,20 @@ server {
     client_body_buffer_size 10m;
 
     types {
-    text/html                             html htm shtml;
-    text/css                              css;
-    text/xml                              xml;
-    image/gif                             gif;
-    image/jpeg                            jpeg jpg;
-    application/javascript                js;
-    application/json                      json;
-    image/png                             png;
-    image/tiff                            tif tiff;
-    image/x-icon                          ico;
-    image/x-jng                           jng;
-    image/x-ms-bmp                        bmp;
-    image/svg+xml                         svg svgz;
-    image/webp                            webp;
+      text/html                             html htm shtml;
+      text/css                              css;
+      text/xml                              xml;
+      image/gif                             gif;
+      image/jpeg                            jpeg jpg;
+      application/javascript                js;
+      application/json                      json;
+      image/png                             png;
+      image/tiff                            tif tiff;
+      image/x-icon                          ico;
+      image/x-jng                           jng;
+      image/x-ms-bmp                        bmp;
+      image/svg+xml                         svg svgz;
+      image/webp                            webp;
     }
 
     gzip on;
@@ -287,16 +425,21 @@ server {
 > end
 
 
-> if portal then
+> if (role == "control_plane" or role == "traditional") and portal then
 server {
     server_name kong_portal_gui;
 > for i = 1, #portal_gui_listeners do
     listen $(portal_gui_listeners[i].listener);
 > end
 
+    access_log ${{PORTAL_GUI_ACCESS_LOG}};
+    error_log ${{PORTAL_GUI_ERROR_LOG}} ${{LOG_LEVEL}};
+
 > if portal_gui_ssl_enabled then
-    ssl_certificate ${{PORTAL_GUI_SSL_CERT}};
-    ssl_certificate_key ${{PORTAL_GUI_SSL_CERT_KEY}};
+> for i = 1, #portal_gui_ssl_cert do
+    ssl_certificate     $(portal_gui_ssl_cert[i]);
+    ssl_certificate_key $(portal_gui_ssl_cert_key[i]);
+> end
     ssl_protocols TLSv1.1 TLSv1.2;
 > end
 
@@ -305,20 +448,20 @@ server {
     log_not_found off;
 
     types {
-    text/html                             html htm shtml;
-    text/css                              css;
-    text/xml                              xml;
-    image/gif                             gif;
-    image/jpeg                            jpeg jpg;
-    application/javascript                js;
-    application/json                      json;
-    image/png                             png;
-    image/tiff                            tif tiff;
-    image/x-icon                          ico;
-    image/x-jng                           jng;
-    image/x-ms-bmp                        bmp;
-    image/svg+xml                         svg svgz;
-    image/webp                            webp;
+      text/html                             html htm shtml;
+      text/css                              css;
+      text/xml                              xml;
+      image/gif                             gif;
+      image/jpeg                            jpeg jpg;
+      application/javascript                js;
+      application/json                      json;
+      image/png                             png;
+      image/tiff                            tif tiff;
+      image/x-icon                          ico;
+      image/x-jng                           jng;
+      image/x-ms-bmp                        bmp;
+      image/svg+xml                         svg svgz;
+      image/webp                            webp;
     }
 
     gzip on;
@@ -390,6 +533,7 @@ server {
     }
 }
 
+> if #portal_api_listeners > 0 and portal_api_listen then
 
 server {
     server_name portal_api;
@@ -404,8 +548,10 @@ server {
     client_body_buffer_size 10m;
 
 > if portal_api_ssl_enabled then
-    ssl_certificate ${{PORTAL_API_SSL_CERT}};
-    ssl_certificate_key ${{PORTAL_API_SSL_CERT_KEY}};
+> for i = 1, #portal_api_ssl_cert do
+    ssl_certificate     $(portal_api_ssl_cert[i]);
+    ssl_certificate_key $(portal_api_ssl_cert_key[i]);
+> end
     ssl_protocols TLSv1.1 TLSv1.2;
 
     ssl_session_cache shared:SSL:10m;
@@ -428,20 +574,17 @@ server {
     }
 }
 > end
+> end
 
-
-> if #admin_listeners > 0 then
+> if (role == "control_plane" or role == "traditional") and #admin_listeners > 0 then
 server {
     server_name kong_admin;
-> for i = 1, #admin_listeners do
-    listen $(admin_listeners[i].listener);
+> for _, entry in ipairs(admin_listeners) do
+    listen $(entry.listener);
 > end
 
     access_log ${{ADMIN_ACCESS_LOG}};
-    error_log ${{ADMIN_ERROR_LOG}} ${{LOG_LEVEL}};
-
-    client_max_body_size 10m;
-    client_body_buffer_size 10m;
+    error_log  ${{ADMIN_ERROR_LOG}} ${{LOG_LEVEL}};
 
     real_ip_header     ${{REAL_IP_HEADER}};
     real_ip_recursive  ${{REAL_IP_RECURSIVE}};
@@ -450,13 +593,11 @@ server {
 > end
 
 > if admin_ssl_enabled then
-    ssl_certificate ${{ADMIN_SSL_CERT}};
-    ssl_certificate_key ${{ADMIN_SSL_CERT_KEY}};
-
-    ssl_session_cache shared:SSL:10m;
-    ssl_session_timeout 10m;
-    ssl_prefer_server_ciphers on;
-    ssl_ciphers ${{SSL_CIPHERS}};
+> for i = 1, #admin_ssl_cert do
+    ssl_certificate     $(admin_ssl_cert[i]);
+    ssl_certificate_key $(admin_ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:AdminSSL:10m;
 > end
 
     # injected nginx_admin_* directives
@@ -465,13 +606,14 @@ server {
 > end
 
     location / {
+
         # added by Team Io
         auth_basic "TARDIS Administrator’s Area";
         auth_basic_user_file /opt/kong/.htpasswd;
 
         default_type application/json;
         content_by_lua_block {
-            Kong.serve_admin_api({
+            Kong.admin_content({
                 acah = "Content-Type, ${{RBAC_AUTH_HEADER}}, Kong-Request-Type, Cache-Control",
             })
         }
@@ -480,6 +622,54 @@ server {
             local audit_log = require "kong.enterprise_edition.audit_log"
             audit_log.admin_log_handler()
             require("kong.tracing").flush()
+        }
+        header_filter_by_lua_block {
+            Kong.admin_header_filter()
+        }
+    }
+
+    location /nginx_status {
+        internal;
+        access_log off;
+        stub_status;
+    }
+
+    location /robots.txt {
+        return 200 'User-agent: *\nDisallow: /';
+    }
+}
+> end -- (role == "control_plane" or role == "traditional") and #admin_listeners > 0
+
+> if #status_listeners > 0 then
+server {
+    server_name kong_status;
+> for _, entry in ipairs(status_listeners) do
+    listen $(entry.listener);
+> end
+
+    access_log ${{STATUS_ACCESS_LOG}};
+    error_log  ${{STATUS_ERROR_LOG}} ${{LOG_LEVEL}};
+
+> if status_ssl_enabled then
+> for i = 1, #status_ssl_cert do
+    ssl_certificate     $(status_ssl_cert[i]);
+    ssl_certificate_key $(status_ssl_cert_key[i]);
+> end
+    ssl_session_cache   shared:StatusSSL:1m;
+> end
+
+    # injected nginx_status_* directives
+> for _, el in ipairs(nginx_status_directives) do
+    $(el.name) $(el.value);
+> end
+
+    location / {
+        default_type application/json;
+        content_by_lua_block {
+            Kong.status_content()
+        }
+        header_filter_by_lua_block {
+            Kong.status_header_filter()
         }
     }
 
@@ -494,4 +684,60 @@ server {
     }
 }
 > end
+
+> if role == "control_plane" then
+server {
+    server_name kong_cluster_listener;
+> for _, entry in ipairs(cluster_listeners) do
+    listen $(entry.listener) ssl;
+> end
+
+    access_log ${{ADMIN_ACCESS_LOG}};
+
+> if cluster_mtls == "shared" then
+    ssl_verify_client   optional_no_ca;
+> else
+    ssl_verify_client   on;
+    ssl_client_certificate ${{CLUSTER_CA_CERT}};
+    ssl_verify_depth     4;
+> end
+    ssl_certificate     ${{CLUSTER_CERT}};
+    ssl_certificate_key ${{CLUSTER_CERT_KEY}};
+    ssl_session_cache   shared:ClusterSSL:10m;
+
+    location = /v1/outlet {
+        content_by_lua_block {
+            Kong.serve_cluster_listener()
+        }
+    }
+}
+> end -- role == "control_plane"
+
+> if role == "control_plane" then
+server {
+    server_name kong_cluster_telemetry_listener;
+> for _, entry in ipairs(cluster_telemetry_listeners) do
+    listen $(entry.listener) ssl;
+> end
+
+    access_log off;
+
+> if cluster_mtls == "shared" then
+    ssl_verify_client   optional_no_ca;
+> else
+    ssl_verify_client   on;
+    ssl_client_certificate ${{CLUSTER_CA_CERT}};
+    ssl_verify_depth     4;
+> end
+    ssl_certificate     ${{CLUSTER_CERT}};
+    ssl_certificate_key ${{CLUSTER_CERT_KEY}};
+    ssl_session_cache   shared:ClusterSSL:10m;
+
+    location = /v1/ingest {
+        content_by_lua_block {
+            Kong.serve_cluster_telemetry_listener()
+        }
+    }
+}
+> end -- role == "control_plane"
 ]]

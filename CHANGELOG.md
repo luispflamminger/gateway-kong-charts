@@ -1,6 +1,12 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.17.0
+  - fixed lua template for caas
+  - kong-plugins 2.0.0
+  - Updated jumper to 1.9.8
+  - readiness and liveness probe for jumper
+  - readiness and liveness probe for kong
 
 ## 1.16.0-RC
   - Updated jumper to 1.9.7

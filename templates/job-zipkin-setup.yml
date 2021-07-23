@@ -44,12 +44,19 @@ spec:
               -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
               {{- end }}
               -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
-              --data "name=eni-zipkin" \
-              --data "config.http_endpoint={{ .Values.zipkin.collectorUrl }}" \
-              --data "config.sample_ratio={{ .Values.zipkin.sampleRatio | default 0.001 }}" \
-              --data "config.include_credential={{ .Values.zipkin.includeCredential | default "true" }}" \
-              --data "config.default_service_name={{ .Values.zipkin.defaultServiceName | default .Release.Name }}" \
-              --data "config.local_component_name={{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
+              --header 'Content-Type: application/json' \
+              --data \
+              '{
+                "name" : "eni-zipkin",
+                "tags" : ["tardis","eni-zipkin"],
+                "config" : {
+                  "http_endpoint" : "{{ .Values.zipkin.collectorUrl }}",
+                  "sample_ratio" : {{ .Values.zipkin.sampleRatio | default 0.001 }},
+                  "include_credential" : {{ .Values.zipkin.includeCredential | default true }},
+                  "default_service_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}",
+                  "local_component_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
+                }
+              }'
             else
                 echo "Kong Admin-API unreachable"
                 exit 1
