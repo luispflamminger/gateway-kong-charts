@@ -1,6 +1,10 @@
 **Table of contents**
 
 [[_TOC_]]
+
+## 1.17.1 
+  - Updated jumper to 1.10.2
+
 ## 1.17.0
   - fixed lua template for caas
   - kong-plugins 2.0.0
