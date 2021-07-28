@@ -4,7 +4,7 @@
 ## 1.17.0
   - fixed lua template for caas
   - kong-plugins 2.0.0
-  - Updated jumper to 1.9.8
+  - Updated jumper to 1.10.0
   - readiness and liveness probe for jumper
   - readiness and liveness probe for kong
 
