@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.17.2
+  - Removed hook-succeeded from plugin jobs for debugging
+
 ## 1.17.1 
   - Updated jumper to 1.10.2
 
