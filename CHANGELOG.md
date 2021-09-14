@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.17.4
+  - Updated jumper to 1.10.4
+
 ## 1.17.3
   - Updated jumper to 1.10.3
 
