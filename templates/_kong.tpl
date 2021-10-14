@@ -523,6 +523,12 @@ false
   value: {{ .Values.jumper.issuerUrl }}
 - name: TRACING_URL
   value: {{ .Values.jumper.tracingUrl }}
+- name: STARGATE_URL
+  value: {{ .Values.jumper.stargateUrl }}
+- name: JVM_OPTS
+  value: {{ .Values.jumper.jvmOpts }}
+- name: PUBLISH_EVENT_URL
+  value: {{ .Values.jumper.publishEventUrl }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
