@@ -168,7 +168,7 @@ autoscaling:
 resources:
   limits:
     cpu: 3
-    memory: 4Gi
+    memory: 3500Mi
   requests:
     cpu: 1
     memory: 2Gi
@@ -269,16 +269,19 @@ jumper:
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   tracingUrl: http://guardians-drax-collector.skoll:9411
+  stargateUrl: https://stargate-integration.test.dhei.telekom.de
+  publishEventUrl: http://producer.integration:8080/v1/events
+  jvmOpts: ""
 
   securityContext: {}
 
   resources:
     limits:
       cpu: 4
-      memory: 1Gi
+      memory: 2Gi
     requests:
       cpu: 2
-      memory: 500Mi
+      memory: 1Gi
 
 issuerService:
   enabled: true
@@ -296,7 +299,7 @@ issuerService:
   resources:
     limits:
       cpu: 0.5
-      memory: 1Gi
+      memory: 500Mi
     requests:
       cpu: 50m
       memory: 200Mi

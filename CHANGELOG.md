@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.17.5
+  - Added envrionment variables for jumper auto-event
+
 ## 1.17.4
   - Updated jumper to 1.10.4
 
