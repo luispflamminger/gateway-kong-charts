@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.18.0
+  - Use jumper-sse 2.0.1
+
 ## 1.17.5
   - Added envrionment variables for jumper auto-event
 
