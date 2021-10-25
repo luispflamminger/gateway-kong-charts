@@ -439,7 +439,7 @@ false
   value: {{ .Values.sslCiphers }}
 {{- end }}
 {{- if .Values.sslProtocols }}
-- name: KONG_SSL_Protocols
+- name: KONG_SSL_PROTOCOLS
   value: {{ .Values.sslProtocols }}
 {{- end }}
 - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
