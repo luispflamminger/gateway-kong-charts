@@ -146,6 +146,20 @@ sslVerifyDepth: '1'
 # Note: additional route-specific server certificates can by configured and assigned to SNIs at runtime. This is only a default certificate
 #defaultTlsSecret: "mysecret"
 
+# Defines the TLS ciphers served by Nginx.
+# Accepted values are modern, intermediate, old, or custom.
+# See https://wiki.mozilla.org/Security/Server_Side_TLS for detailed descriptions of each cipher suite.
+sslCipherSuite: intermediate
+
+#Defines a custom list of TLS ciphers to be served by Nginx. This list must conform to the pattern defined by openssl ciphers.
+#This value is ignored if ssl_cipher_suite is not custom.
+sslCiphers: none
+
+#Enables the specified protocols for client-side connections. The set of supported protocol versions also depends on the version of OpenSSL Kong was built with. This value is ignored if ssl_cipher_suite is not custom.
+# See http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols
+# Default: TLSv1.1 TLSv1.2 TLSv1.3
+sslProtocols: TLSv1.1 TLSv1.2 TLSv1.3
+
 disableUpstreamCache: false
 
 securityContext: {}

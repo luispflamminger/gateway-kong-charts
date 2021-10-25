@@ -430,6 +430,18 @@ false
 {{- end }}
 {{- end }}
 {{- end }}
+{{- if .Values.sslCipherSuite }}
+- name: KONG_SSL_CIPHER_SUITE
+  value: {{ .Values.sslCipherSuite }}
+{{- end }}
+{{- if .Values.sslCiphers }}
+- name: KONG_SSL_CIPHERS
+  value: {{ .Values.sslCiphers }}
+{{- end }}
+{{- if .Values.sslProtocols }}
+- name: KONG_SSL_Protocols
+  value: {{ .Values.sslProtocols }}
+{{- end }}
 - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
   value: "TLSv1.2 TLSv1.3"
 - name: KONG_PROXY_LISTEN
