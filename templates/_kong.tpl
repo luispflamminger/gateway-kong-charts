@@ -438,10 +438,6 @@ false
 - name: KONG_SSL_CIPHERS
   value: {{ .Values.sslCiphers }}
 {{- end }}
-{{- if .Values.sslProtocols }}
-- name: KONG_SSL_PROTOCOLS
-  value: {{ .Values.sslProtocols }}
-{{- end }}
 - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
   value: "TLSv1.2 TLSv1.3"
 - name: KONG_PROXY_LISTEN
