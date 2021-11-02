@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.19.0
+  - Update SSL Ciphers
+
 ## 1.18.0
   - Use jumper-sse 2.0.1
 
