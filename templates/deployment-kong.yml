@@ -90,6 +90,37 @@ spec:
           successThreshold: 1
           failureThreshold: 6
 {{- end }}
+{{- if eq .Values.legacyJumper.enabled true }}
+      - name: legacy-jumper
+        image: {{ include "kong.legacyJumper.image" $ }}
+        imagePullPolicy: {{ .Values.legacyJumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
+        securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
+        ports:
+        - containerPort: {{ .Values.legacyJumper.port | default 8082 }} 
+          name: legacy-jumper
+          protocol: TCP
+        volumeMounts:
+          {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
+        env:
+        {{- include "kong.jumper.env" $ | indent 8 }}
+        livenessProbe:
+          tcpSocket:
+            port: legacy-jumper
+          initialDelaySeconds: 25
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          tcpSocket:
+            port: legacy-jumper
+          initialDelaySeconds: 25
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 6
+{{- end }}
 {{- if eq .Values.issuerService.enabled true }}
       - name: issuer-service
         image: {{ include "kong.issuerService.image" $ }}

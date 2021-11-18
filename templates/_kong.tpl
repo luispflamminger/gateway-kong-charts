@@ -74,7 +74,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.0.1" -}}
+{{- $imageTag := "2.2.3.1" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -86,6 +86,26 @@ false
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- .Values.jumper.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.legacyJumper.image" -}}
+{{- $imageName := "jumper" -}}
+{{- $imageTag := "1.10.4" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.legacyJumper.image -}}
+  {{- if not (kindIs "string" .Values.legacyJumper.image) -}}
+    {{ $imageRepository = .Values.legacyJumper.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.legacyJumper.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.legacyJumper.image.name | default $imageName -}}
+    {{ $imageTag = .Values.legacyJumper.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.legacyJumper.image -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}

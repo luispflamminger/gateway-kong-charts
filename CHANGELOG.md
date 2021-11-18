@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.20.0
+  - Added legacy Jumper container
+
 ## 1.19.0
   - Update SSL Ciphers
 
