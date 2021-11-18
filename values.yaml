@@ -164,6 +164,7 @@ jobs:
 
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
+#nginxHttpLuaSharedDict: prometheus_metrics 15m
 
 replicas: 1
 
@@ -251,9 +252,9 @@ plugins:
       #repository: mtr.external.otc.telekomcloud.com
       #organization: tif-public
       #name: kong-plugins
-      #tag: 2.0.0
+      #tag: 2.0.1
     # Or use the flattened string form:
-    #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.0.0
+    #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.0.1
     #imagePullPolicy: IfNotPresent
     resources:
       limits:

@@ -37,7 +37,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kongplugins.image" -}}
 {{- $imageName := "kong-plugins" -}}
-{{- $imageTag := "2.0.0" -}}
+{{- $imageTag := "2.0.1" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.plugins.initContainer.image -}}
@@ -319,6 +319,8 @@ false
   value: '{{ .Values.nginxWorkerProcesses | default "auto" }}'
 - name: KONG_NGINX_HTTP_INCLUDE
   value: '/opt/kong/nginx/servers.conf'
+- name: KONG_NGINX_HTTP_LUA_SHARED_DICT
+  value: '{{ .Values.nginxHttpLuaSharedDict | default "prometheus_metrics 15m" }}'
 {{- if .Values.defaultTlsSecret }}            
 - name: KONG_SSL_CERT
   value: /opt/kong/default-https/tls.crt
