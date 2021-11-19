@@ -273,9 +273,9 @@ jumper:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: jumper-sse
-    #tag: 2.2.4.1
+    #tag: 2.2.4.3
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.2.4.1
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.2.4.3
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   tracingUrl: http://guardians-drax-collector.skoll:9411
@@ -301,9 +301,9 @@ legacyJumper:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: jumper
-    #tag: 1.10.5.2
+    #tag: 1.10.5.3
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.10.5.2
+  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.10.5.3
   #imagePullPolicy: IfNotPresent
 
   #port: 8082

@@ -3,10 +3,10 @@
 [[_TOC_]]
 
 ## 1.20.0
-  - Added legacy Jumper (1.10.5.2) container
+  - Added legacy Jumper (1.10.5.3) container
   - Added env var KONG_NGINX_HTTP_LUA_SHARED_DICT
   - kong-plugins 2.0.1
-  - Jumper 2.2.4.1
+  - Jumper 2.2.4.3
   - Port setting for Jumper
 
 ## 1.19.0

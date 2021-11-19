@@ -72,6 +72,8 @@ spec:
         volumeMounts:
           {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
         env:
+        - name: JUMPER_PORT
+          value: {{ .Values.jumper.port | default 8080 }}
         {{- include "kong.jumper.env" $ | indent 8 }}
         livenessProbe:
           tcpSocket:
@@ -103,6 +105,8 @@ spec:
         volumeMounts:
           {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
         env:
+        - name: JUMPER_PORT
+          value: {{ .Values.legacyJumper.port | default 8082 }}
         {{- include "kong.jumper.env" $ | indent 8 }}
         livenessProbe:
           tcpSocket:
