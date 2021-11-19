@@ -2,6 +2,9 @@
 
 [[_TOC_]]
 
+## 1.21.0
+  - Legacy Jumper 1.10.5.2
+
 ## 1.20.0
   - Added legacy Jumper container
   - Added env var KONG_NGINX_HTTP_LUA_SHARED_DICT
