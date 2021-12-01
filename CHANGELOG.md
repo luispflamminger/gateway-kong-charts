@@ -1,6 +1,10 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.20.1
+ - jumper 2.2.5
+ - legacy jumper 1.10.6.1
+ - jumper name
 
 ## 1.20.0
   - Added legacy Jumper (1.10.5.3) container

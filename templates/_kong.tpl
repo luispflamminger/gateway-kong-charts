@@ -74,7 +74,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.2.4.3" -}}
+{{- $imageTag := "2.2.5" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -94,7 +94,7 @@ false
 
 {{- define "kong.legacyJumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.10.5.3" -}}
+{{- $imageTag := "1.10.6.1" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.legacyJumper.image -}}
@@ -559,6 +559,8 @@ false
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
+- name: JUMPER_NAME
+  value: {{ .Values.zipkin.defaultServiceName }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
