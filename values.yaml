@@ -376,3 +376,14 @@ postgres:
     requests:
       cpu: 20m
       memory: 200Mi
+
+job: {}
+# force specific image for jobs:
+#job:
+  #image: 
+    #repository: mtr.external.otc.telekomcloud.com
+    #organization: tif-public
+    #name: tif-base-image
+    #tag: 1.0.0
+  # Or use the flattened string form:
+  #image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0

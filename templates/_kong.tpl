@@ -55,6 +55,26 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 {{- end -}}
 
+{{- define "job.image" -}}
+{{- $imageName := "tif-base-image" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if and .Values.job .Values.job.image -}}
+  {{- if not (kindIs "string" .Values.job.image) -}}
+    {{ $imageRepository = .Values.job.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.job.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.job.image.name | default $imageName -}}
+    {{ $imageTag = .Values.job.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.job.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 # hasLicense
 {{- define "kong.isEnterprise" -}}
 {{- if eq .Values.enterprise.license "" -}}
