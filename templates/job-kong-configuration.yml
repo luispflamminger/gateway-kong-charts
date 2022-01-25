@@ -16,7 +16,7 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
       - name: {{ .Release.Name }}-kong-admin-route
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: {{ include "job.image" $ }}
         imagePullPolicy: {{ .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         command: [ "/bin/sh" ]
