@@ -32,7 +32,7 @@ spec:
       honorLabels: {{ .Values.prometheus.serviceMonitor.honorLabels }}
       {{- end }}
     - port: legacy-jumper-metrics
-      path: {{ .Values.prometheus.path | default "/actuator/prometheus" }}
+      path: '/actuator/prometheus'
       {{- if .Values.prometheus.serviceMonitor.scheme }}
       scheme: {{ .Values.prometheus.serviceMonitor.scheme }}
       {{- end }}
