@@ -102,9 +102,6 @@ spec:
         - containerPort: {{ .Values.legacyJumper.port | default 8082 }} 
           name: legacy-jumper
           protocol: TCP
-        - containerPort: {{ .Values.legacyJumper.port | default 8080 }} 
-          name: legacy-metrics
-          protocol: TCP
         volumeMounts:
           {{- include "kong.jumper.volumeMounts" $ | indent 8 }}
         env:
