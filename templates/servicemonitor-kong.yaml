@@ -31,7 +31,7 @@ spec:
       {{- if .Values.prometheus.serviceMonitor.honorLabels }}
       honorLabels: {{ .Values.prometheus.serviceMonitor.honorLabels }}
       {{- end }}
-    - port: legacy-jumper-metrics
+    - port: legacy-metrics
       path: '/actuator/prometheus'
       {{- if .Values.prometheus.serviceMonitor.scheme }}
       scheme: {{ .Values.prometheus.serviceMonitor.scheme }}
