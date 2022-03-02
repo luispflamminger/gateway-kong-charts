@@ -55,6 +55,26 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 {{- end -}}
 
+{{- define "job.image" -}}
+{{- $imageName := "tif-base-image" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if and .Values.job .Values.job.image -}}
+  {{- if not (kindIs "string" .Values.job.image) -}}
+    {{ $imageRepository = .Values.job.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.job.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.job.image.name | default $imageName -}}
+    {{ $imageTag = .Values.job.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.job.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 # hasLicense
 {{- define "kong.isEnterprise" -}}
 {{- if eq .Values.enterprise.license "" -}}
@@ -74,7 +94,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.2.4.3" -}}
+{{- $imageTag := "2.2.5" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -94,7 +114,7 @@ false
 
 {{- define "kong.legacyJumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.10.5.3" -}}
+{{- $imageTag := "1.10.6.1-metrics" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.legacyJumper.image -}}
@@ -114,7 +134,7 @@ false
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.7.0" -}}
+{{- $imageTag := "1.8.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.issuerService.image -}}
@@ -559,6 +579,8 @@ false
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
+- name: JUMPER_NAME
+  value: {{ .Values.zipkin.defaultServiceName }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}

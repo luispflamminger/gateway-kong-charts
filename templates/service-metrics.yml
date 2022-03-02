@@ -11,4 +11,8 @@ spec:
     port: 9542
     targetPort: metrics
     protocol: TCP
+  - name: legacy-metrics
+    port: 9543
+    targetPort: legacy-jumper
+    protocol: TCP
 {{- end -}}
