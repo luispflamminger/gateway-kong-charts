@@ -3,6 +3,8 @@
 [[_TOC_]]
 ## 1.20.2
  - legacy jumper exposes metrics
+ - legacy jumper: 1.10.6.1-metrics
+ - issuer-service: 1.8.0
 
 ## 1.20.1
  - jumper 2.2.5
