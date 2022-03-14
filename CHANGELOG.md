@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+## 0.0.0
+ - Added labels for Jumper service metrics
+
 ## 1.20.2
  - legacy jumper exposes metrics
  - legacy jumper: 1.10.6.1-metrics
