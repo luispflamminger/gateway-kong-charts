@@ -94,7 +94,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.2.5" -}}
+{{- $imageTag := "2.3.3" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -114,7 +114,7 @@ false
 
 {{- define "kong.legacyJumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.10.6.1-metrics" -}}
+{{- $imageTag := "1.10.6.2-loglevel" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.legacyJumper.image -}}
