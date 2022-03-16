@@ -1,8 +1,11 @@
 **Table of contents**
 
 [[_TOC_]]
-## 0.0.0
- - Added labels for Jumper service metrics
+## 1.21.0
+ - extended grace period to 65 seconds
+ - jumper-legacy: 1.10.6.2-loglevel
+ - jumper: 2.3.3
+ - added jumper metrics endpoint to service and service monitor
 
 ## 1.20.2
  - legacy jumper exposes metrics
