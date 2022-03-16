@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-metrics
   labels: {{ include "kong.labels" $ | nindent 4 }}
+  {{- include "common.status-monitor.labels" $ | nindent 4 }}
 spec:
   selector: {{ include "kong.selector" $ | nindent 4 }}
   ports:
