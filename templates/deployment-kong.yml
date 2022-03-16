@@ -238,4 +238,4 @@ spec:
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 65
