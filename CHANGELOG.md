@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.21.1
+ - Use dedicated jumper readiness and liveness probes
+
 ## 1.21.0
  - extended grace period to 65 seconds
  - jumper-legacy: 1.10.6.2-loglevel
