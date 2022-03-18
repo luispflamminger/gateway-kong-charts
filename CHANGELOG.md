@@ -4,8 +4,6 @@
 ## 1.22.0
  - extended grace period to 80 seconds
  - added preStopHook with 65s sleep to jumper and legacy-jumper
-
-## 1.21.1
  - Use dedicated jumper readiness and liveness probes
 
 ## 1.21.0
