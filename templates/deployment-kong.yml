@@ -65,6 +65,10 @@ spec:
         imagePullPolicy: {{ .Values.jumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
         resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "65"]
         ports:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
@@ -76,16 +80,20 @@ spec:
           value: {{ .Values.jumper.port | default 8080 | quote }}
         {{- include "kong.jumper.env" $ | indent 8 }}
         livenessProbe:
-          tcpSocket:
+          httpGet:
+            path: /actuator/health/liveness
             port: jumper
+            scheme: HTTP
           initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 6
         readinessProbe:
-          tcpSocket:
+          httpGet:
+            path: /actuator/health/readiness
             port: jumper
+            scheme: HTTP
           initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
@@ -98,6 +106,10 @@ spec:
         imagePullPolicy: {{ .Values.legacyJumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
         resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "65"]
         ports:
         - containerPort: {{ .Values.legacyJumper.port | default 8082 }} 
           name: legacy-jumper
@@ -109,16 +121,20 @@ spec:
           value: {{ .Values.legacyJumper.port | default 8082 | quote }}
         {{- include "kong.jumper.env" $ | indent 8 }}
         livenessProbe:
-          tcpSocket:
+          httpGet:
+            path: /actuator/health/liveness
             port: legacy-jumper
+            scheme: HTTP
           initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 6
         readinessProbe:
-          tcpSocket:
+          httpGet:
+            path: /actuator/health/readiness
             port: legacy-jumper
+            scheme: HTTP
           initialDelaySeconds: 25
           timeoutSeconds: 5
           periodSeconds: 10
@@ -238,4 +254,4 @@ spec:
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      terminationGracePeriodSeconds: 65
+      terminationGracePeriodSeconds: 80

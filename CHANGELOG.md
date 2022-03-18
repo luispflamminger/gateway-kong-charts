@@ -1,6 +1,11 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.22.0
+ - extended grace period to 80 seconds
+ - added preStopHook with 65s sleep to jumper and legacy-jumper
+ - Use dedicated jumper readiness and liveness probes
+
 ## 1.21.0
  - extended grace period to 65 seconds
  - jumper-legacy: 1.10.6.2-loglevel
