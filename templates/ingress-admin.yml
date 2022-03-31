@@ -1,6 +1,6 @@
 {{- if eq .Values.global.platform "kubernetes" -}}
 {{- if eq (include "kong.adminApi.ingress.enabled" $) "true" }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-admin
