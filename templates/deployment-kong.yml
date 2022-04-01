@@ -159,7 +159,6 @@ spec:
       - name: circuitbreaker
         image: mtr.external.otc.telekomcloud.com/tif/gateway-circuitbreaker:main
         imagePullPolicy: always
-        #TODO securityContext: {{ default .Values.issuerService.securityContext | toYaml | nindent 10 }}
         resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
         ports:
         - containerPort: 8084
