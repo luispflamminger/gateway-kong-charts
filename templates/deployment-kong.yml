@@ -156,6 +156,15 @@ spec:
         env:
         {{- include "kong.issuerService.env" $ | indent 8 }}
 {{- end }}
+      - name: circuitbreaker
+        image: mtr.external.otc.telekomcloud.com/tif/gateway-circuitbreaker:main
+        imagePullPolicy: always
+        #TODO securityContext: {{ default .Values.issuerService.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
+        ports:
+        - containerPort: 8084 
+          name: circuitbreaker
+          protocol: TCP
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
