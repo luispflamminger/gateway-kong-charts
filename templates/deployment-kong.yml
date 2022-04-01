@@ -162,7 +162,7 @@ spec:
         #TODO securityContext: {{ default .Values.issuerService.securityContext | toYaml | nindent 10 }}
         resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
         ports:
-        - containerPort: 8084 
+        - containerPort: 8084
           protocol: TCP
       - name: kong
         image: {{ include "kong.image" $ }}
