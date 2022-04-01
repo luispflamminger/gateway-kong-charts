@@ -163,7 +163,6 @@ spec:
         resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
         ports:
         - containerPort: 8084 
-          name: circuitbreaker
           protocol: TCP
       - name: kong
         image: {{ include "kong.image" $ }}
