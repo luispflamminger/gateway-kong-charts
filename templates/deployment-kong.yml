@@ -156,14 +156,17 @@ spec:
         env:
         {{- include "kong.issuerService.env" $ | indent 8 }}
 {{- end }}
+{{- if eq .Values.circuitbreaker.enabled true }}
       - name: circuitbreaker
-        image: mtr.external.otc.telekomcloud.com/tif/gateway-circuitbreaker:main
-        imagePullPolicy: Always
-        resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
+        image: {{ include "kong.circuitbreaker.image" $ }}
+        imagePullPolicy: {{ .Values.circuitbreaker.imagePullPolicy | default .Values.global.imagePullPolicy }}
+        securityContext: {{ default .Values.circuitbreaker.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.circuitbreaker.resources | toYaml | nindent 10 }}
         ports:
         - name: circuitbreaker
-          containerPort: 8084
+          containerPort: {{ .Values.circuitbreaker.port | default 8084 }} 
           protocol: TCP
+{{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}

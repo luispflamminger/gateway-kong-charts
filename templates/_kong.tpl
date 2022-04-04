@@ -152,6 +152,26 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.circuitbreaker.image" -}}
+{{- $imageName := "circuitbreaker" -}}
+{{- $imageTag := "1.0.0" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.circuitbreaker.image -}}
+  {{- if not (kindIs "string" .Values.circuitbreaker.image) -}}
+    {{ $imageRepository = .Values.circuitbreaker.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.circuitbreaker.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.circuitbreaker.image.name | default $imageName -}}
+    {{ $imageTag = .Values.circuitbreaker.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.circuitbreaker.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.issuerService.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
