@@ -166,6 +166,8 @@ spec:
         - name: circuitbreaker
           containerPort: {{ .Values.circuitbreaker.port | default 8084 }} 
           protocol: TCP
+        env:
+        {{- include "kong.circuitbreaker.env" $ | indent 8 }}
 {{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}

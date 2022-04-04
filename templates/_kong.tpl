@@ -177,6 +177,16 @@ false
   value: {{ .Values.jumper.issuerUrl }}
 {{- end -}}
 
+{{- define "kong.circuitbreaker.env" }}
+- name: KONG_AUTH
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: gatewayAdminBase64
+- name: KONG_URL
+  value: {{ include "kong.adminApi.localhost" $ }}
+{{- end -}}
+
 {{- define "kong.bundledTrustedCaCertificates" }}
 {{ include "kong.luaSslTrustedCertificates" $ }}
 {{ .Values.trustedCaCertificates }}
@@ -648,6 +658,15 @@ admin-api
 
 {{- define "kong.adminApi.serviceUrl" -}}
 {{- $host := include "kong.adminApi.serviceHost" . -}}
+{{- if .Values.adminApi.tls.enabled }}
+{{- printf "https://%s:%s" $host "8444" }}
+{{- else }}
+{{- printf "http://%s:%s" $host "8001" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.adminApi.localhost" -}}
+{{- $host := "localhost" -}}
 {{- if .Values.adminApi.tls.enabled }}
 {{- printf "https://%s:%s" $host "8444" }}
 {{- else }}
