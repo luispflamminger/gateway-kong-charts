@@ -175,6 +175,16 @@ false
 {{- define "kong.issuerService.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
+- name: ISSUER_CERT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-issuer-service
+      key: jsonWebKey
+- name: ISSUER_PUBLIC_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-issuer-service
+      key: publicKey
 {{- end -}}
 
 {{- define "kong.circuitbreaker.env" }}
@@ -301,6 +311,9 @@ false
 - name: htpasswd
   secret:
     secretName: {{ .Release.Name }}-htpasswd
+- name: issuer-service
+  secret:
+    secretName: {{ .Release.Name }}-issuer-service
 {{- end }}
 - name: nginx-servers
   configMap:
