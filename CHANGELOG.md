@@ -3,6 +3,7 @@
 [[_TOC_]]
 ## 0.0.0
  - status page (include in general already with 1.22.0), use Subproduct for developer-portal status page
+ - Adapted pull secret handling
 
 ## 1.22.0
  - extended grace period to 80 seconds
