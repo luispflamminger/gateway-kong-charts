@@ -311,9 +311,6 @@ false
 - name: htpasswd
   secret:
     secretName: {{ .Release.Name }}-htpasswd
-- name: issuer-service
-  secret:
-    secretName: {{ .Release.Name }}-issuer-service
 {{- end }}
 - name: nginx-servers
   configMap:
