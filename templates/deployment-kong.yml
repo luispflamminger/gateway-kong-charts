@@ -166,6 +166,8 @@ spec:
         - name: circuitbreaker
           containerPort: {{ .Values.circuitbreaker.port | default 8084 }} 
           protocol: TCP
+        volumeMounts:
+          {{- include "kong.circuitbreaker.volumeMounts" $ | indent 8 }}
         env:
         {{- include "kong.circuitbreaker.env" $ | indent 8 }}
 {{- end }}
@@ -265,6 +267,7 @@ spec:
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
+      {{- include "kong.circuitbreaker.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 80

@@ -374,6 +374,16 @@ false
   mountPath: /tmp
 {{- end -}}
 
+{{- define "kong.circuitbreaker.volumes" }}
+- name: kong-circuitbreaker-tmp
+  emptyDir: {}
+{{- end -}}
+
+{{- define "kong.circuitbreaker.volumeMounts" }}
+- name: kong-circuitbreaker-tmp
+  mountPath: /tmp
+{{- end -}}
+
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_WORKER_PROCESSES
   value: '{{ .Values.nginxWorkerProcesses | default "auto" }}'
