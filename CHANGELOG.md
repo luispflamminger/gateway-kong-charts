@@ -1,6 +1,10 @@
 **Table of contents**
 
 [[_TOC_]]
+
+## 1.22.1 
+  - Adapted pull secret handling
+
 ## 1.22.0
  - extended grace period to 80 seconds
  - added preStopHook with 65s sleep to jumper and legacy-jumper
