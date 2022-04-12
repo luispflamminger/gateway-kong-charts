@@ -1,7 +1,7 @@
 **Table of contents**
 
 [[_TOC_]]
-## 0.0.0
+## 1.23.0
  - status page (include in general already with 1.22.0), use Subproduct for developer-portal status page
 
 ## 1.22.1
