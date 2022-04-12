@@ -3,6 +3,8 @@
 [[_TOC_]]
 ## 0.0.0
  - status page (include in general already with 1.22.0), use Subproduct for developer-portal status page
+
+## 1.22.1
  - Adapted pull secret handling
 
 ## 1.22.0
