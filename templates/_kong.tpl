@@ -196,7 +196,7 @@ false
 - name: KONG_URL
   value: {{ include "kong.adminApi.localhost" $ }}
 - name: INTERVAL
-  value: {{- .Values.circuitbreaker.interval | default 60s }}
+  value: {{- .Values.circuitbreaker.interval | default "60s" }}
 - name: COUNT
   value: {{- .Values.circuitbreaker.count | default '4' }}
 {{- end -}}
