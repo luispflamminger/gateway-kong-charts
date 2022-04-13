@@ -94,7 +94,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.3.3" -}}
+{{- $imageTag := "2.3.4.1" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -134,7 +134,7 @@ false
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.8.0" -}}
+{{- $imageTag := "1.9.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.issuerService.image -}}
@@ -153,8 +153,8 @@ false
 {{- end -}}
 
 {{- define "kong.circuitbreaker.image" -}}
-{{- $imageName := "circuitbreaker" -}}
-{{- $imageTag := "1.0.0" -}}
+{{- $imageName := "gateway-circuitbreaker" -}}
+{{- $imageTag := "1.0.2" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.circuitbreaker.image -}}
@@ -195,6 +195,10 @@ false
       key: gatewayAdminBase64
 - name: KONG_URL
   value: {{ include "kong.adminApi.localhost" $ }}
+- name: INTERVAL
+  value: {{- .Values.circuitbreaker.interval -}}
+- name: COUNT
+  value: {{- .Values.circuitbreaker.count -}}
 {{- end -}}
 
 {{- define "kong.bundledTrustedCaCertificates" }}
