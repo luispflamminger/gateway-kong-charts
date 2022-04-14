@@ -198,7 +198,7 @@ false
 - name: INTERVAL
   value: {{ .Values.circuitbreaker.interval | default "60s" }}
 - name: COUNT
-  value: {{ .Values.circuitbreaker.count | default "4" }}
+  value: {{ .Values.circuitbreaker.count | default "4" | quote}}
 {{- end -}}
 
 {{- define "kong.bundledTrustedCaCertificates" }}
