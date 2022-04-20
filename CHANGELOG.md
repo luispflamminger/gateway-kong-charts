@@ -2,9 +2,15 @@
 
 [[_TOC_]]
 ## 1.23.0
- - added circuit breaker service (1.0.3)
- - issuer service to 1.9.0
- - jumper-sse to 2.3.4.3
+- added circuit breaker service (1.0.3)
+- issuer service to 1.9.0
+- jumper-sse to 2.3.4.3
+
+## 1.22.2
+ - status page (include in general already with 1.22.0), use Subproduct for developer-portal status page
+
+## 1.22.1
+ - Adapted pull secret handling
 
 ## 1.22.0
  - extended grace period to 80 seconds
