@@ -94,7 +94,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.3.4.1" -}}
+{{- $imageTag := "2.3.4.3" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -154,7 +154,7 @@ false
 
 {{- define "kong.circuitbreaker.image" -}}
 {{- $imageName := "gateway-circuitbreaker" -}}
-{{- $imageTag := "1.0.2" -}}
+{{- $imageTag := "1.0.3" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.circuitbreaker.image -}}

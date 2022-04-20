@@ -1,6 +1,11 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.23.0
+ - added circuit breaker service (1.0.3)
+ - issuer service to 1.9.0
+ - jumper-sse to 2.3.4.3
+
 ## 1.22.0
  - extended grace period to 80 seconds
  - added preStopHook with 65s sleep to jumper and legacy-jumper
