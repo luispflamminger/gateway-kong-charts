@@ -156,6 +156,21 @@ spec:
         env:
         {{- include "kong.issuerService.env" $ | indent 8 }}
 {{- end }}
+{{- if eq .Values.circuitbreaker.enabled true }}
+      - name: circuitbreaker
+        image: {{ include "kong.circuitbreaker.image" $ }}
+        imagePullPolicy: {{ .Values.circuitbreaker.imagePullPolicy | default .Values.global.imagePullPolicy }}
+        securityContext: {{ default .Values.circuitbreaker.securityContext | toYaml | nindent 10 }}
+        resources: {{ .Values.circuitbreaker.resources | toYaml | nindent 10 }}
+        ports:
+        - name: circuitbreaker
+          containerPort: {{ .Values.circuitbreaker.port | default 8084 }} 
+          protocol: TCP
+        volumeMounts:
+          {{- include "kong.circuitbreaker.volumeMounts" $ | indent 8 }}
+        env:
+        {{- include "kong.circuitbreaker.env" $ | indent 8 }}
+{{- end }}
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
@@ -252,6 +267,7 @@ spec:
       {{- include "kong.volumes" $ | indent 6 }}
       {{- include "kong.jumper.volumes" $ | indent 6 }}
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
+      {{- include "kong.circuitbreaker.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 80

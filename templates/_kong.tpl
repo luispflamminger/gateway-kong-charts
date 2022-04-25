@@ -94,7 +94,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.3.3" -}}
+{{- $imageTag := "2.3.4.3" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.jumper.image -}}
@@ -134,7 +134,7 @@ false
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.8.0" -}}
+{{- $imageTag := "1.9.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.issuerService.image -}}
@@ -152,9 +152,53 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.circuitbreaker.image" -}}
+{{- $imageName := "gateway-circuitbreaker" -}}
+{{- $imageTag := "1.0.3" -}}
+{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
+{{- $imageOrganization := "tif-public" -}}
+{{- if .Values.circuitbreaker.image -}}
+  {{- if not (kindIs "string" .Values.circuitbreaker.image) -}}
+    {{ $imageRepository = .Values.circuitbreaker.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.circuitbreaker.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.circuitbreaker.image.name | default $imageName -}}
+    {{ $imageTag = .Values.circuitbreaker.image.tag | default $imageTag -}}
+    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+  {{- else -}}
+    {{- .Values.circuitbreaker.image -}}
+  {{- end -}}
+{{- else -}}
+ {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.issuerService.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
+- name: ISSUER_CERT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-issuer-service
+      key: jsonWebKey
+- name: ISSUER_PUBLIC_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}-issuer-service
+      key: publicKey
+{{- end -}}
+
+{{- define "kong.circuitbreaker.env" }}
+- name: KONG_AUTH
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Release.Name }}
+      key: gatewayAdminBase64
+- name: KONG_URL
+  value: {{ include "kong.adminApi.localhost" $ }}
+- name: INTERVAL
+  value: {{ .Values.circuitbreaker.interval | default "60s" }}
+- name: COUNT
+  value: {{ .Values.circuitbreaker.count | default "4" | quote}}
 {{- end -}}
 
 {{- define "kong.bundledTrustedCaCertificates" }}
@@ -331,6 +375,16 @@ false
 
 {{- define "kong.issuerService.volumeMounts" }}
 - name: kong-issuer-tmp
+  mountPath: /tmp
+{{- end -}}
+
+{{- define "kong.circuitbreaker.volumes" }}
+- name: kong-circuitbreaker-tmp
+  emptyDir: {}
+{{- end -}}
+
+{{- define "kong.circuitbreaker.volumeMounts" }}
+- name: kong-circuitbreaker-tmp
   mountPath: /tmp
 {{- end -}}
 
@@ -628,6 +682,15 @@ admin-api
 
 {{- define "kong.adminApi.serviceUrl" -}}
 {{- $host := include "kong.adminApi.serviceHost" . -}}
+{{- if .Values.adminApi.tls.enabled }}
+{{- printf "https://%s:%s" $host "8444" }}
+{{- else }}
+{{- printf "http://%s:%s" $host "8001" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.adminApi.localhost" -}}
+{{- $host := "localhost" -}}
 {{- if .Values.adminApi.tls.enabled }}
 {{- printf "https://%s:%s" $host "8444" }}
 {{- else }}
