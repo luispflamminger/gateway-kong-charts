@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.23.1
+- Corrected circuit breaker image version
+
 ## 1.23.0
 - added circuit breaker service (1.0.3)
 - issuer service to 1.9.0

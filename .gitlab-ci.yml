@@ -1,4 +1,4 @@
 include:
   - project: 'dhei/teams/io/templates/gitlab-pipelines'
     file: '/helm/PublishChart.gitlab-ci.yml'
-    ref: debug
+    ref: develop
