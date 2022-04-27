@@ -40,15 +40,15 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- $imageTag := "2.0.1" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
-{{- if .Values.plugins.initContainer.image -}}
-  {{- if not (kindIs "string" .Values.plugins.initContainer.image) -}}
-    {{ $imageRepository = .Values.plugins.initContainer.image.repository | default $imageRepository -}}
-    {{ $imageOrganization = .Values.plugins.initContainer.image.organization | default $imageOrganization -}}
-    {{ $imageName = .Values.plugins.initContainer.image.name | default $imageName -}}
-    {{ $imageTag = .Values.plugins.initContainer.image.tag | default $imageTag -}}
+{{- if .Values.plugins.image -}}
+  {{- if not (kindIs "string" .Values.plugins.image) -}}
+    {{ $imageRepository = .Values.plugins.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.plugins.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.plugins.image.name | default $imageName -}}
+    {{ $imageTag = .Values.plugins.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.plugins.initContainer.image -}}
+    {{- .Values.plugins.image -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}

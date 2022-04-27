@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+## 0.0.0
+- Simplified plugin container configuration
+
 ## 1.23.1
 - Corrected circuit breaker image version
 
