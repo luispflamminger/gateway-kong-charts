@@ -13,10 +13,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "kong" -}}
-{{- $imageTag := "2.3.2-alpine" -}}
+{{- $imageTag := "2.8.0-alpine" -}}
 {{- if or (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
 {{- $imageName = "kong-enterprise-edition" -}}
-{{- $imageTag = "2.3.2.0-alpine" -}}
+{{- $imageTag = "2.8.0-alpine" -}}
 {{- end -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
@@ -37,18 +37,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kongplugins.image" -}}
 {{- $imageName := "kong-plugins" -}}
-{{- $imageTag := "2.0.1" -}}
+{{- $imageTag := "2.1.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
-{{- if .Values.plugins.initContainer.image -}}
-  {{- if not (kindIs "string" .Values.plugins.initContainer.image) -}}
-    {{ $imageRepository = .Values.plugins.initContainer.image.repository | default $imageRepository -}}
-    {{ $imageOrganization = .Values.plugins.initContainer.image.organization | default $imageOrganization -}}
-    {{ $imageName = .Values.plugins.initContainer.image.name | default $imageName -}}
-    {{ $imageTag = .Values.plugins.initContainer.image.tag | default $imageTag -}}
+{{- if .Values.plugins.image -}}
+  {{- if not (kindIs "string" .Values.plugins.image) -}}
+    {{ $imageRepository = .Values.plugins.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.plugins.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.plugins.image.name | default $imageName -}}
+    {{ $imageTag = .Values.plugins.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.plugins.initContainer.image -}}
+    {{- .Values.plugins.image -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
