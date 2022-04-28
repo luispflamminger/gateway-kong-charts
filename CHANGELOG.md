@@ -1,7 +1,8 @@
 **Table of contents**
 
 [[_TOC_]]
-## 0.0.0
+## 1.24.0
+- Kong Plugins 2.1.0
 - Simplified plugin container configuration
 
 ## 1.23.1

@@ -37,7 +37,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kongplugins.image" -}}
 {{- $imageName := "kong-plugins" -}}
-{{- $imageTag := "2.0.1" -}}
+{{- $imageTag := "2.1.0" -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
 {{- if .Values.plugins.image -}}

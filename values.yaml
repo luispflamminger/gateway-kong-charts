@@ -251,9 +251,9 @@ plugins:
     #repository: mtr.external.otc.telekomcloud.com
     #organization: tif-public
     #name: kong-plugins
-    #tag: 2.0.1
+    #tag: 2.1.0
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.0.1
+  #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.1.0
   #imagePullPolicy: IfNotPresent
   resources:
     limits:
