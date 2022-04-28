@@ -13,10 +13,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "kong" -}}
-{{- $imageTag := "2.3.2-alpine" -}}
+{{- $imageTag := "2.8.0-alpine" -}}
 {{- if or (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
 {{- $imageName = "kong-enterprise-edition" -}}
-{{- $imageTag = "2.3.2.0-alpine" -}}
+{{- $imageTag = "2.8.0-alpine" -}}
 {{- end -}}
 {{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
 {{- $imageOrganization := "tif-public" -}}
