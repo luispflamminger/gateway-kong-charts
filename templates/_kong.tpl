@@ -264,6 +264,8 @@ false
 {{- end -}}
 
 {{- define "kong.migrations.volumes" }}
+- name: local-luarocks
+  emptyDir: {}
 - name: kong-migrations-prefix-dir
   emptyDir: {}
 - name: kong-migrations-tmp
@@ -279,6 +281,8 @@ false
 {{- end -}}
 
 {{- define "kong.migrations.volumeMounts" }}
+- name: local-luarocks
+  mountPath: /home/kong/.luarocks
 - name: kong-migrations-prefix-dir
   mountPath: /kong
 - name: kong-migrations-tmp
