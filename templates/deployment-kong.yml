@@ -56,7 +56,7 @@ spec:
           luarocks --from=/tmp/plugins install --local kong-plugin-jwt-keycloak
           luarocks --from=/tmp/plugins install --local kong-plugin-eni-zipkin
           luarocks --from=/tmp/plugins install --local kong-plugin-eni-prometheus
-          luarocks --from=/tmp/plugins install --local luaossl
+          luarocks --from=/tmp/plugins install --local luaossl OPENSSL_ CRYPTO_
         volumeMounts:
           {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
