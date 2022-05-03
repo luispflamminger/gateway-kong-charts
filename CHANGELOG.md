@@ -1,6 +1,9 @@
 **Table of contents**
 
 [[_TOC_]]
+## 1.24.2
+- Fixed missing openssl.rand issue
+
 ## 1.24.1
 - Kong Plugins 2.1.1
 
