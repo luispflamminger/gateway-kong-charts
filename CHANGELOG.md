@@ -1,5 +1,8 @@
 **Table of contents**
 
+This document show changes done to the chart.
+Please also seek advice from the README regarding updates.
+
 [[_TOC_]]
 ## 1.24.3
  - Job hooks adapted
@@ -22,7 +25,8 @@
 
 ## 1.23.0
 - added circuit breaker service (1.0.3)
-- issuer service to 1.9.0
+- Issuer-service version 1.9.0
+- Isser-Service: Added jsonWebKey and publicKey secret
 - jumper-sse to 2.3.4.3
 
 ## 1.22.2
