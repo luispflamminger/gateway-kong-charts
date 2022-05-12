@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 0.0.0
+ - Fail on unset issuerService values for secret
+
 ## 1.24.3
  - Job hooks adapted
 
