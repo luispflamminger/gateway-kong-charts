@@ -103,6 +103,7 @@ Running the job again will do no harm in any way, as the executed bootstrap reco
 If you deploy a new instance of StarGate, make sure migrations is set to `bootstrap`.
 
 ### Upgrade
+
 Upgrading to a newer version may require running migration steps (e.g. database changes). To run those jobs set "`migrations: upgrade`" in the `values.yaml`.
 As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-upgrade-migrations.yml` will be run after successfull deployments to complete the upgrade.
 
@@ -113,6 +114,14 @@ As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-up
 ## Upgrade Advice
 The following section contains special advice for dedicated updates and maybe necessary steps to be taken if updating from a certain version to another.
 Although updates in minor versions, whilst keeping the same major verison, do not contain breaking changes, implications may occour.
+
+### To 1.24.0 and up
+This version introduces Kong 2.8.1 and requires migrations to be run.\
+It also requires to adapt to the changed ```securityContext``` settings of the ```plugins``` in the ````values.yaml```.  
+
+### To 1.23.0 and up
+Version 1.23.0 introduces a new issuer service version. If in use, this requires to set values for the new secret ```secret-issuer-service.yml```. \
+Replace ```jsonWebKey: changeme``` and  ```publicKey: changeme```.
 
 ### From 1.5.x and lower to 1.6.x
 With introduction of Kong CE, a dedicated Admin-API handling has been introduced to proted the Admin-API. This required changes to the ingress of the Admin-API.
