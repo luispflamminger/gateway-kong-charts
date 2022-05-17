@@ -6,6 +6,7 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 ## 1.24.4
  - Fail on unset issuerService values for secret
+ - Checksum for issuer service secret
 
 ## 1.24.3
  - Job hooks adapted
