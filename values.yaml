@@ -240,6 +240,11 @@ requestTransformer:
   setupJob:
     pluginId: e9fb4272-0aff-4208-9efa-6bfec5d9df53
 
+# log_format select the pre-configured log formats for nginx
+# It can have one of the values: default, json or plain. details
+# Details are specified in templates/configmap-nginx-kong-template.yaml and nginx/nginx_kong.lua
+logFormat: default
+
 kong_admin:
   enabled: true
   #token: changeme
