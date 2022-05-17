@@ -218,6 +218,9 @@ checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") 
 {{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
+{{- if .Values.issuerService.enabled }}
+checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
+{{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
