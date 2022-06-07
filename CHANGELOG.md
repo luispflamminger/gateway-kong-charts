@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 1.24.5
+ - Fixed missing values.yaml settings for circuit breaker
+
 ## 1.24.4
  - Fail on unset issuerService values for secret
  - Checksum for issuer service secret

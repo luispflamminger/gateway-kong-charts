@@ -1,3 +1,14 @@
+{{- $availableProxyFormats := dict "default" "" }}
+{{- $_ := set $availableProxyFormats "json" "log_proxy_json" }}
+{{- $_ := set $availableProxyFormats "plain" "log_proxy_plain" }}
+{{- $availableAdminFormats := dict "default" "" }}
+{{- $_ := set $availableAdminFormats "json" "log_admin_json" }}
+{{- $_ := set $availableAdminFormats "plain" "log_admin_plain" }}
+
+{{- $logFormat := (.Values.logFormat | toString ) }}
+{{- if hasKey $availableProxyFormats $logFormat }}
+{{- $selectedProxyFormat := (get $availableProxyFormats $logFormat) }}
+{{- $selectedAdminFormat := (get $availableAdminFormats $logFormat) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,7 +17,11 @@ metadata:
 data:
   nginx_kong.lua: |
   {{- if (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
-  {{- .Files.Get "nginx/nginx_kong_ee.lua" | nindent 4 }}
+  {{- .Files.Get "nginx/nginx_kong_ee.lua" | nindent 4 | replace "REPLACE_STARGATE_PROXY_LOG_FORMAT" $selectedProxyFormat | replace "REPLACE_STARGATE_ADMIN_LOG_FORMAT" $selectedAdminFormat }}
   {{- else }}
-  {{ .Files.Get "nginx/nginx_kong.lua" | nindent 4 }}
+  {{ .Files.Get "nginx/nginx_kong.lua" | nindent 4 | replace "REPLACE_STARGATE_PROXY_LOG_FORMAT" $selectedProxyFormat | replace "REPLACE_STARGATE_ADMIN_LOG_FORMAT" $selectedAdminFormat }}
   {{- end -}}
+
+{{- else }}
+{{- fail (printf "logFormat must be one of the following values: %v" (keys $availableProxyFormats | sortAlpha )) }}
+{{- end }}

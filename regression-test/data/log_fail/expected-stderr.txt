@@ -1,0 +1,3 @@
+Error: template: stargate/templates/configmap-nginx-kong-template.yaml:26:4: executing "stargate/templates/configmap-nginx-kong-template.yaml" at <fail (printf "logFormat must be one of the following values: %v" (keys $availableProxyFormats | sortAlpha))>: error calling fail: logFormat must be one of the following values: [default json plain]
+
+Use --debug flag to render out invalid YAML
