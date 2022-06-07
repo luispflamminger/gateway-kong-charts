@@ -343,6 +343,8 @@ circuitbreaker:
   # Or use the flattened string form:
   #image: mtr.external.otc.telekomcloud.com/tif-public/gateway-circuitbreaker:1.0.3
   imagePullPolicy: IfNotPresent
+  #interval: 60s
+  #count: 4
 
   securityContext: {}
 
