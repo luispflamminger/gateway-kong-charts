@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 ## 1.24.5
  - Fixed missing values.yaml settings for circuit breaker
+ - Option logFormat with values [default|json|plain] added to values.yaml 
+ - Alternative log formats pre-configured: log_proxy_json/log_admin_json and log_proxy_plain/log_admin_plain
+ - Default size of metrics dictionary increased   
 
 ## 1.24.4
  - Fail on unset issuerService values for secret
