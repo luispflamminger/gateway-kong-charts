@@ -233,6 +233,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `autoscaling.minReplicas`               | Minimum number of replicas if autoscaling is enabled           | `$replicas`         | 
 | `autoscaling.maxReplicas`               | Maximum number of replicas if autoscaling is enabled           | `10`                |
 | `autoscaling.cpuUtilizationPercentage`  | Number of target CPU Utilization                               | `80`                |
+| `logFormat`                             | Selects the mginx log format `default`, `json` or `plain`      | `default`           |
 
 ## Troubleshooting
 
