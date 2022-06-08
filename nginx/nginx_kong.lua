@@ -25,6 +25,7 @@ lua_shared_dict kong_core_db_cache          ${{MEM_CACHE_SIZE}};
 lua_shared_dict kong_core_db_cache_miss     12m;
 lua_shared_dict kong_db_cache               ${{MEM_CACHE_SIZE}};
 lua_shared_dict kong_db_cache_miss          12m;
+lua_shared_dict prometheus_metrics          10m;
 > if database == "off" then
 lua_shared_dict kong_core_db_cache_2        ${{MEM_CACHE_SIZE}};
 lua_shared_dict kong_core_db_cache_miss_2   12m;
