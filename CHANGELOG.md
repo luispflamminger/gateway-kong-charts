@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 1.24.6
+ - Default size of metrics dictionary removed becaus of conflict with env variable
+
 ## 1.24.5
  - Fixed missing values.yaml settings for circuit breaker
  - Option logFormat with values [default|json|plain] added to values.yaml 
