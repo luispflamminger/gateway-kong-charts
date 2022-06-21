@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 1.25.0
+ - default kong-plugins image updated (containing security errorcodes)
+
 ## 1.24.6
  - Default size of metrics dictionary removed becaus of conflict with env variable
 
