@@ -95,9 +95,11 @@ log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                                '"upstream_response_length": "$upstream_response_length", '
                                '"upstream_response_time": "$upstream_response_time", '
                                '"upstream_status": "$upstream_status", '
+                               '"sec_event_code": "$sec_event_code", '
+                               '"sec_event_details": "$sec_event_details", '
                                '"http_user_agent": "$http_user_agent" } }';
 
-log_format log_proxy_plain '$time_iso8601 service=proxy source=$http_x_real_ip status=$status basepath=$http_api_base_path request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname hostname_upstream=$http_remote_api_url X-B3-SpanId=$http_x_b3_spanid X-B3-ParentSpanId=$http_x_b3_parentspanid X-B3-TraceId=$http_x_b3_traceid X-Request-Id=$http_x_request_id upstream_response_length=$upstream_response_length upstream_response_time=$upstream_response_time upstream_status=$upstream_status http_user_agent=$http_user_agent';
+log_format log_proxy_plain '$time_iso8601 service=proxy source=$http_x_real_ip status=$status basepath=$http_api_base_path request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname hostname_upstream=$http_remote_api_url X-B3-SpanId=$http_x_b3_spanid X-B3-ParentSpanId=$http_x_b3_parentspanid X-B3-TraceId=$http_x_b3_traceid X-Request-Id=$http_x_request_id upstream_response_length=$upstream_response_length upstream_response_time=$upstream_response_time upstream_status=$upstream_status sec_event_code=$sec_event_code sec_event_details=$sec_event_details http_user_agent=$http_user_agent';
 
 log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "admin", '
@@ -118,9 +120,11 @@ log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
                                '"connection_requests": "$connection_requests", '
                                '"hostname_ingress": "$host", '
                                '"hostname_pod": "$hostname", '
+                               '"sec_event_code": "$sec_event_code", '
+                               '"sec_event_details": "$sec_event_details", '
                                '"http_user_agent": "$http_user_agent" } }';
 
-log_format log_admin_plain '$time_iso8601 service=admin source=$http_x_real_ip remote_user=$remote_user status=$status request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname http_user_agent=$http_user_agent';
+log_format log_admin_plain '$time_iso8601 service=admin source=$http_x_real_ip remote_user=$remote_user status=$status request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname sec_event_code=$sec_event_code sec_event_details=$sec_event_details http_user_agent=$http_user_agent';
 
 server {
     server_name kong;
@@ -176,6 +180,8 @@ server {
     location / {
         default_type                     '';
 
+        set $sec_event_code              '';
+        set $sec_event_details           '';
         set $ctx_ref                     '';
         set $upstream_te                 '';
         set $upstream_host               '';
