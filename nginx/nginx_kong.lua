@@ -68,6 +68,8 @@ upstream kong_upstream {
     }
 }
 
+# TARDIS log formats for proxy port
+
 log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "proxy", '
                              '"@fields": { '
@@ -100,6 +102,8 @@ log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                                '"http_user_agent": "$http_user_agent" } }';
 
 log_format log_proxy_plain '$time_iso8601 service=proxy source=$http_x_real_ip status=$status basepath=$http_api_base_path request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname hostname_upstream=$http_remote_api_url X-B3-SpanId=$http_x_b3_spanid X-B3-ParentSpanId=$http_x_b3_parentspanid X-B3-TraceId=$http_x_b3_traceid X-Request-Id=$http_x_request_id upstream_response_length=$upstream_response_length upstream_response_time=$upstream_response_time upstream_status=$upstream_status sec_event_code=$sec_event_code sec_event_details=$sec_event_details http_user_agent=$http_user_agent';
+
+# TARDIS log formats for admin port
 
 log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "admin", '
@@ -180,8 +184,10 @@ server {
     location / {
         default_type                     '';
 
+        # added for TARDIS DHEI-8371
         set $sec_event_code              '';
         set $sec_event_details           '';
+
         set $ctx_ref                     '';
         set $upstream_te                 '';
         set $upstream_host               '';
@@ -417,6 +423,10 @@ server {
         # added by Team Io
         auth_basic "TARDIS Administrator’s Area";
         auth_basic_user_file /opt/kong/.htpasswd;
+
+        # added for TARDIS DHEI-8371
+        set $sec_event_code              '';
+        set $sec_event_details           '';
 
         default_type application/json;
         content_by_lua_block {
