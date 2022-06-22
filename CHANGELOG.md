@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 1.25.1
+ - avoid warnings by adding "sec_event" variables to admin port too
+
 ## 1.25.0
  - default kong-plugins image updated (containing security errorcodes)
 
