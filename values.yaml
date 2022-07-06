@@ -13,6 +13,17 @@ global:
       #external-dns.alpha.kubernetes.io/target: ""
       #kubernetes.io/ingress.class: ""
 
+  # change the values below to overwrite the repository globally
+  # set "force: true" to perform string replacement in "image: repository/organization/name:tag" too
+  # for example:
+  # image:
+  #   repository: harbor.das-schiff.telekom.de
+  #   organization: tardis
+  image:
+    repository: mtr.external.otc.telekomcloud.com
+    organization: tif-public
+    force: false
+
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
   # no pull secret will be deployed
   # If you use Sapling for deployment this will be set automatically
