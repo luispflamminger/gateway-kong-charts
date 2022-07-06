@@ -32,7 +32,7 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
-  failOnUnsetValues: true
+  failOnUnsetValues: false
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -57,9 +57,6 @@ templateChangeTriggers: []
 # Comment out or set to none if none of the options are needed
 migrations: none
 
-enterprise:
-  license: ""
-  useEnterpriseImage: false
 
 # Warning: 
 # If you disable RBAC exposing the Admin API can be dangerous

@@ -16,12 +16,7 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
   nginx_kong.lua: |
-  {{- if (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
-  {{- .Files.Get "nginx/nginx_kong_ee.lua" | nindent 4 | replace "REPLACE_STARGATE_PROXY_LOG_FORMAT" $selectedProxyFormat | replace "REPLACE_STARGATE_ADMIN_LOG_FORMAT" $selectedAdminFormat }}
-  {{- else }}
   {{ .Files.Get "nginx/nginx_kong.lua" | nindent 4 | replace "REPLACE_STARGATE_PROXY_LOG_FORMAT" $selectedProxyFormat | replace "REPLACE_STARGATE_ADMIN_LOG_FORMAT" $selectedAdminFormat }}
-  {{- end -}}
-
 {{- else }}
 {{- fail (printf "logFormat must be one of the following values: %v" (keys $availableProxyFormats | sortAlpha )) }}
 {{- end }}
