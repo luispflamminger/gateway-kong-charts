@@ -1,0 +1,10 @@
+global:
+  image:
+    force: true
+    repository: some-other-registry.telekom.de
+    organization: tardis
+jumper:
+  image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.3.5
+issuerService:
+  jsonWebKey: ignore
+  publicKey: ignore
