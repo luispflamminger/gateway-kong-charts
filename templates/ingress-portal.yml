@@ -1,6 +1,6 @@
 {{- if eq .Values.global.platform "kubernetes" }}
 {{- if and .Values.portal.ingress.enabled .Values.portal.enabled (eq (include "kong.isEnterprise" $ ) "true") -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-portal
@@ -13,11 +13,13 @@ spec:
       paths:
         - path: /
           backend:
-            serviceName: {{ .Release.Name }}-portal
+            service:
+              name: {{ .Release.Name }}-portal
+              port:
 {{- if .Values.portal.tls.enabled }}
-            servicePort: portal-ssl
+                name: portal-ssl
 {{- else }}
-            servicePort: portal
+                name: portal
 {{- end }}
   tls:
   - hosts:

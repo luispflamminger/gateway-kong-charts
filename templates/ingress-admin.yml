@@ -1,6 +1,6 @@
 {{- if eq .Values.global.platform "kubernetes" -}}
 {{- if eq (include "kong.adminApi.ingress.enabled" $) "true" }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-admin
@@ -14,18 +14,22 @@ spec:
         - path: {{ include "kong.adminApi.ingress.path" . }}
           backend:
 {{- if (eq (include "kong.isEnterprise" $ ) "true") }}
-            serviceName: {{ .Release.Name }}-admin
+            service:
+              name: {{ .Release.Name }}-admin
+              port:
 {{- if .Values.adminApi.tls.enabled }}
-            servicePort: admin-ssl
+                name: admin-ssl
 {{- else }}
-            servicePort: admin
+                name: admin
 {{- end }}
 {{- else }}
-            serviceName: {{ .Release.Name }}-proxy
+            service:
+              name: {{ .Release.Name }}-proxy
+              port:
 {{- if .Values.proxy.tls.enabled }}
-            servicePort: proxy-ssl
+                name: proxy-ssl
 {{- else }}
-            servicePort: proxy
+                name: proxy
 {{- end }}
 {{- end }}
   tls:
