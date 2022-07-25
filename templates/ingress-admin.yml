@@ -12,6 +12,7 @@ spec:
     http:
       paths:
         - path: {{ include "kong.adminApi.ingress.path" . }}
+          pathType: Prefix
           backend:
 {{- if (eq (include "kong.isEnterprise" $ ) "true") }}
             service:
