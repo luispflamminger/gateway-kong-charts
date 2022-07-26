@@ -5,6 +5,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 ## 0.0.0
+ -
+
+## 2.0.0
+ - Pull images from new MTR
  - Using networking.k8s.io/v1 for ingress
 
 ## 1.25.1
