@@ -29,7 +29,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.image -}}
     {{- end -}}
@@ -53,7 +53,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.plugins.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.plugins.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.plugins.image -}}
     {{- end -}}
@@ -77,7 +77,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.job.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.job.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.job.image -}}
     {{- end -}}
@@ -106,9 +106,9 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.3.4.3" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageTag := "3.2.2" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
   {{- if not (kindIs "string" .Values.jumper.image) -}}
     {{ $imageRepository = .Values.jumper.image.repository | default $imageRepository -}}
@@ -118,7 +118,7 @@ false
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.jumper.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.jumper.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.jumper.image -}}
     {{- end -}}
@@ -130,9 +130,9 @@ false
 
 {{- define "kong.legacyJumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.10.6.2-loglevel" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageTag := "1.10.6.3" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.legacyJumper.image -}}
   {{- if not (kindIs "string" .Values.legacyJumper.image) -}}
     {{ $imageRepository = .Values.legacyJumper.image.repository | default $imageRepository -}}
@@ -142,7 +142,7 @@ false
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.legacyJumper.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.legacyJumper.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
     {{- else -}}
     {{- end -}}
     {{- .Values.legacyJumper.image -}}
@@ -155,8 +155,8 @@ false
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
 {{- $imageTag := "1.9.0" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.issuerService.image -}}
   {{- if not (kindIs "string" .Values.issuerService.image) -}}
     {{ $imageRepository = .Values.issuerService.image.repository | default $imageRepository -}}
@@ -166,7 +166,7 @@ false
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.issuerService.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.issuerService.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
     {{- else -}}
     {{- end -}}
     {{- .Values.issuerService.image -}}
@@ -178,9 +178,9 @@ false
 
 {{- define "kong.circuitbreaker.image" -}}
 {{- $imageName := "gateway-circuitbreaker" -}}
-{{- $imageTag := "1.0.3" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageTag := "2.1.0" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.circuitbreaker.image -}}
   {{- if not (kindIs "string" .Values.circuitbreaker.image) -}}
     {{ $imageRepository = .Values.circuitbreaker.image.repository | default $imageRepository -}}
@@ -190,7 +190,7 @@ false
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.circuitbreaker.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.circuitbreaker.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
     {{- else -}}
     {{- end -}}
     {{- .Values.circuitbreaker.image -}}

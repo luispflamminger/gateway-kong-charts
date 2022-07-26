@@ -25,7 +25,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.postgres.image | replace "mtr.external.otc.telekomcloud.com" .Values.global.image.repository | replace "tif-public" .Values.global.image.organization -}}
+      {{- .Values.postgres.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.postgres.image -}}
     {{- end -}}
