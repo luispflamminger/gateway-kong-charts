@@ -153,7 +153,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.domain`                      | URL for cluster external access set in Ingress/Route                             | `nil`                  |
 | `global.labels`                      | Define global labels                                                             | `tif.telekom.de/group` |
 | `global.ingress.annotations`         | Set annotations for all ingress, can be extended by ingress specific ones        | `nil`                  |
-| `global.image.repository`            | Set default repository for all images                                            | `mtr.external.otc.telekomcloud.com` |
+| `global.image.repository`            | Set default repository for all images                                            | `mtr.devops.telekom.de` |
 | `global.image.organisation`          | Set default organisation for all images                                          | `tif-public`           |
 | `global.image.force`                 | Replace repository/organisation also if image is set as custom  "image:" value   | `false`                |
 | `migrations`                         | Determine the migrations behaviuor for a new instance or upgrade                 | `bootstrap`            |
