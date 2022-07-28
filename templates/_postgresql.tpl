@@ -14,8 +14,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- define "postgresql.image" -}}
 {{- $imageName := "postgres" -}}
 {{- $imageTag := "12.3-debian" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageOrganization := .Values.global.image.organization -}}
 {{- if .Values.postgres.image -}}
   {{- if not (kindIs "string" .Values.postgres.image) -}}
     {{ $imageRepository = .Values.postgres.image.repository | default $imageRepository -}}
@@ -24,7 +24,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
     {{ $imageTag = .Values.postgres.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.postgres.image -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.postgres.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+    {{- else -}}
+      {{- .Values.postgres.image -}}
+    {{- end -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}

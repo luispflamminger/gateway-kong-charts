@@ -29,9 +29,7 @@ metadata:
     tif.telekom.de/group: tif
 type: Opaque
 data:
-
   jsonWebKey: "aWdub3Jl"
-
   publicKey: "aWdub3Jl"
 ---
 # Source: stargate/templates/secret-kong.yml
@@ -246,65 +244,73 @@ data:
         }
     }
     
+    # TARDIS log formats for proxy port
+    
+    log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
+                                 '"@service": "proxy", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"status": "$status", '
+                                   '"basepath": "$http_api_base_path", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"request_protocol": "$server_protocol", '
+                                   '"request_time": "$request_time", '
+                                   '"request_completion": "$request_completion", '
+                                   '"request_length": "$request_length", '
+                                   '"response_body_lenght": "$body_bytes_sent", '
+                                   '"content_length": "$content_length", '
+                                   '"content_type": "$content_type", '
+                                   '"connection_id": "$connection", '
+                                   '"connection_requests": "$connection_requests", '
+                                   '"hostname_ingress": "$host", '
+                                   '"hostname_pod": "$hostname", '
+                                   '"hostname_upstream": "$http_remote_api_url", '
+                                   '"X-B3-SpanId": "$http_x_b3_spanid", '
+                                   '"X-B3-ParentSpanId": "$http_x_b3_parentspanid", '
+                                   '"X-B3-TraceId": "$http_x_b3_traceid", '
+                                   '"X-Request-Id": "$http_x_request_id", '
+                                   '"upstream_response_length": "$upstream_response_length", '
+                                   '"upstream_response_time": "$upstream_response_time", '
+                                   '"upstream_status": "$upstream_status", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", '
+                                   '"http_user_agent": "$http_user_agent" } }';
+    
+    log_format log_proxy_plain '$time_iso8601 service=proxy source=$http_x_real_ip status=$status basepath=$http_api_base_path request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname hostname_upstream=$http_remote_api_url X-B3-SpanId=$http_x_b3_spanid X-B3-ParentSpanId=$http_x_b3_parentspanid X-B3-TraceId=$http_x_b3_traceid X-Request-Id=$http_x_request_id upstream_response_length=$upstream_response_length upstream_response_time=$upstream_response_time upstream_status=$upstream_status sec_event_code=$sec_event_code sec_event_details=$sec_event_details http_user_agent=$http_user_agent';
+    
+    # TARDIS log formats for admin port
+    
+    log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
+                                 '"@service": "admin", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"remote_user": "$remote_user", '
+                                   '"status": "$status", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"request_protocol": "$server_protocol", '
+                                   '"request_time": "$request_time", '
+                                   '"request_completion": "$request_completion", '
+                                   '"request_length": "$request_length", '
+                                   '"response_body_lenght": "$body_bytes_sent", '
+                                   '"content_length": "$content_length", '
+                                   '"content_type": "$content_type", '
+                                   '"connection_id": "$connection", '
+                                   '"connection_requests": "$connection_requests", '
+                                   '"hostname_ingress": "$host", '
+                                   '"hostname_pod": "$hostname", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", '
+                                   '"http_user_agent": "$http_user_agent" } }';
+    
+    log_format log_admin_plain '$time_iso8601 service=admin source=$http_x_real_ip remote_user=$remote_user status=$status request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname sec_event_code=$sec_event_code sec_event_details=$sec_event_details http_user_agent=$http_user_agent';
+    
     server {
         server_name kong;
     > for _, entry in ipairs(proxy_listeners) do
         listen $(entry.listener);
     > end
-    
-        log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
-                                     '"@service": "proxy", '
-                                     '"@fields": { '
-                                       '"remote_addr": "$remote_addr", '
-                                       '"status": "$status", '
-                                       '"basepath": "$http_api_base_path", '
-                                       '"request_method": "$request_method", '
-                                       '"request_path": "$uri", '
-                                       '"request_protocol": "$server_protocol", '
-                                       '"request_time": "$request_time", '
-                                       '"request_completion": "$request_completion", '
-                                       '"request_length": "$request_length", '
-                                       '"response_body_lenght": "$body_bytes_sent", '
-                                       '"content_length": "$content_length", '
-                                       '"content_type": "$content_type", '
-                                       '"connection_id": "$connection", '
-                                       '"connection_requests": "$connection_requests", '
-                                       '"hostname_ingress": "$host", '
-                                       '"hostname_pod": "$hostname", '
-                                       '"hostname_upstream": "$http_remote_api_url", '
-                                       '"X-B3-SpanId": "$http_x_b3_spanid", '
-                                       '"X-B3-ParentSpanId": "$http_x_b3_parentspanid", '
-                                       '"X-B3-TraceId": "$http_x_b3_traceid", '
-                                       '"X-Request-Id": "$http_x_request_id", '
-                                       '"upstream_response_length": "$upstream_response_length", '
-                                       '"upstream_response_time": "$upstream_response_time", '
-                                       '"upstream_status": "$upstream_status", '
-                                       '"http_user_agent": "$http_user_agent" } }';
-    
-        log_format log_proxy_plain '$time_iso8601 service=proxy remote_addr=$remote_addr status=$status basepath=$http_api_base_path request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname hostname_upstream=$http_remote_api_url X-B3-SpanId=$http_x_b3_spanid X-B3-ParentSpanId=$http_x_b3_parentspanid X-B3-TraceId=$http_x_b3_traceid X-Request-Id=$http_x_request_id upstream_response_length=$upstream_response_length upstream_response_time=$upstream_response_time upstream_status=$upstream_status http_user_agent=$http_user_agent';
-    
-        log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
-                                     '"@service": "admin", '
-                                     '"@fields": { '
-                                       '"remote_addr": "$remote_addr", '
-                                       '"remote_user": "$remote_user", '
-                                       '"status": "$status", '
-                                       '"request_method": "$request_method", '
-                                       '"request_path": "$uri", '
-                                       '"request_protocol": "$server_protocol", '
-                                       '"request_time": "$request_time", '
-                                       '"request_completion": "$request_completion", '
-                                       '"request_length": "$request_length", '
-                                       '"response_body_lenght": "$body_bytes_sent", '
-                                       '"content_length": "$content_length", '
-                                       '"content_type": "$content_type", '
-                                       '"connection_id": "$connection", '
-                                       '"connection_requests": "$connection_requests", '
-                                       '"hostname_ingress": "$host", '
-                                       '"hostname_pod": "$hostname", '
-                                       '"http_user_agent": "$http_user_agent" } }';
-    
-        log_format log_admin_plain '$time_iso8601 service=admin remote_addr=$remote_addr remote_user=$remote_user status=$status request_method=$request_method request_path=$uri request_protocol=$server_protocol request_time=$request_time request_completion=$request_completion request_length=$request_length response_body_lenght=$body_bytes_sent content_length=$content_length content_type=$content_type connection_id=$connection connection_requests=$connection_requests hostname_ingress=$host hostname_pod=$hostname http_user_agent=$http_user_agent';
     
         error_page 400 404 408 411 412 413 414 417 494 /kong_error_handler;
         error_page 500 502 503 504                     /kong_error_handler;
@@ -353,6 +359,10 @@ data:
     
         location / {
             default_type                     '';
+    
+            # added for TARDIS DHEI-8371
+            set $sec_event_code              '';
+            set $sec_event_details           '';
     
             set $ctx_ref                     '';
             set $upstream_te                 '';
@@ -589,6 +599,10 @@ data:
             # added by Team Io
             auth_basic "TARDIS Administrator’s Area";
             auth_basic_user_file /opt/kong/.htpasswd;
+    
+            # added for TARDIS DHEI-8371
+            set $sec_event_code              '';
+            set $sec_event_details           '';
     
             default_type application/json;
             content_by_lua_block {
@@ -856,6 +870,7 @@ metadata:
   annotations:
     ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
     checksum/secret-kong: 3ba5c182641e1ae13c7d4504069c1078389215bac6f68b201b5dd325875c6b77
+    checksum/secret-issuer-service: da62a251a3ed5607f7ebc6af113f05cf1f00c6e174270fb7e7ef6572ac4d1b32
   labels: 
     app: stargate
     app.kubernetes.io/name: kong
@@ -873,6 +888,7 @@ spec:
       annotations:
         ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
         checksum/secret-kong: 3ba5c182641e1ae13c7d4504069c1078389215bac6f68b201b5dd325875c6b77
+        checksum/secret-issuer-service: da62a251a3ed5607f7ebc6af113f05cf1f00c6e174270fb7e7ef6572ac4d1b32
         prometheus.io/path: '/metrics'
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9542'
@@ -904,7 +920,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       initContainers:
       - name: kong-install-plugins
-        image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.1.2
+        image: mtr.devops.telekom.de/tardis-common/kong-plugins:2.1.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -933,7 +949,7 @@ spec:
           mountPath: /tmp
       containers:
       - name: jumper
-        image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.3.4.3
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:2.3.4.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -991,7 +1007,7 @@ spec:
           successThreshold: 1
           failureThreshold: 6
       - name: issuer-service
-        image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.9.0
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/issuer-service:1.9.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1023,7 +1039,7 @@ spec:
               name: stargate-issuer-service
               key: publicKey
       - name: circuitbreaker
-        image: mtr.external.otc.telekomcloud.com/tif-public/gateway-circuitbreaker:1.0.3
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/gateway-circuitbreaker:1.0.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1050,11 +1066,11 @@ spec:
         - name: KONG_URL
           value: http://localhost:8001
         - name: INTERVAL
-          value: 60s
+          value: "60s"
         - name: COUNT
           value: "4"
       - name: kong
-        image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.8.1-alpine
+        image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1233,7 +1249,7 @@ spec:
     spec:      
       containers:
       - name: stargate-postgresql
-        image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1424,7 +1440,7 @@ spec:
     spec:      
       containers:
       - name: stargate-kong-admin-route
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1468,7 +1484,7 @@ spec:
     spec:      
       containers:
       - name: stargate-prometheus-setup
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1532,7 +1548,7 @@ spec:
     spec:      
       containers:
       - name: tif-base-image
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:

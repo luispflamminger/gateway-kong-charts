@@ -904,7 +904,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       initContainers:
       - name: kong-install-plugins
-        image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.1.2
+        image: mtr.devops.telekom.de/tardis-common/kong-plugins:2.1.2
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -933,7 +933,7 @@ spec:
           mountPath: /tmp
       containers:
       - name: jumper
-        image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.3.4.3
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:2.3.4.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -991,7 +991,7 @@ spec:
           successThreshold: 1
           failureThreshold: 6
       - name: issuer-service
-        image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.9.0
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/issuer-service:1.9.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1023,7 +1023,7 @@ spec:
               name: stargate-issuer-service
               key: publicKey
       - name: circuitbreaker
-        image: mtr.external.otc.telekomcloud.com/tif-public/gateway-circuitbreaker:1.0.3
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/gateway-circuitbreaker:1.0.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1054,7 +1054,7 @@ spec:
         - name: COUNT
           value: "4"
       - name: kong
-        image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.8.1-alpine
+        image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1233,7 +1233,7 @@ spec:
     spec:      
       containers:
       - name: stargate-postgresql
-        image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1424,7 +1424,7 @@ spec:
     spec:      
       containers:
       - name: stargate-kong-admin-route
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1468,7 +1468,7 @@ spec:
     spec:      
       containers:
       - name: stargate-prometheus-setup
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1532,7 +1532,7 @@ spec:
     spec:      
       containers:
       - name: tif-base-image
-        image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
