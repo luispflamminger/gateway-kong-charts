@@ -13,12 +13,24 @@ global:
       #external-dns.alpha.kubernetes.io/target: ""
       #kubernetes.io/ingress.class: ""
 
+  # change the values below to overwrite the repository globally
+  # set "force: true" to perform string replacement in "image: repository/organization/name:tag" too
+  # for example:
+  #image:
+  #   repository: harbor.das-schiff.telekom.de
+  #   organization: tardis
+  #  force: false
+  image:
+    repository: mtr.devops.telekom.de
+    organization: tardis-common
+    force: false
+
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
   # no pull secret will be deployed
   # If you use Sapling for deployment this will be set automatically
   imagePullSecrets: 
-  #- name: mtr-tif-public
-  #  registry: https://mtr.external.otc.telekomcloud.com
+  #- name: mtr-deveops
+  #  registry: https://mtr.devops.telekom.de
   #  username: changeme
   #  password: changeme
   imagePullPolicy: IfNotPresent
@@ -45,12 +57,12 @@ templateChangeTriggers: []
 
 # You can force using a specific image here:
 #image: 
-  #repository: mtr.external.otc.telekomcloud.com
-  #organization: tif-public
+  #repository: mtr.devops.telekom.de
+  #organization: tardis-common
   #name: kong
   #tag: 2.8.1-alpine
 # Or use the flattened string form:
-#image: mtr.external.otc.telekomcloud.com/tif-public/kong:2.8.1-alpine
+#image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap or upgrade)
@@ -255,12 +267,12 @@ kong_admin:
 plugins:
   enabled: []
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
     #name: kong-plugins
     #tag: 2.1.2
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/kong-plugins:2.1.2
+  #image: mtr.devops.telekom.de/tardis-common/kong-plugins:2.1.2
   #imagePullPolicy: IfNotPresent
   resources:
     limits:
@@ -276,12 +288,12 @@ plugins:
 jumper:
   enabled: true
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-internal/hyperion
     #name: jumper-sse
-    #tag: 2.3.4.3
+    #tag: 3.2.2
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper-sse:2.3.4.3
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.2
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   tracingUrl: http://guardians-drax-collector.skoll:9411
@@ -305,12 +317,12 @@ jumper:
 legacyJumper:
   enabled: false
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-internal/hyperion
     #name: jumper
-    #tag: 1.10.6.1
+    #tag: 1.10.6.3
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/jumper:1.10.6.1
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper:1.10.6.3
   #imagePullPolicy: IfNotPresent
 
   #port: 8082
@@ -318,12 +330,12 @@ legacyJumper:
 issuerService:
   enabled: true
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-internal/hyperion
     #name: issuer-service
-    #tag: 1.7.0
+    #tag: 1.9.0
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/issuer-service:1.9.0
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/issuer-service:1.9.0
   #imagePullPolicy: IfNotPresent
   jsonWebKey: changeme
   publicKey: changeme
@@ -339,14 +351,14 @@ issuerService:
       memory: 200Mi
 
 circuitbreaker:
-  enabled: true
+  enabled: false
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-internal/hyperion
     #name: circuitbreaker
-    #tag: 1.0.3
+    #tag: 2.1.0
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/gateway-circuitbreaker:1.0.3
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/gateway-circuitbreaker:2.1.0
   imagePullPolicy: IfNotPresent
   #interval: 60s
   #count: 4
@@ -364,12 +376,12 @@ circuitbreaker:
 postgres:
   # You can force using a specific image here:
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
     #name: postgres
     #tag: 12.3-debian
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/postgres:12.3-debian
+  #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
 
   # If set to true, the bundled PostgreSQL will not be deployed
@@ -412,9 +424,9 @@ job: {}
 # force specific image for jobs:
 #job:
   #image: 
-    #repository: mtr.external.otc.telekomcloud.com
-    #organization: tif-public
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
     #name: tif-base-image
     #tag: 1.0.0
   # Or use the flattened string form:
-  #image: mtr.external.otc.telekomcloud.com/tif-public/tif-base-image:1.0.0
+  #image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0

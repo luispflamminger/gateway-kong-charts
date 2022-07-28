@@ -18,8 +18,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- $imageName = "kong-enterprise-edition" -}}
 {{- $imageTag = "2.8.0-alpine" -}}
 {{- end -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageOrganization := .Values.global.image.organization -}}
 {{- if .Values.image -}}
   {{- if not (kindIs "string" .Values.image) -}}
     {{ $imageRepository = .Values.image.repository | default $imageRepository -}}
@@ -28,7 +28,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{ $imageTag = .Values.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.image -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+    {{- else -}}
+      {{- .Values.image -}}
+    {{- end -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
@@ -38,8 +42,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "kongplugins.image" -}}
 {{- $imageName := "kong-plugins" -}}
 {{- $imageTag := "2.1.3" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageOrganization := .Values.global.image.organization -}}
 {{- if .Values.plugins.image -}}
   {{- if not (kindIs "string" .Values.plugins.image) -}}
     {{ $imageRepository = .Values.plugins.image.repository | default $imageRepository -}}
@@ -48,7 +52,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{ $imageTag = .Values.plugins.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.plugins.image -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.plugins.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+    {{- else -}}
+      {{- .Values.plugins.image -}}
+    {{- end -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
@@ -58,8 +66,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "job.image" -}}
 {{- $imageName := "tif-base-image" -}}
 {{- $imageTag := "1.0.0" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageOrganization := .Values.global.image.organization -}}
 {{- if and .Values.job .Values.job.image -}}
   {{- if not (kindIs "string" .Values.job.image) -}}
     {{ $imageRepository = .Values.job.image.repository | default $imageRepository -}}
@@ -68,7 +76,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{ $imageTag = .Values.job.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.job.image -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.job.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+    {{- else -}}
+      {{- .Values.job.image -}}
+    {{- end -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
@@ -94,9 +106,9 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "2.3.4.3" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageTag := "3.2.2" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
   {{- if not (kindIs "string" .Values.jumper.image) -}}
     {{ $imageRepository = .Values.jumper.image.repository | default $imageRepository -}}
@@ -105,7 +117,11 @@ false
     {{ $imageTag = .Values.jumper.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
-    {{- .Values.jumper.image -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.jumper.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
+    {{- else -}}
+      {{- .Values.jumper.image -}}
+    {{- end -}}
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
@@ -114,9 +130,9 @@ false
 
 {{- define "kong.legacyJumper.image" -}}
 {{- $imageName := "jumper" -}}
-{{- $imageTag := "1.10.6.2-loglevel" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageTag := "1.10.6.3" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.legacyJumper.image -}}
   {{- if not (kindIs "string" .Values.legacyJumper.image) -}}
     {{ $imageRepository = .Values.legacyJumper.image.repository | default $imageRepository -}}
@@ -125,6 +141,10 @@ false
     {{ $imageTag = .Values.legacyJumper.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.legacyJumper.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
+    {{- else -}}
+    {{- end -}}
     {{- .Values.legacyJumper.image -}}
   {{- end -}}
 {{- else -}}
@@ -135,8 +155,8 @@ false
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
 {{- $imageTag := "1.9.0" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.issuerService.image -}}
   {{- if not (kindIs "string" .Values.issuerService.image) -}}
     {{ $imageRepository = .Values.issuerService.image.repository | default $imageRepository -}}
@@ -145,6 +165,10 @@ false
     {{ $imageTag = .Values.issuerService.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.issuerService.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
+    {{- else -}}
+    {{- end -}}
     {{- .Values.issuerService.image -}}
   {{- end -}}
 {{- else -}}
@@ -154,9 +178,9 @@ false
 
 {{- define "kong.circuitbreaker.image" -}}
 {{- $imageName := "gateway-circuitbreaker" -}}
-{{- $imageTag := "1.0.3" -}}
-{{- $imageRepository := "mtr.external.otc.telekomcloud.com" -}}
-{{- $imageOrganization := "tif-public" -}}
+{{- $imageTag := "2.1.0" -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.circuitbreaker.image -}}
   {{- if not (kindIs "string" .Values.circuitbreaker.image) -}}
     {{ $imageRepository = .Values.circuitbreaker.image.repository | default $imageRepository -}}
@@ -165,6 +189,10 @@ false
     {{ $imageTag = .Values.circuitbreaker.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
+    {{- if .Values.global.image.force -}}
+      {{- .Values.circuitbreaker.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/hyperion" .Values.global.image.organization -}}
+    {{- else -}}
+    {{- end -}}
     {{- .Values.circuitbreaker.image -}}
   {{- end -}}
 {{- else -}}
