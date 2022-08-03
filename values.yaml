@@ -416,6 +416,7 @@ postgres:
         storage: 1Gi
 
   securityContext: {}
+    #fsGroup: 999
 
   resources:
     limits:
