@@ -36,5 +36,6 @@ spec:
   tls:
   - hosts:
     - {{ include "kong.adminApi.host" . }}
+{{- include "kong.adminApi.ingress.tlsSecret" . | nindent 4 -}}
 {{- end -}}
 {{- end -}}

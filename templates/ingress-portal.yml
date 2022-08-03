@@ -25,5 +25,6 @@ spec:
   tls:
   - hosts:
     - {{ include "kong.portal.host" . }}
+{{- include "kong.portal.ingress.tlsSecret" . | nindent 4 -}}
 {{- end -}}
 {{- end -}}

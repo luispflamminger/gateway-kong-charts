@@ -800,3 +800,27 @@ admin-api
 {{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
 {{- $mergedAnnotations | toYaml -}}
 {{ end -}}
+
+{{- define "kong.adminApi.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.adminApi.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.adminApi.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.manager.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.manager.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.manager.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.portal.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.portal.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.portal.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.proxy.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.proxy.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.proxy.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}

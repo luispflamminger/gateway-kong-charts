@@ -25,5 +25,6 @@ spec:
   tls:
   - hosts:
     - {{ include "kong.proxy.host" . }}
+{{- include "kong.proxy.ingress.tlsSecret" . | nindent 4 -}}
 {{- end -}}
 {{- end -}}
