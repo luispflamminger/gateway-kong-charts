@@ -7,6 +7,7 @@ Please also seek advice from the README regarding updates.
 ## 0.0.0
  - Added ingress tlsSecret
  - Security context fsGroup for postgres
+ - ingressClassName for platform 'tdi'
 
 ## 2.0.0
  - Pull images from new MTR
