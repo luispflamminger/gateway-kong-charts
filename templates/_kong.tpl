@@ -824,3 +824,27 @@ secretName: {{ .Values.portal.ingress.tlsSecret | default .Values.global.ingress
 secretName: {{ .Values.proxy.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.adminApi.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.manager.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.manager.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.portal.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.portal.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.proxy.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
