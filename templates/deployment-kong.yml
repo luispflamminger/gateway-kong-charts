@@ -40,25 +40,6 @@ spec:
                   values:
                   - {{ .Release.Name }}-kong
               topologyKey: "kubernetes.io/hostname"
-      initContainers:
-      - name: kong-install-plugins
-        image: {{ include "kongplugins.image" $ }}
-        imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.plugins.securityContext | toYaml | nindent 10 }}
-        resources: {{ .Values.plugins.resources | toYaml | nindent 10 }}
-        command:
-        - /bin/sh
-        - -c
-        - |-
-          mkdir -p /tmp/plugins
-          cp -r /usr/local/kong/plugins/. /tmp/plugins
-          luarocks-admin make-manifest /tmp/plugins
-          luarocks --from=/tmp/plugins install --local kong-plugin-jwt-keycloak
-          luarocks --from=/tmp/plugins install --local kong-plugin-eni-zipkin
-          luarocks --from=/tmp/plugins install --local kong-plugin-eni-prometheus
-          luarocks --from=/tmp/plugins install --local luaossl OPENSSL_DIR=/usr/local/kong CRYPTO_DIR=/usr/local/kong
-        volumeMounts:
-          {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper
