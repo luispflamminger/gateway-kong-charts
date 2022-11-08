@@ -316,9 +316,9 @@ jumper:
   applicationName: Stargate
   startup:
     livenessProbe:
-      initialDelay: 5
+      initialDelay: 25
     readinessProbe:
-      initialDelay: 5
+      initialDelay: 25
   #port: 8080
 
   securityContext: {}
