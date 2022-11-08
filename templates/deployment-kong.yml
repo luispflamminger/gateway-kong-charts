@@ -126,7 +126,7 @@ spec:
             path: /actuator/health/liveness
             port: legacy-jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          {{- include "legacyJumper.liveness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -136,7 +136,7 @@ spec:
             path: /actuator/health/readiness
             port: legacy-jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          {{- include "legacyJumper.readiness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1

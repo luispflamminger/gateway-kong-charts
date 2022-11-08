@@ -338,6 +338,11 @@ jumper:
 
 legacyJumper:
   enabled: false
+  startup:
+    livenessProbe:
+      initialDelay: 25
+    readinessProbe:
+      initialDelay: 25
   #image: 
     #repository: mtr.devops.telekom.de
     #organization: tardis-internal/hyperion

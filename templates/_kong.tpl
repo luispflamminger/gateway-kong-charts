@@ -136,6 +136,22 @@ initialDelaySeconds: 25
 {{- end -}}
 {{- end -}}
 
+{{- define "legacyJumper.liveness.delay" }}
+{{- if .Values.legacyJumper.startup.livenessProbe.initialDelay -}}
+initialDelaySeconds: {{ .Values.legacyJumper.startup.livenessProbe.initialDelay }}
+{{- else -}}
+initialDelaySeconds: 25
+{{- end -}}
+{{- end -}}
+
+{{- define "legacyJumper.readiness.delay" }}
+{{- if .Values.legacyJumper.startup.readinessProbe.initialDelay -}}
+initialDelaySeconds: {{ .Values.legacyJumper.startup.readinessProbe.initialDelay }}
+{{- else -}}
+initialDelaySeconds: 25
+{{- end -}}
+{{- end -}}
+
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
