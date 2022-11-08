@@ -104,31 +104,6 @@ false
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.liveness.delay" }}
-initialDelaySeconds: {{ .Values.startup.livenessProbe.initialDelay | default 5 }}
-{{- end -}}
-
-{{- define "kong.readiness.delay" }}
-initialDelaySeconds: {{ .Values.startup.readinessProbe.initialDelay | default 5 }}
-{{- end -}}
-
-{{- define "jumper.liveness.delay" }}
-initialDelaySeconds: {{ .Values.jumper.startup.livenessProbe.initialDelay | default 25 }}
-{{- end -}}
-
-{{- define "jumper.readiness.delay" }}
-initialDelaySeconds: {{ .Values.jumper.startup.readinessProbe.initialDelay | default 25 }}
-{{- end -}}
-
-{{- define "legacyJumper.liveness.delay" }}
-initialDelaySeconds: {{ .Values.legacyJumper.startup.livenessProbe.initialDelay | default 25 }}
-{{- end -}}
-
-{{- define "legacyJumper.readiness.delay" }}
-initialDelaySeconds: {{ .Values.legacyJumper.startup.readinessProbe.initialDelay | default 25 }}
-{{- end -}}
-
-
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
 {{- $imageTag := "3.2.9" -}}
