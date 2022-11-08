@@ -45,7 +45,7 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
-  failOnUnsetValues: true
+  failOnUnsetValues: false
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -269,6 +269,13 @@ kong_admin:
   setupJob: {}
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
+kong:
+  startup:
+    livenessProbe:
+      initialDelay: 5
+    readinessProbe:
+      initialDelay: 5
+
 
 plugins:
   enabled: []
@@ -293,6 +300,11 @@ plugins:
 # communication
 jumper:
   enabled: true
+  startup:
+    livenessProbe:
+      initialDelay: 25
+    readinessProbe:
+      initialDelay: 25
   #image: 
     #repository: mtr.devops.telekom.de
     #organization: tardis-internal/hyperion
@@ -307,7 +319,11 @@ jumper:
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
   applicationName: Stargate
-
+  startup:
+    livenessProbe:
+      initialDelay: 5
+    readinessProbe:
+      initialDelay: 5
   #port: 8080
 
   securityContext: {}

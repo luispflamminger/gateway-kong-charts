@@ -85,7 +85,7 @@ spec:
             path: /actuator/health/liveness
             port: jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          {{- include "jumper.liveness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -95,7 +95,7 @@ spec:
             path: /actuator/health/readiness
             port: jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          {{- include "jumper.readiness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -244,7 +244,7 @@ spec:
             path: /status
             port: status
             scheme: HTTP
-          initialDelaySeconds: 5
+          {{- include "kong.liveness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -254,7 +254,7 @@ spec:
             path: /status
             port: status
             scheme: HTTP
-          initialDelaySeconds: 5
+          {{- include "kong.readiness.delay" $ | nindent 10 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
