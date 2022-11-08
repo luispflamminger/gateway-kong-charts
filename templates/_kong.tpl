@@ -106,7 +106,7 @@ false
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.2.2" -}}
+{{- $imageTag := "3.2.9" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -800,3 +800,51 @@ admin-api
 {{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
 {{- $mergedAnnotations | toYaml -}}
 {{ end -}}
+
+{{- define "kong.adminApi.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.adminApi.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.adminApi.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.manager.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.manager.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.manager.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.portal.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.portal.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.portal.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.proxy.ingress.tlsSecret" -}}
+{{- if not (and (empty .Values.proxy.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
+secretName: {{ .Values.proxy.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.adminApi.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.manager.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.manager.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.portal.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.portal.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.proxy.ingress.ingressClassName" -}}
+{{- if eq .Values.global.platform "tdi" -}}
+ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
+{{- end -}}
+{{- end -}}

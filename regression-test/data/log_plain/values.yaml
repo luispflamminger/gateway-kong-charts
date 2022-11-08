@@ -1,5 +1,0 @@
-issuerService:
-  jsonWebKey: ignore
-  publicKey: ignore
-
-logFormat: plain

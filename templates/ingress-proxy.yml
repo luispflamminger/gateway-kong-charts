@@ -1,4 +1,4 @@
-{{- if eq .Values.global.platform "kubernetes" }}
+{{- if or (eq .Values.global.platform "kubernetes") (eq .Values.global.platform "tdi") -}}
 {{- if .Values.proxy.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -22,8 +22,10 @@ spec:
 {{- else }}
                 name: proxy
 {{- end }}
+{{- include "kong.proxy.ingress.ingressClassName" . | nindent 2 }}
   tls:
   - hosts:
     - {{ include "kong.proxy.host" . }}
+{{- include "kong.proxy.ingress.tlsSecret" . | nindent 4 -}}
 {{- end -}}
 {{- end -}}
