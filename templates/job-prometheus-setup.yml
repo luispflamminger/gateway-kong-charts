@@ -47,8 +47,8 @@ spec:
               --header 'Content-Type: application/json' \
               --data \
               '{
-                "name" : "eni-prometheus",
-                "tags" : ["tardis","eni-prometheus"],
+                "name" : "prometheus",
+                "tags" : ["tardis","prometheus","eni-prometheus"],
                 "config" : {
                   "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
                   "eni_stat" : true

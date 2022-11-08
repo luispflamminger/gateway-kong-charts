@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 0.0.0
+ - Use ENI flavoured original Prometheus plugin version 1.5.0
+
 ## 2.1.0
  - Added configurable initial delays
  - Added ingress tlsSecret
