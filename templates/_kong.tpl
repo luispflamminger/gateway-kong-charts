@@ -105,57 +105,33 @@ false
 {{- end -}}
 
 {{- define "kong.liveness.delay" }}
-{{- if .Values.kong.startup.livenessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.kong.startup.livenessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 5
-{{- end -}}
+initialDelaySeconds: {{ .Values.startup.livenessProbe.initialDelay | default 5 }}
 {{- end -}}
 
 {{- define "kong.readiness.delay" }}
-{{- if .Values.kong.startup.readinessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.kong.startup.readinessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 5
-{{- end -}}
+initialDelaySeconds: {{ .Values.startup.readinessProbe.initialDelay | default 5 }}
 {{- end -}}
 
 {{- define "jumper.liveness.delay" }}
-{{- if .Values.jumper.startup.livenessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.jumper.startup.livenessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 25
-{{- end -}}
+initialDelaySeconds: {{ .Values.jumper.startup.livenessProbe.initialDelay | default 25 }}
 {{- end -}}
 
 {{- define "jumper.readiness.delay" }}
-{{- if .Values.jumper.startup.readinessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.jumper.startup.readinessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 25
-{{- end -}}
+initialDelaySeconds: {{ .Values.jumper.startup.readinessProbe.initialDelay | default 25 }}
 {{- end -}}
 
 {{- define "legacyJumper.liveness.delay" }}
-{{- if .Values.legacyJumper.startup.livenessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.legacyJumper.startup.livenessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 25
-{{- end -}}
+initialDelaySeconds: {{ .Values.legacyJumper.startup.livenessProbe.initialDelay | default 25 }}
 {{- end -}}
 
 {{- define "legacyJumper.readiness.delay" }}
-{{- if .Values.legacyJumper.startup.readinessProbe.initialDelay -}}
-initialDelaySeconds: {{ .Values.legacyJumper.startup.readinessProbe.initialDelay }}
-{{- else -}}
-initialDelaySeconds: 25
-{{- end -}}
+initialDelaySeconds: {{ .Values.legacyJumper.startup.readinessProbe.initialDelay | default 25 }}
 {{- end -}}
 
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.2.2" -}}
+{{- $imageTag := "3.2.9" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}

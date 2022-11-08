@@ -45,7 +45,7 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
-  failOnUnsetValues: false
+  failOnUnsetValues: true
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -269,12 +269,12 @@ kong_admin:
   setupJob: {}
   #  backoffLimit: 15
   #  activeDeadlineSeconds: 3600
-kong:
-  startup:
-    livenessProbe:
-      initialDelay: 5
-    readinessProbe:
-      initialDelay: 5
+
+startup:
+  livenessProbe:
+    initialDelay: 5
+  readinessProbe:
+    initialDelay: 5
 
 
 plugins:
@@ -300,11 +300,11 @@ plugins:
 # communication
 jumper:
   enabled: true
-  startup:
-    livenessProbe:
-      initialDelay: 25
-    readinessProbe:
-      initialDelay: 25
+  #startup:
+    #livenessProbe:
+      #initialDelay: 25
+    #readinessProbe:
+      #initialDelay: 25
   #image: 
     #repository: mtr.devops.telekom.de
     #organization: tardis-internal/hyperion
