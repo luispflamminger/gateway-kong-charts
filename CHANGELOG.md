@@ -5,6 +5,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 ## 0.0.0
+ - Added configurable initial delays
  - Added ingress tlsSecret
  - Security context fsGroup for postgres
  - ingressClassName for platform 'tdi'

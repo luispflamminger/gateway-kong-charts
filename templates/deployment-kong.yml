@@ -85,7 +85,7 @@ spec:
             path: /actuator/health/liveness
             port: jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          initialDelaySeconds: {{ .Values.jumper.startup.livenessProbe.initialDelay | default 25 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -95,7 +95,7 @@ spec:
             path: /actuator/health/readiness
             port: jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          initialDelaySeconds: {{ .Values.jumper.startup.readinessProbe.initialDelay | default 25 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -126,7 +126,7 @@ spec:
             path: /actuator/health/liveness
             port: legacy-jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          initialDelaySeconds: {{ .Values.legacyJumper.startup.livenessProbe.initialDelay | default 25 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -136,7 +136,7 @@ spec:
             path: /actuator/health/readiness
             port: legacy-jumper
             scheme: HTTP
-          initialDelaySeconds: 25
+          initialDelaySeconds: {{ .Values.legacyJumper.startup.readinessProbe.initialDelay | default 25 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -244,7 +244,7 @@ spec:
             path: /status
             port: status
             scheme: HTTP
-          initialDelaySeconds: 5
+          initialDelaySeconds: {{ .Values.startup.livenessProbe.initialDelay | default 5 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
@@ -254,7 +254,7 @@ spec:
             path: /status
             port: status
             scheme: HTTP
-          initialDelaySeconds: 5
+          initialDelaySeconds: {{ .Values.startup.readinessProbe.initialDelay | default 5 }}
           timeoutSeconds: 5
           periodSeconds: 10
           successThreshold: 1
