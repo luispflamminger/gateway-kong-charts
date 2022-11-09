@@ -678,7 +678,7 @@ false
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
-  value: bundled,eni-zipkin,jwt-keycloak{{ $enabledPlugins }}
+  value: bundled,jwt-keycloak{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
 {{- end -}}
