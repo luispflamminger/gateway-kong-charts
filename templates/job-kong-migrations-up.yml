@@ -14,30 +14,6 @@ spec:
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      initContainers:
-      - name: "check-database"
-        image: '{{ include "postgresql.image" $ }}'
-        imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
-        command: ['/bin/bash']
-        args: ['-c', 'until pg_isready -U {{ .Values.postgres.user }}; do echo waiting for database; sleep 2; done;']
-        env:
-        {{- include "kong.migrations.checkdatabase.env" $ | indent 8 }}
-      - name: kong-install-plugins
-        image: {{ include "kongplugins.image" $ }}
-        imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.plugins.securityContext | toYaml | nindent 10 }}
-        resources: {{ .Values.plugins.resources | toYaml | nindent 10 }}
-        command:
-        - /bin/sh
-        - -c
-        - |-
-          mkdir -p /tmp/plugins
-          cp -r /usr/local/kong/plugins/. /tmp/plugins
-          luarocks-admin make-manifest /tmp/plugins
-          luarocks --from=/tmp/plugins install --local luaossl OPENSSL_DIR=/usr/local/kong CRYPTO_DIR=/usr/local/kong
-        volumeMounts:
-          {{- include "kongplugins.volumeMounts" $ | indent 8 }}
       containers:
       - name: kong-upgrade-migrations
         image: {{ include "kong.image" $ }}
@@ -50,6 +26,5 @@ spec:
           {{- include "kong.migrations.volumeMounts" $ | indent 8 }}
       restartPolicy: OnFailure
       volumes:
-      {{- include "kongplugins.volumes" $ | indent 6 }}
       {{- include "kong.migrations.volumes" $ | indent 6 }}
 {{- end -}}

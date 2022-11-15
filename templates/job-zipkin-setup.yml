@@ -34,7 +34,7 @@ spec:
           - /bin/bash
           - -c
           - |- 
-            echo "Enabling Kong eni flavoured zipkin plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+            echo "Enabling Kong ENI flavoured Zipkin plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
             HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
