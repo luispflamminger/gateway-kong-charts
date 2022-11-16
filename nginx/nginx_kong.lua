@@ -83,7 +83,7 @@ log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                                '"upstream_status": "$upstream_status", '
                                '"tardis_consumer": "$tardis_consumer", '
                                '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", } }';
+                               '"sec_event_details": "$sec_event_details" } }';
 
 log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "proxy", '
@@ -120,7 +120,7 @@ log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
                                '"request_path": "$uri", '
                                '"hostname_ingress": "$host", '
                                '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", } }';
+                               '"sec_event_details": "$sec_event_details" } }';
 
 log_format log_admin_debug_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "admin", '
