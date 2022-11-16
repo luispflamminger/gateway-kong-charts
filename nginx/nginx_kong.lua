@@ -81,6 +81,7 @@ log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                                '"hostname_upstream": "$http_remote_api_url", '
                                '"X-B3-TraceId": "$http_x_b3_traceid", '
                                '"upstream_status": "$upstream_status", '
+                               '"tardis_consumer": "$tardis_consumer",
                                '"sec_event_code": "$sec_event_code", '
                                '"sec_event_details": "$sec_event_details" } }';
 
@@ -102,6 +103,7 @@ log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
                                '"upstream_response_length": "$upstream_response_length", '
                                '"upstream_response_time": "$upstream_response_time", '
                                '"upstream_status": "$upstream_status", '
+                               '"tardis_consumer": "$tardis_consumer",
                                '"sec_event_code": "$sec_event_code", '
                                '"sec_event_details": "$sec_event_details", '
                                '"http_user_agent": "$http_user_agent" } }';
@@ -200,6 +202,7 @@ server {
         # added for TARDIS DHEI-8371
         set $sec_event_code              '';
         set $sec_event_details           '';
+        set $tardis_consumer             '';
 
         set $ctx_ref                     '';
         set $upstream_te                 '';
@@ -440,6 +443,7 @@ server {
         # added for TARDIS DHEI-8371
         set $sec_event_code              '';
         set $sec_event_details           '';
+        set $tardis_consumer             '';
 
         default_type application/json;
         content_by_lua_block {
