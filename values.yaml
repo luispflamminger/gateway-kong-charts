@@ -23,7 +23,7 @@ global:
   #  force: false
   image:
     repository: mtr.devops.telekom.de
-    organization: tardis-internal/io
+    organization: tardis-common
     force: false
 
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
@@ -57,9 +57,9 @@ global:
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-#image: 
+image: 
   #repository: mtr.devops.telekom.de
-  #organization: tardis-common
+  organization: tardis-internal/io
   #name: kong
   #tag: 2.8.1-alpine
 # Or use the flattened string form:

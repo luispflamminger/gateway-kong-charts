@@ -19,7 +19,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- $imageTag = "2.8.0-alpine" -}}
 {{- end -}}
 {{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
   {{- if not (kindIs "string" .Values.image) -}}
     {{ $imageRepository = .Values.image.repository | default $imageRepository -}}
