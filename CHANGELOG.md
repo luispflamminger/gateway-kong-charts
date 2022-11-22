@@ -4,6 +4,10 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+
+## 2.1.1
+ - Set default log format to JSON
+
 ## 2.1.0
  - Added configurable initial delays
  - Added ingress tlsSecret
