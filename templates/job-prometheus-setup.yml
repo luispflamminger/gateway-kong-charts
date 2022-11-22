@@ -36,27 +36,33 @@ spec:
           - |-
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
-            if [ "$HTTP_RETURN_CODE" == "200" ]; then
-              curl \
-              -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            {{- if eq .Values.rbac.enabled true }}
-              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
-              -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
-              --header 'Content-Type: application/json' \
-              --data \
-              '{
-                "name" : "prometheus",
-                "tags" : ["tardis","prometheus","eni-prometheus"],
-                "config" : {
-                  "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
-                  "eni_stat" : true
-                }
-              }'
-            else
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            if [ "$ADMIN_API_HTTP_RETURN_CODE" == "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
+            fi
+
+            CONFIG_CALL_HTTP_RETURN_CODE=`curl \
+            -w "%{http_code}" \
+            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            {{- if eq .Values.rbac.enabled true }}
+            -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+            {{- end }}
+            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
+            --header 'Content-Type: application/json' \
+            --data \
+            '{
+              "name" : "prometheus",
+              "tags" : ["tardis","prometheus","eni-prometheus"],
+              "config" : {
+                "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
+                "eni_stat" : true
+              }
+            }'`
+
+            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "200" ] && [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "201"]; then
+              echo "Configuring plugin failed"
+              exit 1
             fi
       restartPolicy: OnFailure
 {{- end -}}
