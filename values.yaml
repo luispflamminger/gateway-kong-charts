@@ -261,7 +261,7 @@ requestTransformer:
 # It can have one of the values: default, json or plain.
 # Details are specified in templates/configmap-nginx-kong-template.yaml and nginx/nginx_kong.lua
 # Formats: debug, default, json
-logFormat: default
+logFormat: json
 
 kong_admin:
   enabled: true
