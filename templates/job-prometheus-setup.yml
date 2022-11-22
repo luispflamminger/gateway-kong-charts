@@ -60,7 +60,7 @@ spec:
               }
             }'`
 
-            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "200" ] && [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "201"]; then
+            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "200" ] && [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "201" ]; then
               echo "Configuring plugin failed"
               exit 1
             fi
