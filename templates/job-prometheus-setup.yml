@@ -37,7 +37,7 @@ spec:
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
             ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
-            if [ "$ADMIN_API_HTTP_RETURN_CODE" == "200" ]; then
+            if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
             fi
