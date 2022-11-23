@@ -15,7 +15,7 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
-      - name: {{ .Release.Name }}-zipkin-deletion
+      - name: zipkin-deletion
         image: {{ include "job.image" $ }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:

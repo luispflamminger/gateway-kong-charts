@@ -10,6 +10,7 @@ Please also seek advice from the README regarding updates.
  - Switched to ENI-Kong image 2.8.1.0
  - Removed all plugins-setup e.g. init-container
  - Added jobs to remove old ENI flavoured plugins
+ - Removed release names from containers
 
 ## 2.1.1
  - Set default log format to JSON
