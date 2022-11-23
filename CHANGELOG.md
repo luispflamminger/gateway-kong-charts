@@ -11,6 +11,9 @@ Please also seek advice from the README regarding updates.
  - Removed all plugins-setup e.g. init-container
  - Added jobs to remove old ENI flavoured plugins
 
+## 2.1.1
+ - Set default log format to JSON
+
 ## 2.1.0
  - Added configurable initial delays
  - Added ingress tlsSecret

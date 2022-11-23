@@ -247,77 +247,79 @@ data:
     # TARDIS log formats for proxy port
     
     log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
-                             '"@service": "proxy", '
-                             '"@fields": { '
-                               '"source": "$http_x_real_ip", '
-                               '"status": "$status", '
-                               '"request_method": "$request_method", '
-                               '"request_path": "$uri", '
-                               '"hostname_ingress": "$host", '
-                               '"hostname_upstream": "$http_remote_api_url", '
-                               '"X-B3-TraceId": "$http_x_b3_traceid", '
-                               '"upstream_status": "$upstream_status", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", } }';
+                                 '"@service": "proxy", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"status": "$status", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"hostname_ingress": "$host", '
+                                   '"hostname_upstream": "$http_remote_api_url", '
+                                   '"X-B3-TraceId": "$http_x_b3_traceid", '
+                                   '"upstream_status": "$upstream_status", '
+                                   '"tardis_consumer": "$tardis_consumer", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", } }';
     
     log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
-                             '"@service": "proxy", '
-                             '"@fields": { '
-                               '"source": "$http_x_real_ip", '
-                               '"status": "$status", '
-                               '"request_method": "$request_method", '
-                               '"request_path": "$uri", '
-                               '"request_time": "$request_time", '
-                               '"request_length": "$request_length", '
-                               '"response_body_length": "$body_bytes_sent", '
-                               '"connection_id": "$connection", '
-                               '"connection_requests": "$connection_requests", '
-                               '"hostname_ingress": "$host", '
-                               '"hostname_upstream": "$http_remote_api_url", '
-                               '"X-B3-TraceId": "$http_x_b3_traceid", '
-                               '"upstream_response_length": "$upstream_response_length", '
-                               '"upstream_response_time": "$upstream_response_time", '
-                               '"upstream_status": "$upstream_status", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", '
-                               '"http_user_agent": "$http_user_agent" } }';
+                                 '"@service": "proxy", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"status": "$status", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"request_time": "$request_time", '
+                                   '"request_length": "$request_length", '
+                                   '"response_body_length": "$body_bytes_sent", '
+                                   '"connection_id": "$connection", '
+                                   '"connection_requests": "$connection_requests", '
+                                   '"hostname_ingress": "$host", '
+                                   '"hostname_upstream": "$http_remote_api_url", '
+                                   '"X-B3-TraceId": "$http_x_b3_traceid", '
+                                   '"upstream_response_length": "$upstream_response_length", '
+                                   '"upstream_response_time": "$upstream_response_time", '
+                                   '"upstream_status": "$upstream_status", '
+                                   '"tardis_consumer": "$tardis_consumer", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", '
+                                   '"http_user_agent": "$http_user_agent" } }';
     
     # TARDIS log formats for admin port
     
     log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
-                             '"@service": "admin", '
-                             '"@fields": { '
-                               '"source": "$http_x_real_ip", '
-                               '"remote_user": "$remote_user", '
-                               '"status": "$status", '
-                               '"request_method": "$request_method", '
-                               '"request_path": "$uri", '
-                               '"hostname_ingress": "$host", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", } }';
+                                 '"@service": "admin", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"remote_user": "$remote_user", '
+                                   '"status": "$status", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"hostname_ingress": "$host", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", } }';
     
     log_format log_admin_debug_json '{ "@timestamp": "$time_iso8601", '
-                             '"@service": "admin", '
-                             '"@fields": { '
-                               '"source": "$http_x_real_ip", '
-                               '"remote_user": "$remote_user", '
-                               '"status": "$status", '
-                               '"request_method": "$request_method", '
-                               '"request_path": "$uri", '
-                               '"request_protocol": "$server_protocol", '
-                               '"request_time": "$request_time", '
-                               '"request_completion": "$request_completion", '
-                               '"request_length": "$request_length", '
-                               '"response_body_length": "$body_bytes_sent", '
-                               '"content_length": "$content_length", '
-                               '"content_type": "$content_type", '
-                               '"connection_id": "$connection", '
-                               '"connection_requests": "$connection_requests", '
-                               '"hostname_ingress": "$host", '
-                               '"hostname_pod": "$hostname", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", '
-                               '"http_user_agent": "$http_user_agent" } }';
+                                 '"@service": "admin", '
+                                 '"@fields": { '
+                                   '"source": "$http_x_real_ip", '
+                                   '"remote_user": "$remote_user", '
+                                   '"status": "$status", '
+                                   '"request_method": "$request_method", '
+                                   '"request_path": "$uri", '
+                                   '"request_protocol": "$server_protocol", '
+                                   '"request_time": "$request_time", '
+                                   '"request_completion": "$request_completion", '
+                                   '"request_length": "$request_length", '
+                                   '"response_body_length": "$body_bytes_sent", '
+                                   '"content_length": "$content_length", '
+                                   '"content_type": "$content_type", '
+                                   '"connection_id": "$connection", '
+                                   '"connection_requests": "$connection_requests", '
+                                   '"hostname_ingress": "$host", '
+                                   '"hostname_pod": "$hostname", '
+                                   '"sec_event_code": "$sec_event_code", '
+                                   '"sec_event_details": "$sec_event_details", '
+                                   '"http_user_agent": "$http_user_agent" } }';
     
     server {
         server_name kong;
@@ -376,6 +378,7 @@ data:
             # added for TARDIS DHEI-8371
             set $sec_event_code              '';
             set $sec_event_details           '';
+            set $tardis_consumer             '';
     
             set $ctx_ref                     '';
             set $upstream_te                 '';
@@ -616,6 +619,7 @@ data:
             # added for TARDIS DHEI-8371
             set $sec_event_code              '';
             set $sec_event_details           '';
+            set $tardis_consumer             '';
     
             default_type application/json;
             content_by_lua_block {
@@ -962,7 +966,7 @@ spec:
           mountPath: /tmp
       containers:
       - name: jumper
-        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:2.3.4.3
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1051,37 +1055,6 @@ spec:
             secretKeyRef:
               name: stargate-issuer-service
               key: publicKey
-      - name: circuitbreaker
-        image: mtr.devops.telekom.de/tardis-internal/hyperion/gateway-circuitbreaker:1.0.3
-        imagePullPolicy: IfNotPresent
-        securityContext: 
-          {}
-        resources: 
-          limits:
-            cpu: 0.5
-            memory: 500Mi
-          requests:
-            cpu: 50m
-            memory: 200Mi
-        ports:
-        - name: circuitbreaker
-          containerPort: 8084 
-          protocol: TCP
-        volumeMounts:        
-        - name: kong-circuitbreaker-tmp
-          mountPath: /tmp
-        env:        
-        - name: KONG_AUTH
-          valueFrom:
-            secretKeyRef:
-              name: stargate
-              key: gatewayAdminBase64
-        - name: KONG_URL
-          value: http://localhost:8001
-        - name: INTERVAL
-          value: "60s"
-        - name: COUNT
-          value: "4"
       - name: kong
         image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
         imagePullPolicy: IfNotPresent
@@ -1260,6 +1233,8 @@ spec:
         tardis.telekom.de/environment: "default"
         tardis.telekom.de/subproduct: "stargate-database"
     spec:      
+      securityContext:
+        fsGroup: 999
       containers:
       - name: stargate-postgresql
         image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
@@ -1338,7 +1313,7 @@ spec:
           claimName: stargate-database-pvc
 ---
 # Source: stargate/templates/ingress-admin.yml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: stargate-admin
@@ -1356,15 +1331,19 @@ spec:
     http:
       paths:
         - path: /admin-api
+          pathType: Prefix
           backend:
-            serviceName: stargate-proxy
-            servicePort: proxy
+            service:
+              name: stargate-proxy
+              port:
+                name: proxy
+  
   tls:
   - hosts:
     - stargate-admin-default.lab.tif.telekom.de
 ---
 # Source: stargate/templates/ingress-proxy.yml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: stargate-proxy
@@ -1382,9 +1361,13 @@ spec:
     http:
       paths:
         - path: /
+          pathType: Prefix
           backend:
-            serviceName: stargate-proxy
-            servicePort: proxy
+            service:
+              name: stargate-proxy
+              port:
+                name: proxy
+  
   tls:
   - hosts:
     - stargate-default.lab.tif.telekom.de
