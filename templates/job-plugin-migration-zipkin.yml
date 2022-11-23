@@ -1,20 +1,21 @@
-{{- if and (.Values.adminApi.enabled) (eq (include "kong.isZipkinEnabled" $) "true") }}
+{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) (eq (include "kong.isZipkinEnabled" $) "true") }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-zipkin-setup
+  name: {{ .Release.Name }}-plugin-migration-zipkin
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/weight": "-10"
 spec:
-  backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default 15 }}
-  activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default 3600 }}
+  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
-      - name: {{ .Release.Name }}-zipkin-setup
+      - name: {{ .Release.Name }}-zipkin-deletion
         image: {{ include "job.image" $ }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
@@ -29,12 +30,12 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: kongAdminPassword
-         {{- end }}
+        {{- end }}
         command:        
           - /bin/bash
           - -c
-          - |- 
-            echo "Enabling Kong ENI flavoured Zipkin plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+          - |-
+            echo "Removing old Kong ENI flavoured Zipkin plugin via DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
             ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
@@ -49,25 +50,11 @@ spec:
             {{- if eq .Values.rbac.enabled true }}
             -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
-            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
-            --header 'Content-Type: application/json' \
-            --data \
-            '{
-              "name" : "zipkin",
-              "tags" : ["tardis","zipkin","eni-zipkin"],
-              "config" : {
-                "http_endpoint" : "{{ .Values.zipkin.collectorUrl }}",
-                "sample_ratio" : {{ .Values.zipkin.sampleRatio | default 0.001 }},
-                "include_credential" : {{ .Values.zipkin.includeCredential | default true }},
-                "default_service_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}",
-                "local_component_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
-              }
-            }'`
+            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }}`
 
-            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "200" ] && [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "201" ]; then
-              echo "Configuring plugin failed"
+            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "204" ]; then
+              echo "Plugin deletion failed"
               exit 1
             fi
-
       restartPolicy: OnFailure
-{{- end }}
+{{- end -}}
