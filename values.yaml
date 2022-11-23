@@ -60,8 +60,8 @@ templateChangeTriggers: []
 image: 
   #repository: mtr.devops.telekom.de
   organization: tardis-internal/io
-  #name: kong
-  #tag: 2.8.1-alpine
+  #name: eni-kong
+  #tag: 2.8.1
 # Or use the flattened string form:
 #image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
 #imagePullPolicy: IfNotPresent
@@ -71,7 +71,7 @@ image:
 # upgrade: utilizing Kongs upgrade task for e.g. database migrations
 # jobs: migrating from eni-plugins to ENI flavoured original plugins
 # Comment out or set to none if none of the options are needed
-migrations: jobs
+migrations: none
 
 enterprise:
   license: ""
