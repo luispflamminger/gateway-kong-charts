@@ -43,6 +43,7 @@ spec:
             fi
 
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
+            -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
             {{- if eq .Values.rbac.enabled true }}
