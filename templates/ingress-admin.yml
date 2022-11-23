@@ -22,7 +22,6 @@ spec:
 {{- else }}
                 name: proxy
 {{- end }}
-{{- end }}
 {{- include "kong.adminApi.ingress.ingressClassName" . | nindent 2 }}
   tls:
   - hosts:
