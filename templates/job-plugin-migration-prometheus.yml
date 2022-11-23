@@ -1,4 +1,4 @@
-{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) (eq .Values.prometheus.enabled true) }}
+{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
