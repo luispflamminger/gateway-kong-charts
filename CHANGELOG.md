@@ -4,14 +4,29 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+
+## 2.1.1
+ - Set default log format to JSON
+
+## 2.1.0
+ - Added configurable initial delays
+ - Added ingress tlsSecret
+ - Security context fsGroup for postgres
+ - ingressClassName for platform 'tdi'
+ - Option logFormat with values [debug|default|json] modified in values.yaml
+
+## 2.0.0
+ - Pull images from new MTR
+ - Using networking.k8s.io/v1 for ingress
+
 ## 1.25.1
  - avoid warnings by adding "sec_event" variables to admin port too
 
 ## 1.25.0
- - default kong-plugins image updated (containing security errorcodes)
+ - default kong-plugins image updated (containing security error codes)
 
 ## 1.24.6
- - Default size of metrics dictionary removed becaus of conflict with env variable
+ - Default size of metrics dictionary removed because of conflict with env variable
 
 ## 1.24.5
  - Fixed missing values.yaml settings for circuit breaker
@@ -45,11 +60,11 @@ Please also seek advice from the README regarding updates.
 ## 1.23.0
 - added circuit breaker service (1.0.3)
 - Issuer-service version 1.9.0
-- Isser-Service: Added jsonWebKey and publicKey secret
+- Issuer-Service: Added jsonWebKey and publicKey secret
 - jumper-sse to 2.3.4.3
 
 ## 1.22.2
- - status page (include in general already with 1.22.0), use Subproduct for developer-portal status page
+ - status page (include in general already with 1.22.0), use sub product for developer-portal status page
 
 ## 1.22.1
  - Adapted pull secret handling
@@ -89,7 +104,7 @@ Please also seek advice from the README regarding updates.
   - Use jumper-sse 2.0.1
 
 ## 1.17.5
-  - Added envrionment variables for jumper auto-event
+  - Added environment variables for jumper auto-event
 
 ## 1.17.4
   - Updated jumper to 1.10.4
@@ -176,7 +191,7 @@ Please also seek advice from the README regarding updates.
 
 ## 1.6.0
   - Added TargetLabels to ServiceMonitor 
-  - Added seperate jobs for bootrapping and upgrade
+  - Added separate jobs for bootstrapping and upgrade
   - Switch to Kong Community Edition 2.3.2
   - AdminApi ingress behaviour based on edition (CE or EE)
   - Updated Jumper to 1.3.5
@@ -200,7 +215,7 @@ Please also seek advice from the README regarding updates.
 ## 1.4.0
 
  - Allow TLSv1.2 and TLSv1.3 only, removed TLSv1 support
- - Make podmonitor selector configurable
+ - Make pod monitor selector configurable
  - Zipkin and Prometheus plugin configuration changes will now be properly applied
 
 ## 1.3.1

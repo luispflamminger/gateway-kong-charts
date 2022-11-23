@@ -1,9 +1,9 @@
 {{- $availableProxyFormats := dict "default" "" }}
 {{- $_ := set $availableProxyFormats "json" "log_proxy_json" }}
-{{- $_ := set $availableProxyFormats "plain" "log_proxy_plain" }}
+{{- $_ := set $availableProxyFormats "debug" "log_proxy_debug_json" }}
 {{- $availableAdminFormats := dict "default" "" }}
 {{- $_ := set $availableAdminFormats "json" "log_admin_json" }}
-{{- $_ := set $availableAdminFormats "plain" "log_admin_plain" }}
+{{- $_ := set $availableAdminFormats "debug" "log_admin_debug_json" }}
 
 {{- $logFormat := (.Values.logFormat | toString ) }}
 {{- if hasKey $availableProxyFormats $logFormat }}
