@@ -29,7 +29,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal" .Values.global.image.organization -}}
+      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/io" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.image -}}
     {{- end -}}
