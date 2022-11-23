@@ -238,6 +238,24 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.isZipkinEnabled" -}}
+{{- if and (eq .Values.zipkin.enabled true) ( not ( eq .Values.zipkin.collectorUrl "" )) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.isMigrationsJob" -}}
+{{- if .Values.migrations -}}
+{{- if eq .Values.migrations "jobs" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.isMigrationsBootstrap" -}}
 {{- if .Values.migrations -}}
 {{- if eq .Values.migrations "bootstrap" -}}

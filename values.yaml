@@ -66,9 +66,12 @@ image:
 #image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
 #imagePullPolicy: IfNotPresent
 
-# Determine the migrations behaviour (bootstrap or upgrade)
+# Determine the migrations behaviour (bootstrap, upgrade, job)
+# bootstrap: setting up a new deployments database
+# upgrade: utilizing Kongs upgrade task for e.g. database migrations
+# jobs: migrating from eni-plugins to ENI flavoured original plugins
 # Comment out or set to none if none of the options are needed
-migrations: none
+migrations: jobs
 
 enterprise:
   license: ""
