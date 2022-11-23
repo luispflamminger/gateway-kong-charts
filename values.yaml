@@ -45,7 +45,7 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
-  failOnUnsetValues: false
+  failOnUnsetValues: true
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
