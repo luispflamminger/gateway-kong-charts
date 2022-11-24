@@ -12,14 +12,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 
 {{- define "kong.image" -}}
-{{- $imageName := "kong" -}}
-{{- $imageTag := "2.8.1-alpine" -}}
+{{- $imageName := "eni-kong" -}}
+{{- $imageTag := "2.8.1.1" -}}
 {{- if or (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
 {{- $imageName = "kong-enterprise-edition" -}}
 {{- $imageTag = "2.8.0-alpine" -}}
 {{- end -}}
 {{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
   {{- if not (kindIs "string" .Values.image) -}}
     {{ $imageRepository = .Values.image.repository | default $imageRepository -}}
@@ -29,33 +29,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+      {{- .Values.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-internal/io" .Values.global.image.organization -}}
     {{- else -}}
       {{- .Values.image -}}
-    {{- end -}}
-  {{- end -}}
-{{- else -}}
- {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "kongplugins.image" -}}
-{{- $imageName := "kong-plugins" -}}
-{{- $imageTag := "2.1.3" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
-{{- if .Values.plugins.image -}}
-  {{- if not (kindIs "string" .Values.plugins.image) -}}
-    {{ $imageRepository = .Values.plugins.image.repository | default $imageRepository -}}
-    {{ $imageOrganization = .Values.plugins.image.organization | default $imageOrganization -}}
-    {{ $imageName = .Values.plugins.image.name | default $imageName -}}
-    {{ $imageTag = .Values.plugins.image.tag | default $imageTag -}}
-    {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
-  {{- else -}}
-    {{- if .Values.global.image.force -}}
-      {{- .Values.plugins.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
-    {{- else -}}
-      {{- .Values.plugins.image -}}
     {{- end -}}
   {{- end -}}
 {{- else -}}
@@ -262,6 +238,24 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "kong.isZipkinEnabled" -}}
+{{- if and (eq .Values.zipkin.enabled true) ( not ( eq .Values.zipkin.collectorUrl "" )) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.isMigrationsJob" -}}
+{{- if .Values.migrations -}}
+{{- if eq .Values.migrations "jobs" -}}
+true
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "kong.isMigrationsBootstrap" -}}
 {{- if .Values.migrations -}}
 {{- if eq .Values.migrations "bootstrap" -}}
@@ -322,18 +316,6 @@ false
 - name: lua-ssl-trusted-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
-{{- end -}}
-
-{{- define "kongplugins.volumes" }}
-- name: kongplugins-tmp
-  emptyDir: {}
-{{- end -}}
-
-{{- define "kongplugins.volumeMounts" }}
-- name: local-luarocks
-  mountPath: /home/kong/.luarocks
-- name: kongplugins-tmp
-  mountPath: /tmp
 {{- end -}}
 
 {{- define "kong.volumes" }}
@@ -678,7 +660,7 @@ false
 {{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
 {{- end }}
 - name: KONG_PLUGINS
-  value: bundled,eni-zipkin,jwt-keycloak,eni-prometheus{{ $enabledPlugins }}
+  value: bundled,jwt-keycloak{{ $enabledPlugins }}
 - name: KONG_LUA_PACKAGE_PATH
   value: "/opt/?.lua;;"
 {{- end -}}

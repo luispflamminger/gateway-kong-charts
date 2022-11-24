@@ -1,12 +1,13 @@
-{{- if and (.Values.adminApi.enabled) (eq .Values.prometheus.enabled true) }}
+{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-prometheus-setup
+  name: {{ .Release.Name }}-plugin-migration-prometheus
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/weight": "-10"
 spec:
   backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
   activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
@@ -14,7 +15,7 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
-      - name: prometheus-setup
+      - name: prometheus-deletion
         image: {{ include "job.image" $ }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
@@ -34,7 +35,7 @@ spec:
           - /bin/bash
           - -c
           - |-
-            echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
+            echo "Removing old Kong ENI flavoured Prometheus plugin via DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
             ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
@@ -49,20 +50,10 @@ spec:
             {{- if eq .Values.rbac.enabled true }}
             -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
             {{- end }}
-            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
-            --header 'Content-Type: application/json' \
-            --data \
-            '{
-              "name" : "prometheus",
-              "tags" : ["tardis","prometheus","eni-prometheus"],
-              "config" : {
-                "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
-                "eni_stat" : true
-              }
-            }'`
+            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }}`
 
-            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "200" ] && [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "201" ]; then
-              echo "Configuring plugin failed"
+            if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "204" ]; then
+              echo "Plugin deletion failed"
               exit 1
             fi
       restartPolicy: OnFailure
