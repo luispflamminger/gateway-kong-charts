@@ -1,4 +1,4 @@
-{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) (eq .Values.prometheus.enabled true) }}
+{{- if and (include "kong.isMigrationsJob" $) (.Values.adminApi.enabled) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,7 +15,7 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
-      - name: {{ .Release.Name }}-prometheus-deletion
+      - name: prometheus-deletion
         image: {{ include "job.image" $ }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:

@@ -14,7 +14,7 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       containers:
-      - name: {{ .Release.Name }}-kong-admin-setup
+      - name: kong-admin-setup
         image: {{ include "job.image" $ }}
         imagePullPolicy: {{ .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
