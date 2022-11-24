@@ -4,10 +4,10 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
-## 3.0.0-RC.2
+## 3.0.0-RC.3
  - Use ENI flavoured original Prometheus plugin version 1.5.0
  - Use ENI flavoured original Zipkin plugin version 1.4.1
- - Switched to ENI-Kong image 2.8.1.0
+ - Switched to ENI-Kong image 2.8.1.1
  - Removed all plugins-setup e.g. init-container
  - Added jobs to remove old ENI flavoured plugins
  - Removed release names from containers
