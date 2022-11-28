@@ -49,7 +49,7 @@ data:
         "name": "{{ include "kong.adminApi.name" . }}",
         "protocols": ["http","https"],
         "hosts": [
-          "{{- if or (hasKey .Values "configuration") (eq (include "kong.isEnterprise" $ ) "true") (eq .Values.adminApi.ingress.enabled false) }}
+          "{{- if or (hasKey .Values "configuration") (eq .Values.adminApi.ingress.enabled false) }}
           {{- include "kong.proxy.host" . }}"
           {{- else }}
           {{- include "kong.adminApi.host" . }}
