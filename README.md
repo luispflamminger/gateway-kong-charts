@@ -141,6 +141,14 @@ Deleting the existing plugin:
 via DELETE on https://admin-api-url.me/plugins/<zipkinPluginId>
 ```
 
+### From 2.x.x and lower to 3.x.x
+We changed the integration of the ENI-plugins. Therefore names of the plugins changed and and eni-prefixed plugins have been removed from the image. Therefore the configuration of Kong itself, precisely the database, needs to be updated.
+You can do this by activating the jobs migration. This will delete the "old" ENI-plugins to allow the configuration of the new ones.
+
+```
+migrations: jobs
+```
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.
