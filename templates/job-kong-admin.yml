@@ -19,13 +19,6 @@ spec:
         imagePullPolicy: {{ .Values.global.imagePullPolicy }}
         securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
         env:
-        {{- if eq .Values.rbac.enabled true }}
-        - name: KONG_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: kongAdminPassword
-        {{- end }}
         - name: KONG_ADMIN_TOKEN
           value: {{ .Values.kong_admin.token | default "kong-admin" }}
         command:        
@@ -34,12 +27,9 @@ spec:
           - |-
             echo "Enabling Kong admin via POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users"
 
-            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$HTTP_RETURN_CODE" == "200" ]; then
               curl \
-            {{- if eq .Values.rbac.enabled true }}
-              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
               -H "Content-Type: application/json" \
               -X POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users \
               --data-raw "{
@@ -48,9 +38,6 @@ spec:
                   \"user_token\": \"$KONG_ADMIN_TOKEN\"
                   }"
               curl \
-            {{- if eq .Values.rbac.enabled true }}
-              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
               -H "Content-Type: application/json" \
               -X POST {{ include "kong.adminApi.serviceUrl" . }}/rbac/users/kong-admin/roles \
               --data-raw '{"roles": "admin"}'
