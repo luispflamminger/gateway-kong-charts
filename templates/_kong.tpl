@@ -436,13 +436,6 @@ false
 - name: KONG_DATABASE
   value: postgres
 {{- template "kong.env.prefix" . }}
-{{- if eq .Values.rbac.enabled true }}
-- name: KONG_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}
-      key: kongAdminPassword
-{{- end }}
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:

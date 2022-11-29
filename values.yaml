@@ -45,7 +45,7 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
-  failOnUnsetValues: true
+  failOnUnsetValues: false
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -76,7 +76,6 @@ migrations: none
 
 # Enable Admin API and whether it is http or https
 # Warning: 
-# Enabled Admin API with disabled RBAC can be dangerous
 adminApi:
   enabled: true
   gatewayAdminApiKey: changeme
