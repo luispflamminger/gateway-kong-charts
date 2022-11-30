@@ -14,16 +14,6 @@ spec:
         - path: {{ include "kong.adminApi.ingress.path" . }}
           pathType: Prefix
           backend:
-{{- if (eq (include "kong.isEnterprise" $ ) "true") }}
-            service:
-              name: {{ .Release.Name }}-admin
-              port:
-{{- if .Values.adminApi.tls.enabled }}
-                name: admin-ssl
-{{- else }}
-                name: admin
-{{- end }}
-{{- else }}
             service:
               name: {{ .Release.Name }}-proxy
               port:
@@ -31,7 +21,6 @@ spec:
                 name: proxy-ssl
 {{- else }}
                 name: proxy
-{{- end }}
 {{- end }}
 {{- include "kong.adminApi.ingress.ingressClassName" . | nindent 2 }}
   tls:

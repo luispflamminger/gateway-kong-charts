@@ -23,20 +23,13 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: gatewayAdminBase64
-        {{- if eq .Values.rbac.enabled true }}
-        - name: KONG_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: kongAdminPassword
-        {{- end }}
         command:        
           - /bin/bash
           - -c
           - |-
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -46,9 +39,6 @@ spec:
             -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            {{- if eq .Values.rbac.enabled true }}
-            -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
             -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \

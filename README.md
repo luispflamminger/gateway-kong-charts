@@ -42,10 +42,6 @@ If no license is given, thr Admin-API will not be exposed by Ingress and will on
 
 ## Security
 
-### Enterprise Edition
-
-By default, the ingress giving access to the Admin-API is enabled for Enterprise Edition. Access is secured by role based access control (RBAC).
-
 ### Community Edition
 
 Be aware that exposing the Admin-API for Community Edition can be dangerous, as the API is not protected by any RBAC. Thus it can be accessed by anyone having access to the API url. \
@@ -166,8 +162,6 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.image.force`                 | Replace repository/organisation also if image is set as custom  "image:" value   | `false`                |
 | `migrations`                         | Determine the migrations behaviuor for a new instance or upgrade                 | `bootstrap`            |
 | `enterprise.license`                 | License JSON to activate enterprise features, stored in secret                   | `nil`                  |
-| `rbac.enabled`                       | Security relevant. Role based access control for Admin API                       | `true`                 |
-| `rbac.kongAdminPassword`             | Password for Kong Administrator                                                  | `changeme`             |
 | `adminApi.enabled`                   | Create service for accessing Kong Admin API                                      | `true`                 |
 | `adminApi.tls.enabled`               | Access Admin API via https instead of http                                       | `false`                |
 | `adminApi.ingress.enabled`           | Create ingress (or route for OpenShift) for Admin API. Default depends on Edition| CE: `false`<br/>EE: `true`|

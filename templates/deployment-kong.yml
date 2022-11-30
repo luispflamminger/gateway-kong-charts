@@ -189,34 +189,6 @@ spec:
           protocol: TCP
 {{- end -}}
 {{- end }}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
-{{- if .Values.manager.tls.enabled }}
-        - name: manager-ssl
-          containerPort: 8445
-          protocol: TCP
-{{- else }}
-        - name: manager
-          containerPort: 8002
-          protocol: TCP
-{{- end -}}
-{{- end -}}
-{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
-{{- if .Values.portal.tls.enabled }}
-        - name: portal-ssl
-          containerPort: 8446
-          protocol: TCP
-        - name: portal-api-ssl
-          containerPort: 8447
-          protocol: TCP
-{{- else }}
-        - name: portal
-          containerPort: 8003
-          protocol: TCP
-        - name: portal-api
-          containerPort: 8004
-          protocol: TCP
-{{- end -}}
-{{- end }}
         - name: status
           containerPort: 8100
           protocol: TCP
