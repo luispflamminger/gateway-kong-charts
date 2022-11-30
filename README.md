@@ -192,13 +192,13 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `templateChangeTriggers`             | List of (template) yaml files fo which a checksum annotation will be created     | `[]`                   |
 | `sslVerify`                          | Controls whether to check forward proxy traffic against CA certificates          | `false`                |
 | `sslVerifyDepth`                     | SSL Verification depth                                                           | `1`                    |
+| `setupJobs.backoffLimit`             | How often should be retried to run the job successfully                        | `20`             |
+| `setupJobs.activeDeadlineSeconds`    | How long should be retried to run the job successfully                       | `300`            |
 | `zipkin.enabled`                     | Enable tracing via ENI-Zipkin-Plugin                                             | `false`                |
 | `zipkin.collectorUrl`                | URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory           | `nil`                  |
 | `zipkin.sampleRatio`                 | How often to sample requests that do not contain trace ids. Set to 0 to turn sampling off, or to 1 to sample all requests                                                                                                                  | `0.001`              |
 | `zipkin.includeCredential`           | Should the credential of the currently authenticated consumer be included in metadata sent to the Zipkin server?                                                                                                                   | `true`               |
 | `zipkin.defaultServiceName`          | Name of the service shown in e.g. Jaeger                                       | `tif-kong-apigateway`  |
-| `zipkin.setupJob.backoffLimit`       | How often should be retried to run the job successfully                        | `20`             |
-| `zipkin.setupJob.activeDeadlineSeconds`| How long should be retried to run the job successfully                       | `300`            |
 | `zipkin.luaSslTrustedCertificate`    | CA certificate for the Zipkin-Collector-URL                                    | `nil`            |
 | `trustedCaCertificates`              | CA certificates in PEM format (string)                                         | `nil`            |
 | `defaultTlsSecret`                   | Name of the secret containing the default server certificates                  | `nil`            |

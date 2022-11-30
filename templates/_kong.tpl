@@ -198,7 +198,7 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 
 {{- define "kong.checksums" -}}
 checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
@@ -218,7 +218,7 @@ false
 {{- end -}}
 
 {{- define "kong.isZipkinEnabled" -}}
-{{- if and (eq .Values.zipkin.enabled true) ( not ( eq .Values.zipkin.collectorUrl "" )) -}}
+{{- if and (eq .Values.plugins.zipkin.enabled true) ( not ( eq .Values.plugins.zipkin.collectorUrl "" )) -}}
 true
 {{- else -}}
 false
@@ -313,7 +313,7 @@ false
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -340,7 +340,7 @@ false
   subPath: .htpasswd
 - name: nginx-servers
   mountPath: /opt/kong/nginx
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
@@ -409,8 +409,8 @@ false
 {{- end -}}
 
 {{- define "kong.luaSslTrustedCertificates" }}
-{{ .Values.zipkin.luaSslTrustedCertificate }}
-{{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
+{{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
+{{ .Values.plugins.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}
@@ -530,7 +530,7 @@ false
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
 {{- end }}
-{{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
   value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
 {{- end }}
@@ -548,7 +548,7 @@ false
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
-  value: {{ .Values.zipkin.defaultServiceName }}
+  value: {{ .Values.plugins.zipkin.defaultServiceName }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
@@ -564,7 +564,7 @@ false
 
 {{- define "kong.jwtKeycloak.allowedIss" -}}
 {{ $allowedIss := "" }}
-{{- range .Values.jwtKeycloak.setupJob.allowedIss -}}
+{{- range .Values.plugins.jwtKeycloak.setupJob.allowedIss -}}
 {{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
 {{- end }}
 {{- print (trimPrefix "," $allowedIss) }}

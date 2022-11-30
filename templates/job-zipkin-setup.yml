@@ -8,8 +8,8 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  backoffLimit: {{ .Values.zipkin.setupJob.backoffLimit | default 15 }}
-  activeDeadlineSeconds: {{ .Values.zipkin.setupJob.activeDeadlineSeconds | default 3600 }}
+  backoffLimit: {{ .Values.setupJobs.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.setupJobs.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -39,18 +39,18 @@ spec:
             -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }} \
+            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.zipkin.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \
             '{
               "name" : "zipkin",
               "tags" : ["tardis","zipkin","eni-zipkin"],
               "config" : {
-                "http_endpoint" : "{{ .Values.zipkin.collectorUrl }}",
-                "sample_ratio" : {{ .Values.zipkin.sampleRatio | default 0.001 }},
-                "include_credential" : {{ .Values.zipkin.includeCredential | default true }},
-                "default_service_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}",
-                "local_component_name" : "{{ .Values.zipkin.defaultServiceName | default .Release.Name }}"
+                "http_endpoint" : "{{ .Values.plugins.zipkin.collectorUrl }}",
+                "sample_ratio" : {{ .Values.plugins.zipkin.sampleRatio | default 0.001 }},
+                "include_credential" : {{ .Values.plugins.zipkin.includeCredential | default true }},
+                "default_service_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}",
+                "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}"
               }
             }'`
 

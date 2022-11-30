@@ -1,26 +1,26 @@
-{{- if and (.Values.prometheus.enabled) (.Values.prometheus.podMonitor.enabled) -}}
+{{- if and (.Values.plugins.prometheus.enabled) (.Values.plugins.prometheus.podMonitor.enabled) -}}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: {{ .Release.Name }}
   labels: {{ include "kong.labels" $ | nindent 4 }}
-    release: {{ .Values.prometheus.podMonitor.selector | default "guardians-raccoon" }}
+    release: {{ .Values.plugins.prometheus.podMonitor.selector | default "guardians-raccoon" }}
   namespace: {{ .Release.Namespace }}
 spec:
   podMetricsEndpoints:
     - port: metrics
-      path: {{ .Values.prometheus.path | default "/metrics" }}
-      {{- if .Values.prometheus.podMonitor.scheme }}
-      scheme: {{ .Values.prometheus.podMonitor.scheme }}
+      path: {{ .Values.plugins.prometheus.path | default "/metrics" }}
+      {{- if .Values.plugins.prometheus.podMonitor.scheme }}
+      scheme: {{ .Values.plugins.prometheus.podMonitor.scheme }}
       {{- end }}
-      {{- if .Values.prometheus.podMonitor.interval }}
-      interval: {{ .Values.prometheus.podMonitor.interval | quote}}
+      {{- if .Values.plugins.prometheus.podMonitor.interval }}
+      interval: {{ .Values.plugins.prometheus.podMonitor.interval | quote}}
       {{- end }}
-      {{- if .Values.prometheus.podMonitor.scrapeTimeout }}
-      scrapeTimeout: {{ .Values.prometheus.podMonitor.scrapeTimeout | quote }}
+      {{- if .Values.plugins.prometheus.podMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.plugins.prometheus.podMonitor.scrapeTimeout | quote }}
       {{- end }}
-      {{- if .Values.prometheus.podMonitor.honorLabels }}
-      honorLabels: {{ .Values.prometheus.podMonitor.honorLabels }}
+      {{- if .Values.plugins.prometheus.podMonitor.honorLabels }}
+      honorLabels: {{ .Values.plugins.prometheus.podMonitor.honorLabels }}
       {{- end }}
   namespaceSelector:
     matchNames:
