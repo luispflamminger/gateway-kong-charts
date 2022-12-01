@@ -1,4 +1,4 @@
-{{- if and (.Values.prometheus.enabled) (.Values.prometheus.serviceMonitor.enabled) -}}
+{{- if and (.Values.plugins.prometheus.enabled) (.Values.plugins.prometheus.serviceMonitor.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:

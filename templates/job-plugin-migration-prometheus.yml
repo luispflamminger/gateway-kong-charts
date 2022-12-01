@@ -9,8 +9,8 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
     "helm.sh/weight": "-10"
 spec:
-  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
-  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
+  backoffLimit: {{ .Values.setupJobs.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.setupJobs.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -40,7 +40,7 @@ spec:
             -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }}`
+            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.prometheus.pluginId }}`
 
             if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "204" ]; then
               echo "Plugin deletion failed"
