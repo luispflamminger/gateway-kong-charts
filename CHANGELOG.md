@@ -6,6 +6,7 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 ## 0.0.0
  - Removed kong_admin and reworked plugins setup structure
+ - Removed enterprise switches 
 
 ## 3.0.0
  - Use ENI flavoured original Prometheus plugin version 1.5.0
