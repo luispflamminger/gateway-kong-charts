@@ -4,7 +4,8 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
-## 0.0.0
+## 3.1.0
+ - ENI-Kong image 2.8.1.2
  - Removed kong_admin and reworked plugins setup structure
  - Removed enterprise switches 
 
