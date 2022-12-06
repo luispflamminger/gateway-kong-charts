@@ -9,8 +9,8 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
     "helm.sh/weight": "-10"
 spec:
-  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
-  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
+  backoffLimit: {{ .Values.setupJobs.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.setupJobs.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -24,20 +24,13 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: gatewayAdminBase64
-        {{- if eq .Values.rbac.enabled true }}
-        - name: KONG_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: kongAdminPassword
-        {{- end }}
         command:        
           - /bin/bash
           - -c
           - |-
             echo "Removing old Kong ENI flavoured Zipkin plugin via DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -47,10 +40,7 @@ spec:
             -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            {{- if eq .Values.rbac.enabled true }}
-            -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
-            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.zipkin.setupJob.pluginId }}`
+            -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.zipkin.pluginId }}`
 
             if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "204" ]; then
               echo "Plugin deletion failed"

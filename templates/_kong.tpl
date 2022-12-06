@@ -13,11 +13,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.1.1" -}}
-{{- if or (eq (include "kong.isEnterprise" $ ) "true") (eq (include "kong.isEnterpriseImage" $ ) "true") -}}
-{{- $imageName = "kong-enterprise-edition" -}}
-{{- $imageTag = "2.8.0-alpine" -}}
-{{- end -}}
+{{- $imageTag := "2.8.1.2" -}}
 {{- $imageRepository := .Values.global.image.repository -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
@@ -60,23 +56,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
   {{- end -}}
 {{- else -}}
  {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
-{{- end -}}
-{{- end -}}
-
-# hasLicense
-{{- define "kong.isEnterprise" -}}
-{{- if eq .Values.enterprise.license "" -}}
-false
-{{- else -}}
-true
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.isEnterpriseImage" -}}
-{{- if eq .Values.enterprise.useEnterpriseImage true -}}
-true
-{{- else -}}
-false
 {{- end -}}
 {{- end -}}
 
@@ -219,7 +198,7 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 
 {{- define "kong.checksums" -}}
 checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
@@ -231,7 +210,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.configuration" -}}
-{{- if and (eq .Values.adminApi.enabled true) (or .Values.configuration (eq (include "kong.isEnterprise" $ ) "false") ) -}}
+{{- if and (eq .Values.adminApi.enabled true) (.Values.configuration) -}}
 true
 {{- else }}
 false
@@ -239,7 +218,7 @@ false
 {{- end -}}
 
 {{- define "kong.isZipkinEnabled" -}}
-{{- if and (eq .Values.zipkin.enabled true) ( not ( eq .Values.zipkin.collectorUrl "" )) -}}
+{{- if and (eq .Values.plugins.zipkin.enabled true) ( not ( eq .Values.plugins.zipkin.collectorUrl "" )) -}}
 true
 {{- else -}}
 false
@@ -325,18 +304,16 @@ false
   emptyDir: {}
 - name: kong-tmp
   emptyDir: {}
-{{- if eq (include "kong.isEnterprise" $ ) "false" }}
 - name: nginx-kong-template
   configMap:
     name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
     secretName: {{ .Release.Name }}-htpasswd
-{{- end }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -355,17 +332,15 @@ false
   mountPath: /kong
 - name: kong-tmp
   mountPath: /tmp
-{{- if eq (include "kong.isEnterprise" $ ) "false" }}
 - name: nginx-kong-template
   mountPath: /usr/local/share/lua/5.1/kong/templates/nginx_kong.lua
   subPath: nginx_kong.lua
 - name: htpasswd
   mountPath: /opt/kong/.htpasswd
   subPath: .htpasswd
-{{- end }}
 - name: nginx-servers
   mountPath: /opt/kong/nginx
-{{- if or (eq .Values.sslVerify true) .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
@@ -434,21 +409,13 @@ false
 {{- end -}}
 
 {{- define "kong.luaSslTrustedCertificates" }}
-{{ .Values.zipkin.luaSslTrustedCertificate }}
-{{ .Values.postgres.externalDatabase.luaSslTrustedCertificate }}
+{{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
+{{ .Values.plugins.postgres.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}
 - name: KONG_PREFIX
   value: /kong
-{{- end -}}
-
-{{- define "kong.env.enterprise.license" }}
-- name: KONG_LICENSE_DATA
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}
-      key: license
 {{- end -}}
 
 {{- define "kong.migrations.checkdatabase.env" }}
@@ -469,13 +436,6 @@ false
 - name: KONG_DATABASE
   value: postgres
 {{- template "kong.env.prefix" . }}
-{{- if eq .Values.rbac.enabled true }}
-- name: KONG_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}
-      key: kongAdminPassword
-{{- end }}
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -502,9 +462,6 @@ false
   value: '/opt/kong/tls/init/lua-ssl-trusted-certificates.pem'
 {{- end }}
 {{- end }}
-{{- end }}
-{{- if eq (include "kong.isEnterprise" $ ) "true" }}
-{{- template "kong.env.enterprise.license" . }}
 {{- end }}
 {{- end -}}
 
@@ -573,71 +530,11 @@ false
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
 {{- end }}
-{{- if or .Values.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
   value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
 {{- end }}
-{{- if eq (include "kong.isEnterprise" $ ) "true" -}}
-{{- template "kong.enterprise.env" . }}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.enterprise.env" -}}
-{{- if eq .Values.rbac.enabled true }}
-- name: KONG_ENFORCE_RBAC
-  value: 'on'
-- name: KONG_ADMIN_GUI_AUTH
-  value: 'basic-auth'
-- name: KONG_ADMIN_GUI_SESSION_CONF
-  value: '{"secret":"{{ .Values.manager.session.secret }}"}'
-{{- end -}}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.adminApi.ingress.enabled" $) "true") }}
-- name: KONG_ADMIN_API_URI
-  value: 'https://{{ include "kong.adminApi.host" . }}'
-- name: KONG_ADMIN_GUI_LISTEN
-{{- if .Values.manager.tls.enabled }}
-  value: '0.0.0.0:8445 ssl'
-{{- else }}
-  value: '0.0.0.0:8002'
 {{- end }}
-- name: KONG_ADMIN_GUI_URL
-  value: 'https://{{ include "kong.manager.host" . }}'
-- name: KONG_ADMIN_GUI_ACCESS_LOG
-  value: {{ .Values.manager.access_log | default "/dev/stdout" | quote }}
-- name: KONG_ADMIN_GUI_ERROR_LOG
-  value: {{ .Values.manager.error_log | default "/dev/stderr" | quote }}
-{{- end -}}
-{{- if eq .Values.portal.enabled true }}
-- name: KONG_PORTAL
-  value: 'on'
-{{- if .Values.portal.tls.enabled }}
-- name: KONG_PORTAL_GUI_LISTEN
-  value: '0.0.0.0:8446 ssl'
-- name: KONG_PORTAL_API_LISTEN
-  value: '0.0.0.0:8447 ssl'
-{{- else }}
-- name: KONG_PORTAL_GUI_LISTEN
-  value: '0.0.0.0:8003'
-- name: KONG_PORTAL_API_LISTEN
-  value: '0.0.0.0:8004'
-{{- end }}
-- name: KONG_PORTAL_GUI_HOST
-  value: '{{ include "kong.portal.host" . }}'
-- name: KONG_PORTAL_GUI_PROTOCOL
-  value: https
-{{- if eq .Values.rbac.enabled true }}
-- name: KONG_PORTAL_AUTH
-  value: 'basic-auth'
-- name: KONG_PORTAL_SESSION_CONF
-  value: '{"secret":"{{ .Values.portal.session.secret }}"}'
-- name: KONG_PORTAL_API_ACCESS_LOG
-  value: {{ .Values.portal.access_log | default "/dev/stdout" | quote }}
-- name: KONG_PORTAL_API_ERROR_LOG
-  value: {{ .Values.portal.error_log | default "/dev/stderr" | quote }}
-{{- end -}}
-{{- end -}}
-{{- template "kong.env.enterprise.license" . }}
-{{- end -}}
 
 {{- define "kong.jumper.env" }}
 - name: JUMPER_ISSUER_URL
@@ -651,7 +548,7 @@ false
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
-  value: {{ .Values.zipkin.defaultServiceName }}
+  value: {{ .Values.plugins.zipkin.defaultServiceName }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
@@ -667,7 +564,7 @@ false
 
 {{- define "kong.jwtKeycloak.allowedIss" -}}
 {{ $allowedIss := "" }}
-{{- range .Values.jwtKeycloak.setupJob.allowedIss -}}
+{{- range .Values.plugins.jwtKeycloak.setupJob.allowedIss -}}
 {{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
 {{- end }}
 {{- print (trimPrefix "," $allowedIss) }}
@@ -690,7 +587,7 @@ admin-api
 {{- end -}}
 
 {{- define "kong.adminApi.ingress.path" -}}
-{{- if or (eq (include "kong.isEnterprise" $ ) "true") (hasKey .Values "configuration") -}}
+{{- if (hasKey .Values "configuration") -}}
 /
 {{- else -}}
 /{{ include "kong.adminApi.name" . }}

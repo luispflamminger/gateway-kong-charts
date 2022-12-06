@@ -61,9 +61,9 @@ image:
   #repository: mtr.devops.telekom.de
   organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.1.1
+  #tag: 2.8.1.2
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.1.1
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.1.2
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, job)
@@ -73,20 +73,9 @@ image:
 # Comment out or set to none if none of the options are needed
 migrations: none
 
-enterprise:
-  license: ""
-  useEnterpriseImage: false
-
-# Warning: 
-# If you disable RBAC exposing the Admin API can be dangerous
-# Note that RBAC will only work when Kong in running in enterprise edition (enterprise.license is provided) 
-rbac:
-  enabled: true
-  kongAdminPassword: "changeme"
 
 # Enable Admin API and whether it is http or https
 # Warning: 
-# Enabled Admin API with disabled RBAC can be dangerous
 adminApi:
   enabled: true
   gatewayAdminApiKey: changeme
@@ -205,73 +194,11 @@ resources:
     cpu: 1
     memory: 2Gi
 
-zipkin:
-  enabled: true
-  collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
-  #sampleRatio: 0.001
-  #includeCredential: "true"
-  #defaultServiceName: "stargate"
-  # Set job retries and maximum runtime (default values preset)
-  setupJob:
-    pluginId: e8ff1211-816f-4d93-9011-a4b194586073
-    #backoffLimit: 15
-    #activeDeadlineSeconds: 3600
-    #luaSslTrustedCertificate: |
-    #  -----BEGIN CERTIFICATE-----
-    #  <CA certificate in PEM format here>
-    #  -----END CERTIFICATE-----
-
-prometheus:
-  enabled: true 
-# port: 9542
-# path: /metrics
-  setupJob:
-    pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
-    #customer_facing: false
-    #backoffLimit: 15
-    #activeDeadlineSeconds: 3600
-  serviceMonitor:   
-    enabled: true
-    #selector: "guardians-raccoon"
-    #scheme: http
-    #interval: "15s"
-    #scrapeTimeout: "3s"
-    #honorLabels: ""
-  podMonitor:   
-    enabled: false
-    #selector: "guardians-raccoon"
-    #scheme: http
-    #interval: "15s"
-    #scrapeTimeout: "3s"
-    #honorLabels: ""
-
-acl:
-  setupJob:
-    pluginId: bc823d55-83b5-4184-b03f-ce63cd3b75c7
-    
-jwtKeycloak:
-  enabled: true
-  setupJob:
-    pluginId: b864d58b-7183-4889-8b32-0b92d6c4d513
-    allowedIss: 
-      - https://changeme/auth/realms/default
-
-requestTransformer:
-  setupJob:
-    pluginId: e9fb4272-0aff-4208-9efa-6bfec5d9df53
-
 # log_format select the pre-configured log formats for nginx
 # It can have one of the values: default, json or plain.
 # Details are specified in templates/configmap-nginx-kong-template.yaml and nginx/nginx_kong.lua
 # Formats: debug, default, json
 logFormat: json
-
-kong_admin:
-  enabled: true
-  #token: changeme
-  setupJob: {}
-  #  backoffLimit: 15
-  #  activeDeadlineSeconds: 3600
 
 startup:
   livenessProbe:
@@ -279,17 +206,10 @@ startup:
   readinessProbe:
     initialDelay: 5
 
-
-plugins:
-  enabled: []
-  #image: 
-    #repository: mtr.devops.telekom.de
-    #organization: tardis-common
-    #name: kong-plugins
-    #tag: 2.1.2
-  # Or use the flattened string form:
-  #image: mtr.devops.telekom.de/tardis-common/kong-plugins:2.1.2
-  #imagePullPolicy: IfNotPresent
+setupJobs:
+  #backoffLimit: 15
+  #activeDeadlineSeconds: 3600
+  #Resources need to be discussed
   resources:
     limits:
       cpu: 0.5
@@ -298,6 +218,55 @@ plugins:
       cpu: 50m
       memory: 200Mi
   securityContext: {}
+
+plugins:
+  enabled: []
+
+  zipkin:
+    enabled: true
+    pluginId: e8ff1211-816f-4d93-9011-a4b194586073
+    collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
+    #sampleRatio: 0.001
+    #includeCredential: "true"
+    #defaultServiceName: "stargate"
+    #luaSslTrustedCertificate: |
+    #  -----BEGIN CERTIFICATE-----
+    #  <CA certificate in PEM format here>
+    #  -----END CERTIFICATE-----
+    # Set job retries and maximum runtime (default values preset)
+
+  prometheus:
+    enabled: true 
+    pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
+    #port: 9542
+    #path: /metrics
+    #customer_facing: false
+    serviceMonitor:   
+      enabled: true
+      #selector: "guardians-raccoon"
+      #scheme: http
+      #interval: "15s"
+      #scrapeTimeout: "3s"
+      #honorLabels: ""
+    podMonitor:   
+      enabled: false
+      #selector: "guardians-raccoon"
+      #scheme: http
+      #interval: "15s"
+      #scrapeTimeout: "3s"
+      #honorLabels: ""
+
+  acl:
+    pluginId: bc823d55-83b5-4184-b03f-ce63cd3b75c7
+      
+  jwtKeycloak:
+    enabled: true
+    pluginId: b864d58b-7183-4889-8b32-0b92d6c4d513
+    allowedIss: 
+      - https://changeme/auth/realms/default
+
+  requestTransformer:
+    pluginId: e9fb4272-0aff-4208-9efa-6bfec5d9df53
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

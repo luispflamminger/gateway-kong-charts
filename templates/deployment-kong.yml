@@ -17,10 +17,10 @@ spec:
       annotations: 
       {{- include "kong.annotations" $ | nindent 8 }}
       {{- include "kong.checksums" $ | nindent 8 }}
-{{- if eq .Values.prometheus.enabled true }}
-        prometheus.io/path: '{{ .Values.prometheus.path | default "/metrics" }}'
+{{- if eq .Values.plugins.prometheus.enabled true }}
+        prometheus.io/path: '{{ .Values.plugins.prometheus.path | default "/metrics" }}'
         prometheus.io/scrape: 'true'
-        prometheus.io/port: '{{ .Values.prometheus.port | default 9542 }}'
+        prometheus.io/port: '{{ .Values.plugins.prometheus.port | default 9542 }}'
 {{- end }}
       labels: 
         {{- include "kong.labels" $ | nindent 8 }}
@@ -173,9 +173,9 @@ spec:
           containerPort: 8000
           protocol: TCP
 {{- end -}}
-{{- if .Values.prometheus.enabled }}
+{{- if .Values.plugins.prometheus.enabled }}
         - name: metrics
-          containerPort: {{ .Values.prometheus.port | default 9542 }}
+          containerPort: {{ .Values.plugins.prometheus.port | default 9542 }}
           protocol: TCP
 {{- end -}}
 {{- if .Values.adminApi.enabled -}}
@@ -186,34 +186,6 @@ spec:
 {{- else }}
         - name: admin
           containerPort: 8001
-          protocol: TCP
-{{- end -}}
-{{- end }}
-{{- if and (eq .Values.manager.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
-{{- if .Values.manager.tls.enabled }}
-        - name: manager-ssl
-          containerPort: 8445
-          protocol: TCP
-{{- else }}
-        - name: manager
-          containerPort: 8002
-          protocol: TCP
-{{- end -}}
-{{- end -}}
-{{- if and (eq .Values.portal.enabled true) (eq (include "kong.isEnterprise" $ ) "true") -}}
-{{- if .Values.portal.tls.enabled }}
-        - name: portal-ssl
-          containerPort: 8446
-          protocol: TCP
-        - name: portal-api-ssl
-          containerPort: 8447
-          protocol: TCP
-{{- else }}
-        - name: portal
-          containerPort: 8003
-          protocol: TCP
-        - name: portal-api
-          containerPort: 8004
           protocol: TCP
 {{- end -}}
 {{- end }}

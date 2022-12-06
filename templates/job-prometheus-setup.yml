@@ -1,4 +1,4 @@
-{{- if and (.Values.adminApi.enabled) (eq .Values.prometheus.enabled true) }}
+{{- if and (.Values.adminApi.enabled) (eq .Values.plugins.prometheus.enabled true) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -8,8 +8,8 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  backoffLimit: {{ .Values.prometheus.setupJob.backoffLimit | default 15 }}
-  activeDeadlineSeconds: {{ .Values.prometheus.setupJob.activeDeadlineSeconds | default 3600 }}
+  backoffLimit: {{ .Values.setupJobs.backoffLimit | default 15 }}
+  activeDeadlineSeconds: {{ .Values.setupJobs.activeDeadlineSeconds | default 3600 }}
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
@@ -23,20 +23,13 @@ spec:
             secretKeyRef:
               name: {{ .Release.Name }}
               key: gatewayAdminBase64
-        {{- if eq .Values.rbac.enabled true }}
-        - name: KONG_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}
-              key: kongAdminPassword
-        {{- end }}
         command:        
           - /bin/bash
           - -c
           - |-
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" {{ if eq .Values.rbac.enabled true -}}-H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD"{{- end }} -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -46,17 +39,14 @@ spec:
             -o /dev/null \
             -w "%{http_code}" \
             -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
-            {{- if eq .Values.rbac.enabled true }}
-            -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
-            {{- end }}
-            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.prometheus.setupJob.pluginId }} \
+            -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.prometheus.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \
             '{
               "name" : "prometheus",
               "tags" : ["tardis","prometheus","eni-prometheus"],
               "config" : {
-                "customer_facing" : "{{ .Values.prometheus.setupJob.customer_facing | default false }}",
+                "customer_facing" : "{{ .Values.plugins.prometheus.customer_facing | default false }}",
                 "eni_stat" : true
               }
             }'`
