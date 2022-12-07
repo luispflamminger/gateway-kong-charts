@@ -210,7 +210,7 @@ checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
 {{- end -}}
 
 {{- define "kong.configuration" -}}
-{{- if and (eq .Values.adminApi.enabled true) (.Values.configuration) -}}
+{{- if eq .Values.adminApi.enabled true -}}
 true
 {{- else }}
 false
@@ -564,7 +564,7 @@ false
 
 {{- define "kong.jwtKeycloak.allowedIss" -}}
 {{ $allowedIss := "" }}
-{{- range .Values.plugins.jwtKeycloak.setupJob.allowedIss -}}
+{{- range .Values.plugins.jwtKeycloak.allowedIss -}}
 {{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
 {{- end }}
 {{- print (trimPrefix "," $allowedIss) }}
