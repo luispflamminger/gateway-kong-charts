@@ -61,9 +61,9 @@ image:
   #repository: mtr.devops.telekom.de
   organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.1.2
+  #tag: 2.8.3.0
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.1.2
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.0
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, job)
