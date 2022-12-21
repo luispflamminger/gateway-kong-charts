@@ -4,6 +4,8 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 0.0.0
+ - Altered Prometheus config for Plugin from Kong 3.1.1
 ## 3.2.0
  - ENI-Kong image 2.8.3.0
 
