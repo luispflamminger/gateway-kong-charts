@@ -13,7 +13,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.3.1" -}}
+{{- $imageTag := "2.8.3.2" -}}
 {{- $imageRepository := .Values.global.image.repository -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
