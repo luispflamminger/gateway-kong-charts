@@ -4,6 +4,10 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 3.4.0
+ - ENI-Kong image 2.8.3.2
+ - Fixed Prometheus customer_facing always true 
+
 ## 3.3.0
  - ENI-Kong image 2.8.3.1
  - Altered Prometheus config for Plugin from Kong 3.1.1 (ENI 2.8.3.1)
