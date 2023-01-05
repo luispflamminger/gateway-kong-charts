@@ -5,6 +5,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 ## 0.0.0
+ - ENI-Kong image 2.8.3.2
  - Fixed Prometheus customer_facing always true 
 
 ## 3.3.0
