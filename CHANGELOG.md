@@ -4,6 +4,9 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 3.5.0
+ - Added request-size-limiting plugin setup
+
 ## 3.4.1
  - logging of soutce-ip changed to "$http_x_original_forwarded_for"
 
