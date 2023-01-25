@@ -9,19 +9,11 @@ Not much to read, read everything!
 
 ## Requirements
 
-### License
-
-StarGate uses Kong underneath. To allow Kong to start as enteprise edition, you need a valid enterprise license.
-
 ### Database
 
 StarGate requires a PostgreSQL database that will be preconfigured by StarGate's init container.
 
 ## Configuration
-
-### License
-
-Place your license-JSON into at in the `enterprise` scope of the `values.yaml`. If you don't provide a license, StarGate will start Kong's community edition where no Enterprise features will be available. In this case enabled RBAC will not take effect.
 
 ### Database
 
@@ -36,9 +28,6 @@ If you want to add routes, services, etc. you can set specific curl command to d
 StarGate can be accessed via created Ingress/Route. See the Parameters section for details.
 By default, URLs will have the format `<Release.Name>[-<Suffix>]-<.Release.Namespace>.<.Values.global.domain>`.
 Setting dedicated hostnames for an ingress will overwrite the created URL. The value set in `hostname` needs to be fully qualified, as `.Values.global.domain` will not be added automatically!
-
-The Admin-Ingress' default behaviour is determined by the used edition (Community or Enterprise). If you set a license, Admin-API-Ingress will activated if not set otherwise.
-If no license is given, thr Admin-API will not be exposed by Ingress and will only be accessable by service-url. This can also be overwritten.
 
 ## Security
 
@@ -82,7 +71,7 @@ Example *values.yaml*:
 defaultTlsSecret: my-https-secret
 ```
 
-Here are some examples how to create a corresponding secret from PEM files. For more details s. Kubernetes/Openshift documentation.
+Here are some examples how to create a corresponding secret from PEM files. For more details s. Kubernetes documentation.
 ```
 kubectl create secret tls my-https-secret --key=key.pem --cert=cert.pem
 oc create secret generic my-https-secret-2 --from-file=tls.key=key.pem  --from-file=tls.crt=cert.pem
@@ -105,7 +94,7 @@ As a result `job-kong-pre-upgrade-migrations.yml` will run and `job-kong-post-up
 
 **Warning:** Uncomment "`migrations: upgrade`" if you deploy again after a successfull deployment or set it to "`migrations: bootstrap`". Otherwise migrations will be executed again.
 
-**Note:** Those jobs are only ment to be used for upgrading in the context of either Enterprise OR Community Edition.
+**Note:** Those jobs are only ment to be used for upgrading.
 
 ## Upgrade Advice
 The following section contains special advice for dedicated updates and maybe necessary steps to be taken if updating from a certain version to another.
@@ -161,29 +150,28 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.image.organisation`                         | Set default organisation for all images                                                                                                   | `tif-public`                          |
 | `global.image.force`                                | Replace repository/organisation also if image is set as custom  "image:" value                                                            | `false`                               |
 | `migrations`                                        | Determine the migrations behaviuor for a new instance or upgrade                                                                          | `none`                                |
-| `enterprise.license`                                | License JSON to activate enterprise features, stored in secret                                                                            | `nil`                                 |
 | `adminApi.enabled`                                  | Create service for accessing Kong Admin API                                                                                               | `true`                                |
 | `adminApi.tls.enabled`                              | Access Admin API via https instead of http                                                                                                | `false`                               |
-| `adminApi.ingress.enabled`                          | Create ingress (or route for OpenShift) for Admin API. Default depends on Edition                                                         | CE: `false`<br/>EE: `true`            |
+| `adminApi.ingress.enabled`                          | Create ingress for Admin API. Default depends on Edition                                                                                  | CE: `false`<br/>EE: `true`            |
 | `adminApi.ingress.hostname`                         | Set dedicated hostname for Admin API ingress (or route), overwrites global URL                                                            | `nil`                                 |
 | `adminApi.ingress.annotations`                      | Merges specific into global ingress annotations                                                                                           | `nil`                                 |
 | `adminApi.access_log`                               | Set the log target for access log                                                                                                         | `/dev/stdout`                         |
 | `adminApi.ingress.annotations`                      | Set the log target for error log                                                                                                          | `/dev/stderr`                         |
 | `manager.enabled`                                   | Create service for accessing Kong Manager                                                                                                 | `true`                                |
 | `manager.tls.enabled`                               | Access Manager via https instead of http                                                                                                  | `false`                               |
-| `manager.ingress.enabled`                           | Create ingress (or route for OpenShift) for Manager                                                                                       | `true`                                |
+| `manager.ingress.enabled`                           | Create ingress for Manager                                                                                                                | `true`                                |
 | `manager.ingress.hostname`                          | Set dedicated hostname Manager ingress (or route), overwrites global URL                                                                  | `nil`                                 |
 | `manager.ingress.annotations`                       | Merges specific into global ingress annotations                                                                                           | `nil`                                 |
 | `manager.access_log`                                | Set the log target for access log                                                                                                         | `/dev/stdout`                         |
 | `manager.ingress.annotations`                       | Set the log target for error log                                                                                                          | `/dev/stderr`                         |
 | `portal.enabled`                                    | Create service for accessing the Portal                                                                                                   | `false`                               |
 | `portal.tls.enabled`                                | Access the Portal via https instead of http                                                                                               | `false`                               |
-| `portal.ingress.enabled`                            | Create ingress (or route for OpenShift) for the Portal                                                                                    | `true`                                |
+| `portal.ingress.enabled`                            | Create ingress for the Portal                                                                                                             | `true`                                |
 | `portal.ingress.hostname`                           | Extend global ingress annotations                                                                                                         | `nil`                                 |
 | `portal.ingress.annotations`                        | Merges specific into global ingress annotations                                                                                           | `nil`                                 |
 | `portal.access_log`                                 | Set the log target for access log                                                                                                         | `/dev/stdout`                         |
 | `portal.ingress.annotations`                        | Set the log target for error log                                                                                                          | `/dev/stderr`                         |
-| `proxy.ingress.enabled`                             | Create ingress (or route for OpenShift) for proxy                                                                                         | `true`                                |
+| `proxy.ingress.enabled`                             | Create ingress for proxy                                                                                                                  | `true`                                |
 | `proxy.ingress.hostname`                            | Set dedicated hostname for proxy ingress (or route), overwrites global URL                                                                | `nil`                                 |
 | `proxy.ingress.annotations`                         | Merges specific into global ingress annotations                                                                                           | `ssl-passthrough`                     |
 | `proxy.access_log`                                  | Set the log target for access log                                                                                                         | `/dev/stdout`                         |

@@ -710,18 +710,6 @@ ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.manager.ingress.ingressClassName" -}}
-{{- if eq .Values.global.platform "tdi" -}}
-ingressClassName: {{ .Values.manager.ingress.ingressClassName | default "triton-ingress" -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.portal.ingress.ingressClassName" -}}
-{{- if eq .Values.global.platform "tdi" -}}
-ingressClassName: {{ .Values.portal.ingress.ingressClassName | default "triton-ingress" -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.proxy.ingress.ingressClassName" -}}
 {{- if eq .Values.global.platform "tdi" -}}
 ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
