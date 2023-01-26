@@ -91,36 +91,6 @@ adminApi:
   #access_log: /dev/stdout
   #error_log: /dev/stderr
 
-# Configure Kong Manager
-manager:
-  enabled: true
-  tls:
-    enabled: false
-  session:
-    secret: changeme
-  ingress:
-    enabled: true
-    #hostname: ""
-    #tlsSecret: ""
-    annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
-
-# Configure the Portal
-portal:
-  enabled: false
-  tls:
-    enabled: false
-  session:
-    secret: changeme
-  ingress:
-    enabled: true
-    #hostname: ""
-    #tlsSecret: ""
-    annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
-
 # Activate proxy ingress and set a dedicated hostname
 proxy:
   tls:
