@@ -502,14 +502,14 @@ false
 {{- end }}
 {{- if .Values.ssl.cipherSuite }}
 - name: KONG_SSL_CIPHER_SUITE
-  value: {{ .Values.ssl.cipherSuite }}
+  value: {{ .Values.ssl.cipherSuite | quote }}
 {{- end }}
 {{- if .Values.ssl.ciphers }}
 - name: KONG_SSL_CIPHERS
-  value: {{ .Values.ssl.ciphers }}
+  value: {{ .Values.ssl.ciphers | quote }}
 {{- end }}
-- name: KONG_NGINX_HTTP_SSL_PROTOCOLS
-  value: {{ .Values.ssl.protocols }}
+- name: KONG_SSL_PROTOCOLS
+  value: {{ .Values.ssl.protocols | quote }}
 - name: KONG_PROXY_LISTEN
 {{- if .Values.proxy.tls.enabled }}
   value: '0.0.0.0:8443 ssl http2'
