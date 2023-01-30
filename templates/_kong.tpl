@@ -500,16 +500,16 @@ false
 {{- end }}
 {{- end }}
 {{- end }}
-{{- if .Values.sslCipherSuite }}
+{{- if .Values.ssl.cipherSuite }}
 - name: KONG_SSL_CIPHER_SUITE
-  value: {{ .Values.sslCipherSuite }}
+  value: {{ .Values.ssl.cipherSuite }}
 {{- end }}
-{{- if .Values.sslCiphers }}
+{{- if .Values.ssl.ciphers }}
 - name: KONG_SSL_CIPHERS
-  value: {{ .Values.sslCiphers }}
+  value: {{ .Values.ssl.ciphers }}
 {{- end }}
 - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
-  value: "TLSv1.2 TLSv1.3"
+  value: {{ .Values.ssl.protocols }}
 - name: KONG_PROXY_LISTEN
 {{- if .Values.proxy.tls.enabled }}
   value: '0.0.0.0:8443 ssl http2'
