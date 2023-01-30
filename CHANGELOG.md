@@ -6,6 +6,8 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 ## 0.0.0
  - Removed OpenShift and Enterprise remnants
+ - Deactivated TLSv1.1
+ - Updated cipher suites
 
 ## 3.5.0
  - Added request-size-limiting plugin setup
