@@ -510,6 +510,8 @@ false
 {{- end }}
 - name: KONG_SSL_PROTOCOLS
   value: {{ .Values.ssl.protocols | quote }}
+- name: KONG_LUA_SSL_PROTOCOLS
+  value: {{ .Values.ssl.protocols | quote }}
 - name: KONG_PROXY_LISTEN
 {{- if .Values.proxy.tls.enabled }}
   value: '0.0.0.0:8443 ssl http2'
