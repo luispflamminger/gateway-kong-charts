@@ -4,6 +4,11 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 3.6.0
+ - Removed OpenShift and Enterprise remnants
+ - Deactivated TLSv1.1
+ - Updated cipher suites
+
 ## 3.5.0
  - Added request-size-limiting plugin setup
 

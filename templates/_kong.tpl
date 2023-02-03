@@ -500,16 +500,18 @@ false
 {{- end }}
 {{- end }}
 {{- end }}
-{{- if .Values.sslCipherSuite }}
+{{- if .Values.ssl.cipherSuite }}
 - name: KONG_SSL_CIPHER_SUITE
-  value: {{ .Values.sslCipherSuite }}
+  value: {{ .Values.ssl.cipherSuite | quote }}
 {{- end }}
-{{- if .Values.sslCiphers }}
+{{- if .Values.ssl.ciphers }}
 - name: KONG_SSL_CIPHERS
-  value: {{ .Values.sslCiphers }}
+  value: {{ .Values.ssl.ciphers | quote }}
 {{- end }}
-- name: KONG_NGINX_HTTP_SSL_PROTOCOLS
-  value: "TLSv1.2 TLSv1.3"
+- name: KONG_SSL_PROTOCOLS
+  value: {{ .Values.ssl.protocols | quote }}
+- name: KONG_LUA_SSL_PROTOCOLS
+  value: {{ .Values.ssl.protocols | quote }}
 - name: KONG_PROXY_LISTEN
 {{- if .Values.proxy.tls.enabled }}
   value: '0.0.0.0:8443 ssl http2'
@@ -612,22 +614,6 @@ admin-api
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.manager.host" -}}
-{{- if not (empty .Values.manager.ingress.hostname) }}
-{{- .Values.manager.ingress.hostname -}}
-{{- else }}
-{{- printf "%s-manager-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.portal.host" -}}
-{{- if not (empty .Values.portal.ingress.hostname) }}
-{{- .Values.portal.ingress.hostname -}}
-{{- else }}
-{{- printf "%s-portal-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.proxy.host" -}}
 {{- if not (empty .Values.proxy.ingress.hostname) }}
 {{- .Values.proxy.ingress.hostname -}}
@@ -659,20 +645,6 @@ admin-api
 {{- $mergedAnnotations | toYaml -}}
 {{ end -}}
 
-{{- define "kong.merged.manager.annotations" }}
-{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
-{{- $localAnnotations := dict "annotations" .Values.manager.ingress.annotations -}}
-{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
-{{- $mergedAnnotations | toYaml -}}
-{{ end -}}
-
-{{- define "kong.merged.portal.annotations" }}
-{{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
-{{- $localAnnotations := dict "annotations" .Values.portal.ingress.annotations -}}
-{{- $mergedAnnotations := mergeOverwrite $globalAnnotations $localAnnotations }}
-{{- $mergedAnnotations | toYaml -}}
-{{ end -}}
-
 {{- define "kong.merged.proxy.annotations" }}
 {{- $globalAnnotations := dict "annotations" .Values.global.ingress.annotations | deepCopy -}}
 {{- $localAnnotations := dict "annotations" .Values.proxy.ingress.annotations -}}
@@ -686,18 +658,6 @@ secretName: {{ .Values.adminApi.ingress.tlsSecret | default .Values.global.ingre
 {{- end -}}
 {{- end -}}
 
-{{- define "kong.manager.ingress.tlsSecret" -}}
-{{- if not (and (empty .Values.manager.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
-secretName: {{ .Values.manager.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.portal.ingress.tlsSecret" -}}
-{{- if not (and (empty .Values.portal.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
-secretName: {{ .Values.portal.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "kong.proxy.ingress.tlsSecret" -}}
 {{- if not (and (empty .Values.proxy.ingress.tlsSecret) (empty .Values.global.ingress.tlsSecret)) -}}
 secretName: {{ .Values.proxy.ingress.tlsSecret | default .Values.global.ingress.tlsSecret -}}
@@ -707,18 +667,6 @@ secretName: {{ .Values.proxy.ingress.tlsSecret | default .Values.global.ingress.
 {{- define "kong.adminApi.ingress.ingressClassName" -}}
 {{- if eq .Values.global.platform "tdi" -}}
 ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton-ingress" -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.manager.ingress.ingressClassName" -}}
-{{- if eq .Values.global.platform "tdi" -}}
-ingressClassName: {{ .Values.manager.ingress.ingressClassName | default "triton-ingress" -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "kong.portal.ingress.ingressClassName" -}}
-{{- if eq .Values.global.platform "tdi" -}}
-ingressClassName: {{ .Values.portal.ingress.ingressClassName | default "triton-ingress" -}}
 {{- end -}}
 {{- end -}}
 
