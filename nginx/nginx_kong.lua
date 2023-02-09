@@ -83,8 +83,8 @@ log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
                                '"X-B3-TraceId": "$http_x_b3_traceid", '
                                '"upstream_status": "$upstream_status", '
                                '"tardis_consumer": "$tardis_consumer", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details" } }';
+                               '"eventclassid": "$sec_event_code", '
+                               '"event_details": "$sec_event_details" } }';
 
 log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "proxy", '
@@ -106,8 +106,8 @@ log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
                                '"upstream_response_time": "$upstream_response_time", '
                                '"upstream_status": "$upstream_status", '
                                '"tardis_consumer": "$tardis_consumer", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", '
+                               '"eventclassid": "$sec_event_code", '
+                               '"event_details": "$sec_event_details", '
                                '"http_user_agent": "$http_user_agent" } }';
 
 # TARDIS log formats for admin port
@@ -122,8 +122,8 @@ log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
                                '"request_method": "$request_method", '
                                '"request_path": "$uri", '
                                '"hostname_ingress": "$host", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details" } }';
+                               '"eventclassid": "$sec_event_code", '
+                               '"event_details": "$sec_event_details" } }';
 
 log_format log_admin_debug_json '{ "@timestamp": "$time_iso8601", '
                              '"@service": "admin", '
@@ -145,8 +145,8 @@ log_format log_admin_debug_json '{ "@timestamp": "$time_iso8601", '
                                '"connection_requests": "$connection_requests", '
                                '"hostname_ingress": "$host", '
                                '"hostname_pod": "$hostname", '
-                               '"sec_event_code": "$sec_event_code", '
-                               '"sec_event_details": "$sec_event_details", '
+                               '"eventclassid": "$sec_event_code", '
+                               '"event_details": "$sec_event_details", '
                                '"http_user_agent": "$http_user_agent" } }';
 
 server {
