@@ -4,6 +4,10 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 3.6.1
+ - Default Kong image version set to 2.8.3.3
+ - "sec_event_code" renamed to "eventclassid"
+
 ## 3.6.0
  - Removed OpenShift and Enterprise remnants
  - Deactivated TLSv1.1
