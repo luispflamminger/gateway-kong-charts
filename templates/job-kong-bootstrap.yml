@@ -14,10 +14,10 @@ spec:
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
-        imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
+        imagePullPolicy: {{ .Values.database.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
+        securityContext: {{ .Values.database.postgres.securityContext | toYaml | nindent 10 }}
         command: ['/bin/bash']
-        args: ['-c', 'until pg_isready -U {{ .Values.postgres.user }}; do echo waiting for database; sleep 2; done;']
+        args: ['-c', 'until pg_isready -U {{ .Values.database.user }}; do echo waiting for database; sleep 2; done;']
         env:
         {{- include "kong.migrations.checkdatabase.env" $ | indent 8 }}
       containers:

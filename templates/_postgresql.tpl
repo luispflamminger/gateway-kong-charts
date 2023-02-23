@@ -16,18 +16,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- $imageTag := "12.3-debian" -}}
 {{- $imageRepository := .Values.global.image.repository -}}
 {{- $imageOrganization := .Values.global.image.organization -}}
-{{- if .Values.postgres.image -}}
-  {{- if not (kindIs "string" .Values.postgres.image) -}}
-    {{ $imageRepository = .Values.postgres.image.repository | default $imageRepository -}}
-    {{ $imageOrganization = .Values.postgres.image.organization | default $imageOrganization -}}
-    {{ $imageName = .Values.postgres.image.name | default $imageName -}}
-    {{ $imageTag = .Values.postgres.image.tag | default $imageTag -}}
+{{- if .Values.database.postgres.image -}}
+  {{- if not (kindIs "string" .Values.database.postgres.image) -}}
+    {{ $imageRepository = .Values.database.postgres.image.repository | default $imageRepository -}}
+    {{ $imageOrganization = .Values.database.postgres.image.organization | default $imageOrganization -}}
+    {{ $imageName = .Values.database.postgres.image.name | default $imageName -}}
+    {{ $imageTag = .Values.database.postgres.image.tag | default $imageTag -}}
     {{- printf "%s/%s/%s:%s" $imageRepository $imageOrganization $imageName $imageTag -}}
   {{- else -}}
     {{- if .Values.global.image.force -}}
-      {{- .Values.postgres.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
+      {{- .Values.database.postgres.image | replace "mtr.devops.telekom.de" .Values.global.image.repository | replace "tardis-common" .Values.global.image.organization -}}
     {{- else -}}
-      {{- .Values.postgres.image -}}
+      {{- .Values.database.postgres.image -}}
     {{- end -}}
   {{- end -}}
 {{- else -}}
@@ -37,32 +37,28 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 
 {{- define "postgresql.env" }}
 - name: PGDATA
-  value: {{ .Values.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
+  value: {{ .Values.database.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}/pgdata
 - name: POSTGRES_USER
-  value: {{ .Values.postgres.user | default "kong" }}
+  value: {{ .Values.database.user | default "kong" }}
 - name: POSTGRES_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
       key: postgresPassword
 - name: POSTGRES_DB
-  value: {{ .Values.postgres.database | default "kong" }}
+  value: {{ .Values.database.database | default "kong" }}
 # for centos and rhel we do have different environment variables
 - name: POSTGRESQL_USER
-  value: {{ .Values.postgres.user | default "kong" }}
+  value: {{ .Values.database.user | default "kong" }}
 - name: POSTGRESQL_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
       key: postgresPassword
 - name: POSTGRESQL_DATABASE
-  value: {{ .Values.postgres.database | default "kong" }}
+  value: {{ .Values.database.database | default "kong" }}
 {{- end -}}
 
 {{- define "postgresql.serviceName" -}}
 {{ printf "%s-postgres" $.Release.Name }}
-{{- end -}}
-
-{{- define "postgresql.host" -}}
-{{ .Values.postgres.host | default (printf "%s.%s" ( include "postgresql.serviceName" $ ) $.Release.Namespace) }}
 {{- end -}}

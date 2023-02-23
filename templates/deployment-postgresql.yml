@@ -1,4 +1,4 @@
-{{- if not .Values.postgres.externalDatabase.enabled -}}
+{{- if eq .Values.database.location "local" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,24 +19,24 @@ spec:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       securityContext:
-        fsGroup: {{ .Values.postgres.securityContext.fsGroup | default 999 }}
+        fsGroup: {{ .Values.database.postgres.securityContext.fsGroup | default 999 }}
       containers:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgresql.image" $ }}
-        imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
+        imagePullPolicy: {{ .Values.database.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
+        securityContext: {{ .Values.database.postgres.securityContext | toYaml | nindent 10 }}
         env:
         {{- include "postgresql.env" $ | indent 8 }}
         livenessProbe:
           tcpSocket:
-            port:  {{ .Values.postgres.port }}
+            port:  {{ .Values.database.port }}
           failureThreshold: 3
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
         ports:
-        - containerPort: {{ .Values.postgres.port }}
+        - containerPort: {{ .Values.database.port }}
           protocol: TCP
         readinessProbe:
           exec:
@@ -50,14 +50,14 @@ spec:
           successThreshold: 1
           timeoutSeconds: 1
         resources:
-{{- toYaml .Values.postgres.resources | nindent 10 }}
+{{- toYaml .Values.database.postgres.resources | nindent 10 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         - mountPath: /tmp
           name: {{ .Release.Name }}-postgresql-tmp
         - mountPath: /var/run/postgresql
           name: {{ .Release.Name }}-postgresql-run
-        - mountPath: {{ .Values.postgres.mountDir | default "/var/lib/postgresql/data" }}
+        - mountPath: {{ .Values.database.postgres.persistence.mountDir | default "/var/lib/postgresql/data" }}
           name: {{ .Release.Name }}-postgresql-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

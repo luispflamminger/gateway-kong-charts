@@ -1,4 +1,4 @@
-{{- if not .Values.postgres.externalDatabase.enabled -}}
+{{- if eq .Values.database.location "local" -}}
 apiVersion: v1
 kind: Service
 metadata:

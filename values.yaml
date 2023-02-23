@@ -345,27 +345,9 @@ circuitbreaker:
       cpu: 50m
       memory: 200Mi
 
-postgres:
-  # You can force using a specific image here:
-  #image: 
-    #repository: mtr.devops.telekom.de
-    #organization: tardis-common
-    #name: postgres
-    #tag: 12.3-debian
-  # Or use the flattened string form:
-  #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
-  #imagePullPolicy: IfNotPresent
-
-  # If set to true, the bundled PostgreSQL will not be deployed
-  externalDatabase: 
-    enabled: false
-    #ssl: false
-    #sslVerify: false
-    #luaSslTrustedCertificate: |
-    #  -----BEGIN CERTIFICATE-----
-    #  <CA certificate in PEM format here>
-    #  -----END CERTIFICATE-----
-  
+database:
+  # Determine if the a database will be deployed togehter with Stargate (local) or is provided (external)
+  location: local
   # Set host if you use an external database or service name is not sufficient
   #host: 'some-external-postgresql-database.example.com'
   port: 5432
@@ -373,25 +355,43 @@ postgres:
   schema: public
   user: kong
   password: changeme
-  
-  persistence:
-    keepOnDelete: false
-    #mountDir: '/var/lib/postgresql/data'
-    
+
+  postgres:
+    # You can force using a specific image here:
+    #image: 
+      #repository: mtr.devops.telekom.de
+      #organization: tardis-common
+      #name: postgres
+      #tag: 12.3-debian
+    # Or use the flattened string form:
+    #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
+    #imagePullPolicy: IfNotPresent
+
+    securityContext: {}
+      #fsGroup: 999
+
     resources:
+      limits:
+        cpu: 100m
+        memory: 500Mi
       requests:
-        storage: 1Gi
+        cpu: 20m
+        memory: 200Mi
 
-  securityContext: {}
-    #fsGroup: 999
+    persistence:
+      keepOnDelete: false
+      #mountDir: '/var/lib/postgresql/data'
+      resources:
+        requests:
+          storage: 1Gi
 
-  resources:
-    limits:
-      cpu: 100m
-      memory: 500Mi
-    requests:
-      cpu: 20m
-      memory: 200Mi
+  external: 
+    ssl: false
+    sslVerify: false
+    #luaSslTrustedCertificate: |
+    #  -----BEGIN CERTIFICATE-----
+    #  <CA certificate in PEM format here>
+    #  -----END CERTIFICATE-----
 
 job: {}
 # force specific image for jobs:

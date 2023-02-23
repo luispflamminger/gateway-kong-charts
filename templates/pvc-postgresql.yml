@@ -1,11 +1,11 @@
-{{- if not .Values.postgres.externalDatabase.enabled -}}
+{{- if eq .Values.database.location "local" -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-database-pvc
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
-{{- if .Values.postgres.persistence }}
-  {{- if .Values.postgres.persistence.keepOnDelete }}
+{{- if .Values.database.postgres.persistence }}
+  {{- if .Values.database.postgres.persistence.keepOnDelete }}
   annotations:
     "helm.sh/resource-policy": keep
   {{- end -}}
@@ -14,5 +14,5 @@ spec:
   accessModes:
   - ReadWriteOnce
   storageClassName: {{ .Values.global.storageclass | default "cns" }}
-  resources: {{ .Values.postgres.persistence.resources | toYaml | nindent 4 }}
+  resources: {{ .Values.database.postgres.persistence.resources | toYaml | nindent 4 }}
 {{- end -}}
