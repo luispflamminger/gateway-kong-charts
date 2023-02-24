@@ -1,0 +1,14 @@
+issuerService:
+  jsonWebKey: ignore
+  publicKey: ignore
+
+# changed ssl settings
+ssl:
+  protocols: "TLSv1.2"
+  ciphers: "DHE-DSS-AES128-SHA256"
+
+# changed nginx settings
+memCacheSize: 256m
+nginxWorkerProcesses: 100
+nginxHttpLuaSharedDict: prometheus_metrics 30m
+nginxLargeClientBuffers: 8 16k
