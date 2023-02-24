@@ -148,6 +148,7 @@ jobs:
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
 #nginxHttpLuaSharedDict: prometheus_metrics 15m
+#nginxLargeClientBuffers: 4 8k
 
 replicas: 1
 
