@@ -424,7 +424,7 @@ false
 
 {{- define "kong.migrations.checkdatabase.env" }}
 - name: PGHOST
-  value: {{ include "kong.database.host" $ }}
+  value: {{ include "database.host" $ }}
 - name: PGDATABASE
   value: {{ .Values.database.database }}
 - name: PGUSER
@@ -448,7 +448,7 @@ false
 - name: KONG_PG_PORT
   value: '{{ .Values.database.port }}'
 - name: KONG_PG_HOST
-  value: '{{ include "kong.database.host" $ }}'
+  value: '{{ include "database.host" $ }}'
 - name: KONG_PG_USER
   value: '{{ .Values.database.user }}'
 - name: KONG_PG_DATABASE
@@ -483,7 +483,7 @@ false
 - name: KONG_PG_PORT
   value: '{{ .Values.database.port }}'
 - name: KONG_PG_HOST
-  value: '{{ include "kong.database.host" $ }}'
+  value: '{{ include "database.host" $ }}'
 - name: KONG_PG_USER
   value: '{{ .Values.database.user }}'
 - name: KONG_PG_DATABASE
@@ -678,9 +678,4 @@ ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton
 {{- if eq .Values.global.platform "tdi" -}}
 ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
 {{- end -}}
-{{- end -}}
-
-
-{{- define "kong.database.host" -}}
-{{ .Values.database.host | default (printf "%s.%s" ( include "postgresql.serviceName" $ ) $.Release.Namespace) }}
 {{- end -}}

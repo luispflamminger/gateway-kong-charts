@@ -10,3 +10,7 @@ imagePullSecrets:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "database.host" -}}
+{{ .Values.database.host | default (printf "%s.%s" ( include "postgresql.serviceName" $ ) $.Release.Namespace) }}
+{{- end -}}
