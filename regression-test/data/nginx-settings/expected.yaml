@@ -939,7 +939,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: jumper
-        image: some-other-registry.telekom.de/tardis/jumper-sse:2.3.5
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1029,23 +1029,23 @@ spec:
               name: stargate-issuer-service
               key: publicKey
       - name: kong
-        image: some-other-registry.telekom.de/tardis-internal/io/eni-kong:2.8.3.3
+        image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
         env:        
         - name: KONG_NGINX_WORKER_PROCESSES
-          value: 'auto'
+          value: '100'
         - name: KONG_NGINX_HTTP_INCLUDE
           value: '/opt/kong/nginx/servers.conf'
         - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
-          value: 'prometheus_metrics 15m'        
+          value: 'prometheus_metrics 30m'        
         - name: KONG_PLUGINS
           value: bundled,jwt-keycloak
         - name: KONG_LUA_PACKAGE_PATH
           value: "/opt/?.lua;;"        
         - name: KONG_MEM_CACHE_SIZE
-          value: '128m'
+          value: '256m'
         - name: KONG_PREFIX
           value: /kong
         - name: KONG_DATABASE
@@ -1072,11 +1072,11 @@ spec:
         - name: KONG_SSL_CIPHER_SUITE
           value: "custom"
         - name: KONG_SSL_CIPHERS
-          value: "DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES128-CCM:DHE-RSA-AES256-CCM:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-CCM:ECDHE-ECDSA-AES256-CCM:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_AES_128_CCM_SHA256"
+          value: "DHE-DSS-AES128-SHA256"
         - name: KONG_SSL_PROTOCOLS
-          value: "TLSv1.2 TLSv1.3"
+          value: "TLSv1.2"
         - name: KONG_LUA_SSL_PROTOCOLS
-          value: "TLSv1.2 TLSv1.3"
+          value: "TLSv1.2"
         - name: KONG_PROXY_LISTEN
           value: '0.0.0.0:8000'
         - name: KONG_ADMIN_LISTEN
@@ -1210,7 +1210,7 @@ spec:
         fsGroup: 999
       containers:
       - name: stargate-postgresql
-        image: some-other-registry.telekom.de/tardis/postgres:12.3-debian
+        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1409,7 +1409,7 @@ spec:
     spec:      
       containers:
       - name: kong-admin-route
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1453,7 +1453,7 @@ spec:
     spec:      
       containers:
       - name: prometheus-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1523,7 +1523,7 @@ spec:
     spec:      
       containers:
       - name: request-size-limiting-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1590,7 +1590,7 @@ spec:
     spec:      
       containers:
       - name: zipkin-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
