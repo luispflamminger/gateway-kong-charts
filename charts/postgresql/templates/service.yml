@@ -1,14 +1,16 @@
-{{- if eq .Values.database.location "local" -}}
+{{- if eq .Values.global.database.location "local" }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "postgresql.serviceName" . }}
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
+  type: ClusterIP
   selector: {{ include "postgresql.selector" $ | nindent 4 }}
   ports:
   - name: postgresql
-    protocol: TCP
     port: 5432
+    protocol: TCP
     targetPort: 5432
-{{- end -}}
+{{- end }}
+

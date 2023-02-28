@@ -45,6 +45,15 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
+  database:
+    # Determine if the a database will be deployed togehter with Stargate (local) or is provided (external)
+    location: local
+    #port: 5432
+    database: kong
+    schema: public
+    username: kong
+    password: changeme
+
   failOnUnsetValues: true
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
@@ -346,53 +355,38 @@ circuitbreaker:
       cpu: 50m
       memory: 200Mi
 
-database:
-  # Determine if the a database will be deployed togehter with Stargate (local) or is provided (external)
-  location: local
+postgresql:
+  #image: 
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
+    #name: postgres
+    #tag: 12.3-debian
+  # Or use the flattened string form:
+  #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
+  #imagePullPolicy: IfNotPresent
+
+  admin_password: changeme
+
+  securityContext: {}
+    #fsGroup: 999
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 500Mi
+    requests:
+      cpu: 20m
+      memory: 200Mi
+
+externalDatabase: 
   # Set host if you use an external database or service name is not sufficient
   #host: 'some-external-postgresql-database.example.com'
-  port: 5432
-  database: kong
-  schema: public
-  user: kong
-  password: changeme
-
-  postgres:
-    # You can force using a specific image here:
-    #image: 
-      #repository: mtr.devops.telekom.de
-      #organization: tardis-common
-      #name: postgres
-      #tag: 12.3-debian
-    # Or use the flattened string form:
-    #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
-    #imagePullPolicy: IfNotPresent
-
-    securityContext: {}
-      #fsGroup: 999
-
-    resources:
-      limits:
-        cpu: 100m
-        memory: 500Mi
-      requests:
-        cpu: 20m
-        memory: 200Mi
-
-    persistence:
-      keepOnDelete: false
-      #mountDir: '/var/lib/postgresql/data'
-      resources:
-        requests:
-          storage: 1Gi
-
-  external: 
-    ssl: false
-    sslVerify: false
-    #luaSslTrustedCertificate: |
-    #  -----BEGIN CERTIFICATE-----
-    #  <CA certificate in PEM format here>
-    #  -----END CERTIFICATE-----
+  ssl: false
+  sslVerify: false
+  #luaSslTrustedCertificate: |
+  #  -----BEGIN CERTIFICATE-----
+  #  <CA certificate in PEM format here>
+  #  -----END CERTIFICATE-----
 
 job: {}
 # force specific image for jobs:

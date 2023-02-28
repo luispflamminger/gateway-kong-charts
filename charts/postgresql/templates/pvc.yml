@@ -1,0 +1,12 @@
+{{- if eq .Values.global.database.location "local" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-data
+  labels: {{ include "postgresql.labels" $ | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageclass }}
+  accessModes:
+    - ReadWriteOnce
+  resources: {{ .Values.persistence.resources | toYaml | nindent 4 }}
+{{- end }}
