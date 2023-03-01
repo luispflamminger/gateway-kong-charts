@@ -433,7 +433,7 @@ false
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 {{- end -}}
 
 {{- define "kong.migrations.env" }}
@@ -444,7 +444,7 @@ false
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 - name: KONG_PG_PORT
   value: '{{ .Values.global.database.port }}'
 - name: KONG_PG_HOST
