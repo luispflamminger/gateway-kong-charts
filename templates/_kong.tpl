@@ -491,9 +491,9 @@ false
 - name: KONG_PG_SCHEMA
   value: '{{ .Values.global.database.schema }}'
 - name: KONG_PROXY_ACCESS_LOG
-  value: {{ .Values.proxy.access_log | default "/dev/stdout" | quote }}
+  value: {{ .Values.proxy.accessLog | default "/dev/stdout" | quote }}
 - name: KONG_PROXY_ERROR_LOG
-  value: {{ .Values.proxy.error_log | default "/dev/stderr" | quote }}
+  value: {{ .Values.proxy.errorLog | default "/dev/stderr" | quote }}
 {{- if eq .Values.global.database.location "external" }}
 {{- if .Values.externalDatabase.ssl }}
 - name: KONG_PG_SSL
@@ -532,9 +532,9 @@ false
 - name: KONG_STATUS_LISTEN
   value: '0.0.0.0:8100'
 - name: KONG_ADMIN_ACCESS_LOG
-  value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
+  value: {{ .Values.adminApi.accessLog | default "/dev/stdout" | quote }}
 - name: KONG_ADMIN_ERROR_LOG
-  value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
+  value: {{ .Values.adminApi.errorLog | default "/dev/stderr" | quote }}
 {{- end }}
 {{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE

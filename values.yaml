@@ -97,8 +97,8 @@ adminApi:
     #hostname: ""
     #tlsSecret: ""
     annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
+  #accessLog: /dev/stdout
+  #errorLog: /dev/stderr
 
 # Activate proxy ingress and set a dedicated hostname
 proxy:
@@ -109,8 +109,8 @@ proxy:
     #hostname: ""
     #tlsSecret: ""
     annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
+  #accessLog: /dev/stdout
+  #errorLog: /dev/stderr
 
 #configuration: |
   #Place your curl commands here to configure via Admin-API on deploy time
