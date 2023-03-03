@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "postgresql.pvcName" . }}-data
+  name: {{ include "postgresql.pvcName" . }}
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
   storageClassName: {{ .Values.persistence.storageclass }}
