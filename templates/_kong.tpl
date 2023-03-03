@@ -479,7 +479,7 @@ false
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 - name: KONG_PG_PORT
   value: {{ .Values.global.database.port | default "5432" | quote }}
 - name: KONG_PG_HOST
