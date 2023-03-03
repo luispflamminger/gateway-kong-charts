@@ -2,15 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  name: {{ include "postgresql.serviceName" . }}
   labels: {{ include "postgresql.labels" $ | nindent 4 }}
 spec:
   type: ClusterIP
   selector: {{ include "postgresql.selector" $ | nindent 4 }}
   ports:
   - name: postgresql
-    port: 5432
+    port: {{ .Values.global.database.port | default 5432 }}
     protocol: TCP
-    targetPort: 5432
+    targetPort: {{ .Values.global.database.port | default 5432 }}
 {{- end }}
 
