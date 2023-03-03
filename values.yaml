@@ -22,8 +22,8 @@ global:
   #   organization: tardis
   #  force: false
   image:
-    repository: mtr.devops.telekom.de
-    organization: tardis-common
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
     force: false
 
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
