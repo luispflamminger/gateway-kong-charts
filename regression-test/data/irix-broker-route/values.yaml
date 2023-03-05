@@ -1,0 +1,14 @@
+issuerService:
+  jsonWebKey: ignore
+  publicKey: ignore
+irixBrokerRoute:
+  enabled: true
+  # test optinal settings
+  host: integration.spacegate.telekom.de
+  upstream: 
+    # alternative 1 
+    service: iris-broker
+    namespace: another-namespace
+    # alternative 2
+    #protocol: https
+    #host: iris-broker-integration.test.dhei.telekom.de
