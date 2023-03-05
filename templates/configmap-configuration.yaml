@@ -109,6 +109,44 @@ data:
           "consumer_match_claim_custom_id" : true
         }
       }'
+    {{- if eq .Values.irixBrokerRoute.enabled true }}
+    echo ""
+    echo "8) Create service (upstream: {{ .Values.irixBrokerRoute.upstream.protocol }}//{{ include "kong.irixBrokerRoute.upstreamHost" . }}:{{ .Values.irixBrokerRoute.upstream.port }})"
+    curl --request PUT \
+      --url {{ $apiUrl }}/services/{{ .Values.irixBrokerRoute.name }} \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "{{ .Values.irixBrokerRoute.name }}",
+        "tags": ["irix-broker","{{ .Values.irixBrokerRoute.name }}"],
+        "protocol": "{{ .Values.irixBrokerRoute.upstream.protocol }}",
+        "host": "{{ include "kong.irixBrokerRoute.upstreamHost" . }}",
+        "port": {{ .Values.irixBrokerRoute.upstream.port }},
+        "path": "{{ .Values.irixBrokerRoute.upstream.path }}"
+      }'
+    echo ""
+    echo "9) Create route (/{{ .Values.irixBrokerRoute.name }}) "
+    curl --request PUT \
+      --url {{ $apiUrl }}/services/{{ .Values.irixBrokerRoute.name }}/routes/{{ .Values.irixBrokerRoute.name }} \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "{{ .Values.irixBrokerRoute.name }}",
+        "tags": ["irix-broker","{{ .Values.irixBrokerRoute.name }}"],
+        "strip_path": true,
+        "preserve_host": true,
+        "protocols": ["http","https"],
+        "methods": ["GET","POST"],
+        "hosts": [
+          "{{ include "kong.irixBrokerRoute.spacegateHost" . }}
+        ],
+        "paths": [
+          "/{{ .Values.irixBrokerRoute.name }}"
+        ]
+      }'
+    {{- end -}}
     {{- end -}}
     {{- end -}}
 {{- end -}}
