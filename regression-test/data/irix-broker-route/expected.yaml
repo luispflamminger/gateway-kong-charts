@@ -156,6 +156,42 @@ data:
           "consumer_match_claim_custom_id" : true
         }
       }'
+    echo ""
+    echo "8) Create service (upstream: http//iris-broker.another-namespace:80)"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/user-login \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "user-login",
+        "tags": ["irix-broker","user-login"],
+        "protocol": "http",
+        "host": "iris-broker.another-namespace",
+        "port": 80,
+        "path": "/auth/realms/eni-login"
+      }'
+    echo ""
+    echo "9) Create route (/user-login) "
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/user-login/routes/user-login \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "user-login",
+        "tags": ["irix-broker","user-login"],
+        "strip_path": true,
+        "preserve_host": true,
+        "protocols": ["http","https"],
+        "methods": ["GET","POST"],
+        "hosts": [
+          "integration.spacegate.telekom.de
+        ],
+        "paths": [
+          "/user-login"
+        ]
+      }'
 ---
 # Source: stargate/templates/configmap-nginx-kong-template.yaml
 apiVersion: v1
@@ -939,7 +975,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: jumper
-        image: some-other-registry.telekom.de/tardis/jumper-sse:2.3.5
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1029,7 +1065,7 @@ spec:
               name: stargate-issuer-service
               key: publicKey
       - name: kong
-        image: some-other-registry.telekom.de/tardis-internal/io/eni-kong:2.8.3.3
+        image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1210,7 +1246,7 @@ spec:
         fsGroup: 999
       containers:
       - name: stargate-postgresql
-        image: some-other-registry.telekom.de/tardis/postgres:12.3-debian
+        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1409,7 +1445,7 @@ spec:
     spec:      
       containers:
       - name: kong-admin-route
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1453,7 +1489,7 @@ spec:
     spec:      
       containers:
       - name: prometheus-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1523,7 +1559,7 @@ spec:
     spec:      
       containers:
       - name: request-size-limiting-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:
@@ -1590,7 +1626,7 @@ spec:
     spec:      
       containers:
       - name: zipkin-setup
-        image: some-other-registry.telekom.de/tardis/tif-base-image:1.0.0
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
         securityContext: 
           {}
         env:

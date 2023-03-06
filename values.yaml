@@ -148,6 +148,7 @@ jobs:
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
 #nginxHttpLuaSharedDict: prometheus_metrics 15m
+#nginxLargeClientBuffers: 4 8k
 
 replicas: 1
 
@@ -245,6 +246,22 @@ plugins:
     #  <CA certificate in PEM format here>
     #  -----END CERTIFICATE-----
     # Set job retries and maximum runtime (default values preset)
+
+# irixBrokerRoute is a route on spacegate proxing to irix-broker
+irixBrokerRoute:
+  enabled: false
+  name: user-login
+  # optional if not according to the usual host rules
+  #host: integration.spacegate.telekom.de
+  upstream:
+    protocol: http
+    service: irix-broker
+    path: /auth/realms/eni-login
+    port: 80
+    # optional if upstream should be accessed by ingress
+    #host: integration.spacegate.telekom.de
+    # optional if upstream should be accessed as service but in another namespace
+    #namespace: integration
 
 # Jumper is a component needed for Gateway-to-Gateway
 # communication

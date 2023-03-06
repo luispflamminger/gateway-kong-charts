@@ -387,7 +387,11 @@ false
   value: '/opt/kong/nginx/servers.conf'
 - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
   value: '{{ .Values.nginxHttpLuaSharedDict | default "prometheus_metrics 15m" }}'
-{{- if .Values.defaultTlsSecret }}            
+{{- if .Values.nginxLargeClientBuffers }}
+- name: KONG_NGINX_PROXY_LARGE_CLIENT_HEADER_BUFFERS
+  value: '{{ .Values.nginxLargeClientBuffers | default "4 8k" }}'
+{{- end -}}
+{{- if .Values.defaultTlsSecret }}
 - name: KONG_SSL_CERT
   value: /opt/kong/default-https/tls.crt
 - name: KONG_SSL_CERT_KEY
@@ -675,3 +679,24 @@ ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton
 ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.irixBrokerRoute.spacegateHost" -}}
+{{- if .Values.irixBrokerRoute.host -}}
+{{ .Values.irixBrokerRoute.host -}}
+{{- else -}}
+{{- include "kong.proxy.host" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.irixBrokerRoute.upstreamHost" -}}
+{{- if .Values.irixBrokerRoute.upstream.host -}}
+{{ .Values.irixBrokerRoute.upstream.host -}}
+{{- else -}}
+{{- if .Values.irixBrokerRoute.upstream.namespace -}}
+{{ .Values.irixBrokerRoute.upstream.service | default "iris-broker" }}.{{ .Values.irixBrokerRoute.upstream.namespace -}}
+{{- else -}}
+{{ .Values.irixBrokerRoute.upstream.service | default "iris-broker" }}.{{ .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
