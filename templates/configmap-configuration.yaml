@@ -140,7 +140,7 @@ data:
         "protocols": ["http","https"],
         "methods": ["GET","POST"],
         "hosts": [
-          "{{ include "kong.irixBrokerRoute.spacegateHost" . }}
+          "{{ include "kong.irixBrokerRoute.spacegateHost" . }}"
         ],
         "paths": [
           "/{{ .Values.irixBrokerRoute.name }}"
