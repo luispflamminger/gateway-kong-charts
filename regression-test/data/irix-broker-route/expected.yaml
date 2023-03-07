@@ -156,6 +156,42 @@ data:
           "consumer_match_claim_custom_id" : true
         }
       }'
+    echo ""
+    echo "8) Create service (upstream: http//iris-broker.another-namespace:80)"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/user-login \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "user-login",
+        "tags": ["irix-broker","user-login"],
+        "protocol": "http",
+        "host": "iris-broker.another-namespace",
+        "port": 80,
+        "path": "/auth/realms/eni-login"
+      }'
+    echo ""
+    echo "9) Create route (/user-login) "
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/user-login/routes/user-login \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --data \
+      '{
+        "name": "user-login",
+        "tags": ["irix-broker","user-login"],
+        "strip_path": true,
+        "preserve_host": true,
+        "protocols": ["http","https"],
+        "methods": ["GET","POST"],
+        "hosts": [
+          "integration.spacegate.telekom.de
+        ],
+        "paths": [
+          "/user-login"
+        ]
+      }'
 ---
 # Source: stargate/templates/configmap-nginx-kong-template.yaml
 apiVersion: v1
@@ -1035,19 +1071,17 @@ spec:
           {}
         env:        
         - name: KONG_NGINX_WORKER_PROCESSES
-          value: '100'
+          value: 'auto'
         - name: KONG_NGINX_HTTP_INCLUDE
           value: '/opt/kong/nginx/servers.conf'
         - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
-          value: 'prometheus_metrics 30m'
-        - name: KONG_NGINX_PROXY_LARGE_CLIENT_HEADER_BUFFERS
-          value: '8 16k'        
+          value: 'prometheus_metrics 15m'        
         - name: KONG_PLUGINS
           value: bundled,jwt-keycloak
         - name: KONG_LUA_PACKAGE_PATH
           value: "/opt/?.lua;;"        
         - name: KONG_MEM_CACHE_SIZE
-          value: '256m'
+          value: '128m'
         - name: KONG_PREFIX
           value: /kong
         - name: KONG_DATABASE
@@ -1074,11 +1108,11 @@ spec:
         - name: KONG_SSL_CIPHER_SUITE
           value: "custom"
         - name: KONG_SSL_CIPHERS
-          value: "DHE-DSS-AES128-SHA256"
+          value: "DHE-DSS-AES128-SHA256:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES128-CCM:DHE-RSA-AES256-CCM:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-CCM:ECDHE-ECDSA-AES256-CCM:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_AES_128_CCM_SHA256"
         - name: KONG_SSL_PROTOCOLS
-          value: "TLSv1.2"
+          value: "TLSv1.2 TLSv1.3"
         - name: KONG_LUA_SSL_PROTOCOLS
-          value: "TLSv1.2"
+          value: "TLSv1.2 TLSv1.3"
         - name: KONG_PROXY_LISTEN
           value: '0.0.0.0:8000'
         - name: KONG_ADMIN_LISTEN

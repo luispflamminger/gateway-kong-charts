@@ -4,6 +4,10 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
+## 3.6.3
+ - Added configurable Irix-Broker route to enable ZAM-login for external users
+ - Added option to configure large_client_header_buffers in kong/nginx
+ 
 ## 3.6.1
  - Default Kong image version set to 2.8.3.3
  - "sec_event_code" renamed to "eventclassid"

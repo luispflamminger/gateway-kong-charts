@@ -679,3 +679,24 @@ ingressClassName: {{ .Values.adminApi.ingress.ingressClassName | default "triton
 ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-ingress" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.irixBrokerRoute.spacegateHost" -}}
+{{- if .Values.irixBrokerRoute.host -}}
+{{ .Values.irixBrokerRoute.host -}}
+{{- else -}}
+{{- include "kong.proxy.host" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.irixBrokerRoute.upstreamHost" -}}
+{{- if .Values.irixBrokerRoute.upstream.host -}}
+{{ .Values.irixBrokerRoute.upstream.host -}}
+{{- else -}}
+{{- if .Values.irixBrokerRoute.upstream.namespace -}}
+{{ .Values.irixBrokerRoute.upstream.service | default "iris-broker" }}.{{ .Values.irixBrokerRoute.upstream.namespace -}}
+{{- else -}}
+{{ .Values.irixBrokerRoute.upstream.service | default "iris-broker" }}.{{ .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
