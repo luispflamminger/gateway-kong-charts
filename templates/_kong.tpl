@@ -14,7 +14,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
 {{- $imageTag := "2.8.3.3" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
   {{- if not (kindIs "string" .Values.image) -}}
@@ -38,8 +38,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "job.image" -}}
 {{- $imageName := "tif-base-image" -}}
 {{- $imageTag := "1.0.0" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-common" -}}
 {{- if and .Values.job .Values.job.image -}}
   {{- if not (kindIs "string" .Values.job.image) -}}
     {{ $imageRepository = .Values.job.image.repository | default $imageRepository -}}

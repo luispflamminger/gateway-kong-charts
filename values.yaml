@@ -22,7 +22,7 @@ global:
   #   organization: tardis
   #  force: false
   image:
-    repository: mtr.devops.telekom.de
+    #repository: mtr.devops.telekom.de
     #organization: tardis-common
     force: false
 
