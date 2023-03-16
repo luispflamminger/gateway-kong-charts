@@ -3,7 +3,15 @@
 This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
+
 [[_TOC_]]
+
+## 4.x.x
+ - Reworked database configuration
+ - Database integration reworked to sub-chart
+ - Labels cleaned up
+ - Corrected product names
+
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
  - Added option to configure large_client_header_buffers in kong/nginx
