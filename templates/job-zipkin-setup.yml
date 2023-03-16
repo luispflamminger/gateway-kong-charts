@@ -46,11 +46,11 @@ spec:
               "name" : "zipkin",
               "tags" : ["tardis","zipkin","eni-zipkin"],
               "config" : {
-                "http_endpoint" : "{{ .Values.plugins.zipkin.collectorUrl }}",
-                "sample_ratio" : {{ .Values.plugins.zipkin.sampleRatio | default 0.001 }},
+                "http_endpoint" : "{{ .Values.plugins.zipkin.collectorUrl | default .Values.global.tracing.collectorUrl }}",
+                "sample_ratio" : {{ .Values.plugins.zipkin.sampleRatio | default .Values.global.tracing.sampleRatio }},
                 "include_credential" : {{ .Values.plugins.zipkin.includeCredential | default true }},
-                "default_service_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}",
-                "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}"
+                "default_service_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Values.global.tracing.defaultServiceName }}",
+                "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Values.global.tracing.defaultServiceName }}"
               }
             }'`
 

@@ -220,7 +220,7 @@ false
 {{- end -}}
 
 {{- define "kong.isZipkinEnabled" -}}
-{{- if and (eq .Values.plugins.zipkin.enabled true) ( not ( eq .Values.plugins.zipkin.collectorUrl "" )) -}}
+{{- if (eq .Values.plugins.zipkin.enabled true) -}}
 true
 {{- else -}}
 false
@@ -544,11 +544,16 @@ false
 {{- end }}
 {{- end }}
 
+{{- define "kong.jumper.collectorUrl" -}}
+{{ $url := .Values.jumper.tracingUrl | default .Values.global.tracing.collectorUrl -}}
+{{ trimSuffix "/api/v2/spans" $url -}}
+{{- end -}}
+
 {{- define "kong.jumper.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
 - name: TRACING_URL
-  value: {{ .Values.jumper.tracingUrl }}
+  value: {{ include "kong.jumper.collectorUrl" . }}
 - name: STARGATE_URL
   value: {{ .Values.jumper.stargateUrl }}
 - name: JVM_OPTS
@@ -556,7 +561,7 @@ false
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
-  value: {{ .Values.plugins.zipkin.defaultServiceName }}
+  value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
