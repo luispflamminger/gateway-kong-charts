@@ -4,7 +4,7 @@ helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
-app.kubernetes.io/part-of: tif-runtime^
+app.kubernetes.io/part-of: tif-runtime
 app.kubernetes.io/managed-by: {{ .Values.global.installed_by | default "tif" }}
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
