@@ -58,9 +58,9 @@ global:
   # Set a global collectorUrl for traces.
   # Can be overwritten by individual settings
   tracing:
-    collectorUrl: "GLOBALhttp://guardians-drax-collector.skoll:9411/api/v2/spans"
-    defaultServiceName: "GLOBALstargate"
-    sampleRatio: 2
+    collectorUrl: "http://guardians-drax-collector.skoll:9411/api/v2/spans"
+    defaultServiceName: "stargate"
+    sampleRatio: 1
 
   failOnUnsetValues: true
 
