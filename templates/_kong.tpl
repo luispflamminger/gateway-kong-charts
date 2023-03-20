@@ -483,7 +483,7 @@ false
       name: {{ .Release.Name }}
       key: databasePassword
 - name: KONG_PG_PORT
-  value: {{ .Values.global.database.port | default "5432" | quote }}
+  value: '{{ .Values.global.database.port | default 5432 }}'
 - name: KONG_PG_HOST
   value: '{{ include "database.host" $ }}'
 - name: KONG_PG_USER
