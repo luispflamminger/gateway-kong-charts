@@ -17,7 +17,7 @@ spec:
       containers:
       - name: prometheus-deletion
         image: {{ include "job.image" $ }}
-        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.jobs.containerSecurityContext | toYaml | nindent 10 }}
         env:
         - name: X_TARDIS_GATEWAY_ADMIN_BASE64
           valueFrom:
