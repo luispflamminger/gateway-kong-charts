@@ -18,3 +18,7 @@ imagePullSecrets:
     {{ .Release.Name -}}-postgresql
   {{- end -}}
 {{- end -}}
+
+{{- define "checkForUnset" -}}
+{{- printf $.value }}
+{{- end -}}

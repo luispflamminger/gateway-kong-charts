@@ -576,7 +576,11 @@ false
 
 {{- define "kong.jwtKeycloak.allowedIss" -}}
 {{ $allowedIss := "" }}
+{{- $failOnUnsetValues := eq (toString .Values.global.failOnUnsetValues) "true" }}
 {{- range .Values.plugins.jwtKeycloak.allowedIss -}}
+{{- if and ($failOnUnsetValues) (contains "changeme" .) -}}
+{{- fail (printf "allowedIss contains changeme") }}
+{{- end -}}
 {{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
 {{- end }}
 {{- print (trimPrefix "," $allowedIss) }}

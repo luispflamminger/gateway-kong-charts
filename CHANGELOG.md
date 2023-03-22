@@ -13,6 +13,7 @@ Please also seek advice from the README regarding updates.
  - Corrected product names
  - Zipkin sample ratio set to 1
  - Unification of collectorUrl and global setting option
+ - Prohibit changeme
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
