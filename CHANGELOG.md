@@ -6,7 +6,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 4.x.x
+## 5.0.0
  - Reworked database configuration
  - Database integration reworked to sub-chart
  - Labels cleaned up
