@@ -48,8 +48,8 @@ global:
 #imagePullPolicy: IfNotPresent
 
 
-securityContext: {}
-  #fsGroup: 999
+securityContext:
+  fsGroup: 999
 
 # database admin credentials
 #adminPassword: "changeme"
