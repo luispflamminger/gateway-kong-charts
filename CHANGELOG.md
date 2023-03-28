@@ -14,7 +14,8 @@ Please also seek advice from the README regarding updates.
  - Zipkin sample ratio set to 1
  - Unification of collectorUrl and global setting option
  - Prohibit changeme
- 
+ - PodSecurityContext for Stargate pod
+
 ## 3.7.0
  - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
 
