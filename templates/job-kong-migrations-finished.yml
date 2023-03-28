@@ -15,7 +15,7 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       initContainers:
       - name: "check-database"
-        image: '{{ include "postgresql.image" $ }}'
+        image: '{{ include "postgresql.dbCheck.image" $ }}'
         imagePullPolicy: {{ .Values.postgresql.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ .Values.postgresql.containerSecurityContext | toYaml | nindent 10 }}
         command: ['/bin/bash']

@@ -74,9 +74,9 @@ global:
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-image: 
+#image: 
   #repository: mtr.devops.telekom.de
-  organization: tardis-internal/io
+  #organization: tardis-internal/io
   #name: eni-kong
   #tag: 2.8.3.2
 # Or use the flattened string form:
