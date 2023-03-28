@@ -157,10 +157,11 @@ ssl:
 
 disableUpstreamCache: false
 
-securityContext: {}
+podSecurityContext: {}
+containerSecurityContext: {}
 
 jobs:
-  securityContext: {}
+  containerSecurityContext: {}
 
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
@@ -207,7 +208,7 @@ setupJobs:
     requests:
       cpu: 50m
       memory: 200Mi
-  securityContext: {}
+  containerSecurityContext: {}
 
 plugins:
   enabled: []
@@ -305,7 +306,7 @@ jumper:
       initialDelay: 25
   #port: 8080
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -346,7 +347,7 @@ issuerService:
   jsonWebKey: changeme
   publicKey: changeme
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -369,7 +370,7 @@ circuitbreaker:
   #interval: 60s
   #count: 4
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -388,6 +389,8 @@ postgresql:
   # Or use the flattened string form:
   #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
+
+  containerSecurityContext: {}
 
   resources:
     limits:

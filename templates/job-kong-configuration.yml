@@ -18,7 +18,7 @@ spec:
       - name: kong-admin-route
         image: {{ include "job.image" $ }}
         imagePullPolicy: {{ .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.jobs.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.jobs.containerSecurityContext | toYaml | nindent 10 }}
         command: [ "/bin/sh" ]
         args: [ "-c", "/tmp/configuration.sh" ]
         env:

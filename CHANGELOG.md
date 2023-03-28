@@ -14,6 +14,9 @@ Please also seek advice from the README regarding updates.
  - Zipkin sample ratio set to 1
  - Unification of collectorUrl and global setting option
  - Prohibit changeme
+ 
+## 3.7.0
+ - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
