@@ -15,6 +15,7 @@ Please also seek advice from the README regarding updates.
  - Unification of collectorUrl and global setting option
  - Prohibit changeme
  - PodSecurityContext for Stargate pod
+ - StorageClasseName de-saplingized
 
 ## 3.7.0
  - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
