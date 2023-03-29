@@ -40,12 +40,13 @@ spec:
                   values:
                   - {{ .Release.Name }}-kong
               topologyKey: "kubernetes.io/hostname"
+      securityContext: {{ .Values.podSecurityContext | toYaml | nindent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper
         image: {{ include "kong.jumper.image" $ }}
         imagePullPolicy: {{ .Values.jumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.jumper.containerSecurityContext | toYaml | nindent 10 }}
         resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
         lifecycle:
           preStop:
@@ -86,7 +87,7 @@ spec:
       - name: legacy-jumper
         image: {{ include "kong.legacyJumper.image" $ }}
         imagePullPolicy: {{ .Values.legacyJumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.jumper.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.jumper.containerSecurityContext | toYaml | nindent 10 }}
         resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
         lifecycle:
           preStop:
@@ -127,7 +128,7 @@ spec:
       - name: issuer-service
         image: {{ include "kong.issuerService.image" $ }}
         imagePullPolicy: {{ .Values.issuerService.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.issuerService.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.issuerService.containerSecurityContext | toYaml | nindent 10 }}
         resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
         ports:
         - containerPort: {{ .Values.issuerService.port | default 8081 }} 
@@ -142,7 +143,7 @@ spec:
       - name: circuitbreaker
         image: {{ include "kong.circuitbreaker.image" $ }}
         imagePullPolicy: {{ .Values.circuitbreaker.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.circuitbreaker.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.circuitbreaker.containerSecurityContext | toYaml | nindent 10 }}
         resources: {{ .Values.circuitbreaker.resources | toYaml | nindent 10 }}
         ports:
         - name: circuitbreaker
@@ -156,7 +157,7 @@ spec:
       - name: kong
         image: {{ include "kong.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.containerSecurityContext | toYaml | nindent 10 }}
         env:
         {{- include "kong.nginx.directives" $ | indent 8 }}
         {{- include "kong.customPlugins.env" $ | indent 8 }}

@@ -3,11 +3,12 @@ global:
     pipeline: {}
 
   platform: kubernetes
-  storageclass: gp2
+  storageClassName: gp2
   domain: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
+  product: "stargate"
   ingress:
     #tlsSecret: ""
     annotations: {}
@@ -22,8 +23,8 @@ global:
   #   organization: tardis
   #  force: false
   image:
-    repository: mtr.devops.telekom.de
-    organization: tardis-common
+    #repository: mtr.devops.telekom.de
+    #organization: tardis-common
     force: false
 
   # If imagePullSecrets is not empty, a pull secret will be deployed for each entry otherwise 
@@ -45,6 +46,22 @@ global:
     - '[0-9]'
     - '[^a-zA-Z0-9]'
 
+  database:
+    # Determine if the a database will be deployed togehter with Stargate (local) or is provided (external)
+    location: local
+    #port: 5432
+    database: kong
+    schema: public
+    username: kong
+    password: changeme
+
+  # Set a global collectorUrl for traces.
+  # Can be overwritten by individual settings
+  tracing:
+    collectorUrl: "http://guardians-drax-collector.skoll:9411/api/v2/spans"
+    defaultServiceName: "stargate"
+    sampleRatio: 1
+
   failOnUnsetValues: true
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
@@ -57,9 +74,9 @@ global:
 templateChangeTriggers: []
 
 # You can force using a specific image here:
-image: 
+#image: 
   #repository: mtr.devops.telekom.de
-  organization: tardis-internal/io
+  #organization: tardis-internal/io
   #name: eni-kong
   #tag: 2.8.3.2
 # Or use the flattened string form:
@@ -88,8 +105,8 @@ adminApi:
     #hostname: ""
     #tlsSecret: ""
     annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
+  #accessLog: /dev/stdout
+  #errorLog: /dev/stderr
 
 # Activate proxy ingress and set a dedicated hostname
 proxy:
@@ -100,8 +117,8 @@ proxy:
     #hostname: ""
     #tlsSecret: ""
     annotations: {}
-  #access_log: /dev/stdout
-  #error_log: /dev/stderr
+  #accessLog: /dev/stdout
+  #errorLog: /dev/stderr
 
 #configuration: |
   #Place your curl commands here to configure via Admin-API on deploy time
@@ -140,10 +157,11 @@ ssl:
 
 disableUpstreamCache: false
 
-securityContext: {}
+podSecurityContext: {}
+containerSecurityContext: {}
 
 jobs:
-  securityContext: {}
+  containerSecurityContext: {}
 
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
@@ -190,7 +208,7 @@ setupJobs:
     requests:
       cpu: 50m
       memory: 200Mi
-  securityContext: {}
+  containerSecurityContext: {}
 
 plugins:
   enabled: []
@@ -237,8 +255,8 @@ plugins:
   zipkin:
     enabled: true
     pluginId: e8ff1211-816f-4d93-9011-a4b194586073
-    collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
-    #sampleRatio: 0.001
+    #collectorUrl: "http://guardians-drax-collector.skoll:9411/api/v2/spans"
+    #sampleRatio: 1
     #includeCredential: "true"
     #defaultServiceName: "stargate"
     #luaSslTrustedCertificate: |
@@ -276,11 +294,11 @@ jumper:
   #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
-  tracingUrl: http://guardians-drax-collector.skoll:9411
+  #tracingUrl: http://guardians-drax-collector.skoll:9411
+  #defaultServiceName: "stargate"
   stargateUrl: https://stargate-integration.test.dhei.telekom.de
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
-  applicationName: Stargate
   startup:
     livenessProbe:
       initialDelay: 25
@@ -288,7 +306,7 @@ jumper:
       initialDelay: 25
   #port: 8080
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -329,7 +347,7 @@ issuerService:
   jsonWebKey: changeme
   publicKey: changeme
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -352,7 +370,7 @@ circuitbreaker:
   #interval: 60s
   #count: 4
 
-  securityContext: {}
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -362,8 +380,7 @@ circuitbreaker:
       cpu: 50m
       memory: 200Mi
 
-postgres:
-  # You can force using a specific image here:
+postgresql:
   #image: 
     #repository: mtr.devops.telekom.de
     #organization: tardis-common
@@ -373,34 +390,7 @@ postgres:
   #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
 
-  # If set to true, the bundled PostgreSQL will not be deployed
-  externalDatabase: 
-    enabled: false
-    #ssl: false
-    #sslVerify: false
-    #luaSslTrustedCertificate: |
-    #  -----BEGIN CERTIFICATE-----
-    #  <CA certificate in PEM format here>
-    #  -----END CERTIFICATE-----
-  
-  # Set host if you use an external database or service name is not sufficient
-  #host: 'some-external-postgresql-database.example.com'
-  port: 5432
-  database: kong
-  schema: public
-  user: kong
-  password: changeme
-  
-  persistence:
-    keepOnDelete: false
-    #mountDir: '/var/lib/postgresql/data'
-    
-    resources:
-      requests:
-        storage: 1Gi
-
-  securityContext: {}
-    #fsGroup: 999
+  containerSecurityContext: {}
 
   resources:
     limits:
@@ -409,6 +399,16 @@ postgres:
     requests:
       cpu: 20m
       memory: 200Mi
+
+externalDatabase: 
+  # Set host if you use an external database or service name is not sufficient
+  #host: 'some-external-postgresql-database.example.com'
+  ssl: false
+  sslVerify: false
+  #luaSslTrustedCertificate: |
+  #  -----BEGIN CERTIFICATE-----
+  #  <CA certificate in PEM format here>
+  #  -----END CERTIFICATE-----
 
 job: {}
 # force specific image for jobs:

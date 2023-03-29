@@ -3,7 +3,23 @@
 This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
+
 [[_TOC_]]
+
+## 4.0.0
+ - Reworked database configuration
+ - Database integration reworked to sub-chart
+ - Labels cleaned up
+ - Corrected product names
+ - Zipkin sample ratio set to 1
+ - Unification of collectorUrl and global setting option
+ - Prohibit changeme
+ - PodSecurityContext for Stargate pod
+ - StorageClasseName de-saplingized
+
+## 3.7.0
+ - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
+
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
  - Added option to configure large_client_header_buffers in kong/nginx

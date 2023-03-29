@@ -1,5 +1,6 @@
 {{- define "kong.labels" -}}
 app: {{ .Release.Name }}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
 app.kubernetes.io/instance: {{ .Release.Name }}-kong
 app.kubernetes.io/component: api-gateway
@@ -14,7 +15,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
 {{- $imageTag := "2.8.3.3" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
   {{- if not (kindIs "string" .Values.image) -}}
@@ -38,8 +39,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "job.image" -}}
 {{- $imageName := "tif-base-image" -}}
 {{- $imageTag := "1.0.0" -}}
-{{- $imageRepository := .Values.global.image.repository -}}
-{{- $imageOrganization := .Values.global.image.organization -}}
+{{- $imageRepository := "mtr.devops.telekom.de" -}}
+{{- $imageOrganization := "tardis-common" -}}
 {{- if and .Values.job .Values.job.image -}}
   {{- if not (kindIs "string" .Values.job.image) -}}
     {{ $imageRepository = .Values.job.image.repository | default $imageRepository -}}
@@ -218,7 +219,7 @@ false
 {{- end -}}
 
 {{- define "kong.isZipkinEnabled" -}}
-{{- if and (eq .Values.plugins.zipkin.enabled true) ( not ( eq .Values.plugins.zipkin.collectorUrl "" )) -}}
+{{- if (eq .Values.plugins.zipkin.enabled true) -}}
 true
 {{- else -}}
 false
@@ -274,7 +275,7 @@ false
   emptyDir: {}
 - name: kong-migrations-tmp
   emptyDir: {}
-{{- if .Values.postgres.externalDatabase.sslVerify }}
+{{- if .Values.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -291,7 +292,7 @@ false
   mountPath: /kong
 - name: kong-migrations-tmp
   mountPath: /tmp
-{{- if .Values.postgres.externalDatabase.sslVerify }}
+{{- if .Values.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
@@ -313,7 +314,7 @@ false
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
-{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
     secretName: {{ .Release.Name }}-trusted-ca-certificates
@@ -340,7 +341,7 @@ false
   subPath: .htpasswd
 - name: nginx-servers
   mountPath: /opt/kong/nginx
-{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   mountPath: /opt/kong/tls
 {{- end -}}
@@ -414,7 +415,7 @@ false
 
 {{- define "kong.luaSslTrustedCertificates" }}
 {{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
-{{ .Values.plugins.postgres.externalDatabase.luaSslTrustedCertificate }}
+{{ .Values.plugins.database.external.luaSslTrustedCertificate }}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}
@@ -424,16 +425,16 @@ false
 
 {{- define "kong.migrations.checkdatabase.env" }}
 - name: PGHOST
-  value: {{ include "postgresql.host" $ }}
+  value: {{ include "database.host" $ }}
 - name: PGDATABASE
-  value: {{ .Values.postgres.database }}
+  value: {{ .Values.global.database.database }}
 - name: PGUSER
-  value: {{ .Values.postgres.user }}
+  value: {{ .Values.global.database.username }}
 - name: PGPASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 {{- end -}}
 
 {{- define "kong.migrations.env" }}
@@ -444,22 +445,22 @@ false
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 - name: KONG_PG_PORT
-  value: '{{ .Values.postgres.port }}'
+  value: '{{ .Values.global.database.port }}'
 - name: KONG_PG_HOST
-  value: '{{ include "postgresql.host" $ }}'
+  value: '{{ include "database.host" $ }}'
 - name: KONG_PG_USER
-  value: '{{ .Values.postgres.user }}'
+  value: '{{ .Values.global.database.username }}'
 - name: KONG_PG_DATABASE
-  value: '{{ .Values.postgres.database }}'
+  value: '{{ .Values.global.database.database }}'
 - name: KONG_PG_SCHEMA
-  value: '{{ .Values.postgres.schema }}'
-{{- if eq .Values.postgres.externalDatabase.enabled true }}
-{{- if .Values.postgres.externalDatabase.ssl }}
+  value: '{{ .Values.global.database.schema }}'
+{{- if eq .Values.global.database.location "external" }}
+{{- if .Values.externalDatabase.ssl }}
 - name: KONG_PG_SSL
   value: 'on'
-{{- if .Values.postgres.externalDatabase.sslVerify }}
+{{- if .Values.externalDatabase.sslVerify }}
 - name: KONG_PG_SSL_VERIFY
   value: 'on'
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
@@ -479,26 +480,26 @@ false
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: postgresPassword
+      key: databasePassword
 - name: KONG_PG_PORT
-  value: '{{ .Values.postgres.port }}'
+  value: '{{ .Values.global.database.port | default 5432 }}'
 - name: KONG_PG_HOST
-  value: '{{ include "postgresql.host" $ }}'
+  value: '{{ include "database.host" $ }}'
 - name: KONG_PG_USER
-  value: '{{ .Values.postgres.user }}'
+  value: '{{ .Values.global.database.username }}'
 - name: KONG_PG_DATABASE
-  value: '{{ .Values.postgres.database }}'
+  value: '{{ .Values.global.database.database }}'
 - name: KONG_PG_SCHEMA
-  value: '{{ .Values.postgres.schema }}'
+  value: '{{ .Values.global.database.schema }}'
 - name: KONG_PROXY_ACCESS_LOG
-  value: {{ .Values.proxy.access_log | default "/dev/stdout" | quote }}
+  value: {{ .Values.proxy.accessLog | default "/dev/stdout" | quote }}
 - name: KONG_PROXY_ERROR_LOG
-  value: {{ .Values.proxy.error_log | default "/dev/stderr" | quote }}
-{{- if eq .Values.postgres.externalDatabase.enabled true }}
-{{- if .Values.postgres.externalDatabase.ssl }}
+  value: {{ .Values.proxy.errorLog | default "/dev/stderr" | quote }}
+{{- if eq .Values.global.database.location "external" }}
+{{- if .Values.externalDatabase.ssl }}
 - name: KONG_PG_SSL
   value: 'on'
-{{- if .Values.postgres.externalDatabase.sslVerify }}
+{{- if .Values.externalDatabase.sslVerify }}
 - name: KONG_PG_SSL_VERIFY
   value: 'on'
 {{- end }}
@@ -532,21 +533,26 @@ false
 - name: KONG_STATUS_LISTEN
   value: '0.0.0.0:8100'
 - name: KONG_ADMIN_ACCESS_LOG
-  value: {{ .Values.adminApi.access_log | default "/dev/stdout" | quote }}
+  value: {{ .Values.adminApi.accessLog | default "/dev/stdout" | quote }}
 - name: KONG_ADMIN_ERROR_LOG
-  value: {{ .Values.adminApi.error_log | default "/dev/stderr" | quote }}
+  value: {{ .Values.adminApi.errorLog | default "/dev/stderr" | quote }}
 {{- end }}
-{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.postgres.externalDatabase.sslVerify }}
+{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
   value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
 {{- end }}
 {{- end }}
 
+{{- define "kong.jumper.collectorUrl" -}}
+{{ $url := .Values.jumper.tracingUrl | default .Values.global.tracing.collectorUrl -}}
+{{ trimSuffix "/api/v2/spans" $url -}}
+{{- end -}}
+
 {{- define "kong.jumper.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
 - name: TRACING_URL
-  value: {{ .Values.jumper.tracingUrl }}
+  value: {{ include "kong.jumper.collectorUrl" . }}
 - name: STARGATE_URL
   value: {{ .Values.jumper.stargateUrl }}
 - name: JVM_OPTS
@@ -554,7 +560,7 @@ false
 - name: PUBLISH_EVENT_URL
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
-  value: {{ .Values.plugins.zipkin.defaultServiceName }}
+  value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
@@ -570,7 +576,11 @@ false
 
 {{- define "kong.jwtKeycloak.allowedIss" -}}
 {{ $allowedIss := "" }}
+{{- $failOnUnsetValues := eq (toString .Values.global.failOnUnsetValues) "true" }}
 {{- range .Values.plugins.jwtKeycloak.allowedIss -}}
+{{- if and ($failOnUnsetValues) (contains "changeme" .) -}}
+{{- fail (printf "allowedIss contains changeme") }}
+{{- end -}}
 {{ $allowedIss = printf "%s,%s" $allowedIss ( . | quote ) }}
 {{- end }}
 {{- print (trimPrefix "," $allowedIss) }}
