@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 4.1.0
+ - Removed platform condition from ingress
+ - Caas platform specific topologyKey
+
 ## 4.0.0
  - Reworked database configuration
  - Database integration reworked to sub-chart
