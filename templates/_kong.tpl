@@ -709,11 +709,3 @@ ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-in
 {{- end -}}
 {{- end -}}
 {{- end -}}
-
-{{- define "kong.topologyKey" -}}
-{{- if eq .Values.global.platform "caas" -}}
-topology.kubernetes.io/zone
-{{- else -}}
-kubernetes.io/hostname
-{{- end -}}
-{{- end -}}

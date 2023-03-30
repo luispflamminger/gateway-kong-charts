@@ -39,7 +39,7 @@ spec:
                   operator: In
                   values:
                   - {{ .Release.Name }}-kong
-              topologyKey: {{ .Values.topologyKey | default (include "kong.topologyKey" $) }}
+              topologyKey: {{ .Values.topologyKey | default (include "topologyKey" $) }}
       securityContext: {{ .Values.podSecurityContext | toYaml | nindent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
