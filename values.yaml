@@ -61,6 +61,10 @@ global:
     collectorUrl: "http://guardians-drax-collector.skoll:9411/api/v2/spans"
     defaultServiceName: "stargate"
     sampleRatio: 1
+    environment: null
+    zone: null
+    force_sample: true
+    header_type: "b3"
 
   failOnUnsetValues: true
 
