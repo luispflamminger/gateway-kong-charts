@@ -14,7 +14,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.3.3" -}}
+{{- $imageTag := "2.8.3.4" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.2.9" -}}
+{{- $imageTag := "3.4.3" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -709,4 +709,3 @@ ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-in
 {{- end -}}
 {{- end -}}
 {{- end -}}
-
