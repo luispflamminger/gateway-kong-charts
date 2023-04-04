@@ -709,3 +709,24 @@ ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-in
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "kong.securityContext" -}}
+{{- if .securityContext -}}
+{{ .securityContext | toYaml }}
+{{- else if eq .Values.global.platform "caas" -}}
+{{- $values := $.Files.Get "platforms/caas.yaml" | fromYaml }}
+{{- $values.podSecurityContext | toYaml }}
+{{- else -}}
+{}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kong.securityContextByPlatform" -}}
+{{- if eq .Values.global.platform "caas" -}}
+{{- $values := $.Files.Get "platforms/caas.yaml" | fromYaml }}
+{{- $values.podSecurityContext | toYaml }}
+{{- else -}}
+{}
+{{- end -}}
+{{- end -}}
