@@ -6,7 +6,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 0.0.0
+## 4.1.0
  - Default Jumper image version set to 3.4.3
  - Default Kong image version set to 2.8.3.4
  - tracing adjusted
