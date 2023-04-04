@@ -51,9 +51,9 @@ spec:
                 "include_credential" : {{ .Values.plugins.zipkin.includeCredential | default true }},
                 "default_service_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Values.global.tracing.defaultServiceName }}",
                 "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Values.global.tracing.defaultServiceName }}",
-                "environment" : "{{ .Values.plugins.zipkin.environment | default .Values.global.environment | default "null" }}",
-                "zone" : "{{ .Values.plugins.zipkin.zone | default .Values.global.zone | default "null" }}",
-                "force_sample" : "{{ .Values.plugins.zipkin.forceSample | default true }}",
+                "environment" : "{{ .Values.plugins.zipkin.environment | default .Values.global.environment | default "" }}",
+                "zone" : "{{ .Values.plugins.zipkin.zone | default .Values.global.zone | default "" }}",
+                "force_sample" : {{ .Values.plugins.zipkin.forceSample | default true }},
                 "header_type" : "{{ .Values.plugins.zipkin.headerType | default "b3" }}"
               }
             }'`
