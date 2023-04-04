@@ -6,7 +6,11 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 4.1.0
+## 0.0.0
+ - Default Jumper image version set to 3.4.3
+ - Default Kong image version set to 2.8.3.4
+ - tracing adjusted
+ - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
  - Removed platform condition from ingress
  - Caas platform specific topologyKey
 
@@ -20,12 +24,6 @@ Please also seek advice from the README regarding updates.
  - Prohibit changeme
  - PodSecurityContext for Stargate pod
  - StorageClasseName de-saplingized
-
-## ?.?.?
- - Default Jumper image version set to 3.4.3
- - Default Kong image version set to 2.8.3.4
- - tracing adjusted
- - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), force_sample, header_type 
 
 ## 3.7.0
  - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
