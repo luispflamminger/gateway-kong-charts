@@ -40,7 +40,7 @@ spec:
                   values:
                   - {{ .Release.Name }}-kong
               topologyKey: {{ .Values.topologyKey | default (include "topologyKey" $) }}
-      securityContext: {{ include "kong.securityContext" (dict "Values" .Values "securityContext" .Values.podSecurityContext) | nindent 8 }}
+      securityContext: {{ include "kong.securityContext" (list $ . "{{ .Values.podSecurityContext }}") | nindent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper

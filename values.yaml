@@ -2,7 +2,7 @@ global:
   metadata:
     pipeline: {}
 
-  platform: caas
+  platform: kubernetes
   #storageClassName: gp2
   domain: ""
   labels:
@@ -157,8 +157,7 @@ ssl:
 
 disableUpstreamCache: false
 
-#podSecurityContext:
-#  aws: true
+#podSecurityContext: {}
 containerSecurityContext: {}
 #topologyKey:
 

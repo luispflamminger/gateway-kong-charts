@@ -711,15 +711,22 @@ ingressClassName: {{ .Values.proxy.ingress.ingressClassName | default "triton-in
 {{- end -}}
 
 {{- define "kong.securityContext" -}}
-{{- if .securityContext -}}
-{{ .securityContext | toYaml }}
+{{- $ := index . 0 }}
+{{- $securityContext := index . 2 }}
+
+{{- with index . 1 }}
+
+{{- $securityContextValue := tpl $securityContext $ }}
+{{- if $securityContextValue -}}
+{{ $securityContextValue | toYaml }}
 {{- else if eq .Values.global.platform "caas" -}}
-{{- $values := $.Files.Get "platforms/caas.yaml" | fromYaml }}
-{{- $values.podSecurityContext | toYaml }}
+{{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
+{{ tpl $securityContext (merge $ (dict "Values" $platformValues)) | toYaml }}
 {{- else -}}
 {}
-{{- end -}}
-{{- end -}}
+{{- end }}
+
+{{- end }}
 {{- end -}}
 
 {{- define "kong.securityContextByPlatform" -}}
