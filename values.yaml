@@ -88,7 +88,7 @@ templateChangeTriggers: []
 # upgrade: utilizing Kongs upgrade task for e.g. database migrations
 # jobs: migrating from eni-plugins to ENI flavoured original plugins
 # Comment out or set to none if none of the options are needed
-migrations: none
+migrations: bootstrap
 
 
 # Enable Admin API and whether it is http or https
@@ -158,11 +158,11 @@ ssl:
 disableUpstreamCache: false
 
 #podSecurityContext: {}
-containerSecurityContext: {}
+#containerSecurityContext: {}
 #topologyKey:
 
-jobs:
-  containerSecurityContext: {}
+jobs: {}
+  #containerSecurityContext: {}
 
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
@@ -209,7 +209,7 @@ setupJobs:
     requests:
       cpu: 50m
       memory: 200Mi
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
 plugins:
   enabled: []
@@ -311,7 +311,7 @@ jumper:
       initialDelay: 25
   #port: 8080
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -352,7 +352,7 @@ issuerService:
   jsonWebKey: changeme
   publicKey: changeme
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -375,7 +375,7 @@ circuitbreaker:
   #interval: 60s
   #count: 4
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -395,7 +395,7 @@ postgresql:
   #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:

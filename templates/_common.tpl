@@ -30,3 +30,19 @@ topology.kubernetes.io/zone
 kubernetes.io/hostname
 {{- end -}}
 {{- end -}}
+
+{{- define "platformSpecificValue" -}}
+{{- $ := index . 0 }}
+{{- $securityContextTemplate := printf "{{ %s | toYaml }}" (index . 2) }}
+{{- with index . 1 }}
+{{- $securityContextValue := tpl $securityContextTemplate $ }}
+{{- if not (eq $securityContextValue "null") -}}
+{{ $securityContextValue }}
+{{- else if eq .Values.global.platform "caas" -}}
+{{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
+{{ tpl $securityContextTemplate (merge $ (dict "Values" $platformValues)) }}
+{{- else -}}
+{}
+{{- end }}
+{{- end }}
+{{- end -}}
