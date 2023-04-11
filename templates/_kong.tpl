@@ -187,12 +187,12 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 - name: ISSUER_CERT
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}-issuer-service
+      name: {{ include "kong.fullname" . }}-issuer-service
       key: jsonWebKey
 - name: ISSUER_PUBLIC_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}-issuer-service
+      name: {{ include "kong.fullname" . }}-issuer-service
       key: publicKey
 {{- end -}}
 
@@ -200,7 +200,7 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 - name: KONG_AUTH
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}
+      name: {{ include "kong.fullname" . }}
       key: gatewayAdminBase64
 - name: KONG_URL
   value: {{ include "kong.adminApi.localhost" $ }}
@@ -216,7 +216,7 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 {{ end -}}
 
 {{- define "kong.annotations" -}}
-ops.eni.telekom.de/pipeline-meta-ref: {{ .Release.Name }}-pipeline-metadata
+ops.eni.telekom.de/pipeline-meta-ref: {{ include "kong.fullname" . }}-pipeline-metadata
 {{- if eq (toString .Values.global.metadata.pipeline.forceRedeploy) "true" }}
 ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
 {{- end -}}
@@ -284,7 +284,7 @@ false
 {{- define "kong.configuration.volumes" }}
 - name: kong-configuration
   configMap:
-    name: {{ .Release.Name }}-configuration
+    name: {{ include "kong.fullname" . }}-configuration
     defaultMode: 0555
 {{- end -}}
 
@@ -303,7 +303,7 @@ false
 {{- if .Values.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   secret:
-    secretName: {{ .Release.Name }}-trusted-ca-certificates
+    secretName: {{ include "kong.fullname" . }}-trusted-ca-certificates
     items:
       - key: lua-ssl-trusted-certificates.pem
         path: 'init/lua-ssl-trusted-certificates.pem'
@@ -332,17 +332,17 @@ false
   emptyDir: {}
 - name: nginx-kong-template
   configMap:
-    name: {{ .Release.Name }}-nginx-kong-template
+    name: {{ include "kong.fullname" . }}-nginx-kong-template
 - name: htpasswd
   secret:
-    secretName: {{ .Release.Name }}-htpasswd
+    secretName: {{ include "kong.fullname" . }}-htpasswd
 - name: nginx-servers
   configMap:
-    name: {{ .Release.Name }}-nginx-servers
+    name: {{ include "kong.fullname" . }}-nginx-servers
 {{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
-    secretName: {{ .Release.Name }}-trusted-ca-certificates
+    secretName: {{ include "kong.fullname" . }}-trusted-ca-certificates
 {{- end -}}
 {{- if .Values.defaultTlsSecret }}            
 - name: server-certificate
@@ -458,7 +458,7 @@ false
 - name: PGPASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}
+      name: {{ include "kong.fullname" . }}
       key: databasePassword
 {{- end -}}
 
@@ -469,7 +469,7 @@ false
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}
+      name: {{ include "kong.fullname" . }}
       key: databasePassword
 - name: KONG_PG_PORT
   value: '{{ .Values.global.database.port }}'
@@ -504,7 +504,7 @@ false
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Release.Name }}
+      name: {{ include "kong.fullname" . }}
       key: databasePassword
 - name: KONG_PG_PORT
   value: '{{ .Values.global.database.port | default 5432 }}'
@@ -615,12 +615,12 @@ false
 {{- if not (empty .Values.adminApi.ingress.hostname) }}
 {{- .Values.adminApi.ingress.hostname -}}
 {{- else }}
-{{- printf "%s-admin-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- printf "%s-admin-%s.%s" (include "kong.fullname" .) .Release.Namespace .Values.global.domain }}
 {{- end -}}
 {{- end -}}
 
 {{- define "kong.adminApi.serviceHost" -}}
-{{- printf "%s-admin.%s" .Release.Name .Release.Namespace }}
+{{- printf "%s-admin.%s" (include "kong.fullname" .) .Release.Namespace }}
 {{- end -}}
 
 {{- define "kong.adminApi.name" -}}
@@ -657,7 +657,7 @@ admin-api
 {{- if not (empty .Values.proxy.ingress.hostname) }}
 {{- .Values.proxy.ingress.hostname -}}
 {{- else }}
-{{- printf "%s-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
+{{- printf "%s-%s.%s" (include "kong.fullname" .) .Release.Namespace .Values.global.domain }}
 {{- end -}}
 {{- end -}}
 
