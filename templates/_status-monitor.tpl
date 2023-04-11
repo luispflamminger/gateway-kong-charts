@@ -7,9 +7,9 @@ tardis.telekom.de/environment: {{ .Values.global.metadata.environment | default 
 {{- end -}}
 
 {{- define "status-monitor.labels" -}}
-tardis.telekom.de/subproduct: {{ .Release.Name | quote }}
+tardis.telekom.de/subproduct: {{ (include "kong.fullname" .) | quote }}
 {{- end -}}
 
 {{- define "database.status-monitor.labels" -}}
-tardis.telekom.de/subproduct: {{ printf "%s-%s" .Release.Name "database" | quote }}
+tardis.telekom.de/subproduct: {{ printf "%s-%s" (include "kong.fullname" .) "database" | quote }}
 {{- end -}}

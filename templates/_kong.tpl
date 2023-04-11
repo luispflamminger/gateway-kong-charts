@@ -1,15 +1,40 @@
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "kong.name" -}}
+{{- default .Chart.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "kong.fullname" -}}
+{{- if .Values.global.fullnameOverride }}
+  {{- .Values.global.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+  {{- $name := default .Chart.Name .Values.global.nameOverride }}
+  {{- if contains $name .Release.Name }}
+    {{- .Release.Name | trunc 63 | trimSuffix "-" }}
+  {{- else }}
+    {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
 {{- define "kong.labels" -}}
 app: {{ .Release.Name }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
-app.kubernetes.io/instance: {{ .Release.Name }}-kong
+{{ include "kong.selector" . }}
 app.kubernetes.io/component: api-gateway
 app.kubernetes.io/part-of: tif-runtime
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
 
 {{- define "kong.selector" -}}
-app.kubernetes.io/instance: {{ .Release.Name }}-kong
+app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 {{- end -}}
 
 {{- define "kong.image" -}}

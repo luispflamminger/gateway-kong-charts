@@ -64,6 +64,9 @@ global:
 
   failOnUnsetValues: true
 
+  nameOverride: ""
+  fullnameOverride: ""
+
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
 # This makes sense if you change configMaps or secrets and you

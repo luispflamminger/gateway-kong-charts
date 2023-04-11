@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-configuration
+  name: {{ include "kong.fullname" . }}-configuration
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
   configuration.sh: |
