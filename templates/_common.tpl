@@ -19,10 +19,6 @@ imagePullSecrets:
   {{- end -}}
 {{- end -}}
 
-{{- define "checkForUnset" -}}
-{{- printf $.value }}
-{{- end -}}
-
 {{- define "topologyKey" -}}
 {{- if eq .Values.global.platform "caas" -}}
 topology.kubernetes.io/zone
