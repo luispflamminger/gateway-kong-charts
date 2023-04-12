@@ -1,6 +1,3 @@
-global:
-  storageClassName: nfs-storage
-
 podSecurityContext:
   runAsUser: 100
 
@@ -57,21 +54,6 @@ jobs:
   containerSecurityContext:
     runAsUser: 1000
     runAsGroup: 1000
-    runAsNonRoot: true
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    privileged: false
-    capabilities:
-      drop:
-      - ALL
-
-postgresql:
-  podSecurityContext:
-    fsGroup: 999
-    supplementalGroups: [999]    
-  containerSecurityContext:
-    runAsGroup: 999
-    runAsUser: 999
     runAsNonRoot: true
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false

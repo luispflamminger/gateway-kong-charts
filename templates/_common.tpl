@@ -19,24 +19,16 @@ imagePullSecrets:
   {{- end -}}
 {{- end -}}
 
-{{- define "topologyKey" -}}
-{{- if eq .Values.global.platform "caas" -}}
-topology.kubernetes.io/zone
-{{- else -}}
-kubernetes.io/hostname
-{{- end -}}
-{{- end -}}
-
 {{- define "platformSpecificValue" -}}
 {{- $ := index . 0 }}
-{{- $securityContextTemplate := printf "{{ %s | toYaml }}" (index . 2) }}
+{{- $template := printf "{{ %s | toYaml }}" (index . 2) }}
 {{- with index . 1 }}
-{{- $securityContextValue := tpl $securityContextTemplate $ }}
-{{- if not (eq $securityContextValue "null") -}}
-{{ $securityContextValue }}
+{{- $value := tpl $template $ }}
+{{- if not (eq $value "null") -}}
+{{ $value }}
 {{- else if eq .Values.global.platform "caas" -}}
 {{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
-{{ tpl $securityContextTemplate (merge $ (dict "Values" $platformValues)) }}
+{{ tpl $template (merge $ (dict "Values" $platformValues)) }}
 {{- end }}
 {{- end }}
 {{- end -}}

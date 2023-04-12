@@ -10,3 +10,17 @@ imagePullSecrets:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "platformSpecificValue" -}}
+{{- $ := index . 0 }}
+{{- $template := printf "{{ %s | toYaml }}" (index . 2) }}
+{{- with index . 1 }}
+{{- $value := tpl $template $ }}
+{{- if not (eq $value "null") -}}
+{{ $value }}
+{{- else if eq .Values.global.platform "caas" -}}
+{{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
+{{ tpl $template (merge $ (dict "Values" $platformValues)) }}
+{{- end }}
+{{- end }}
+{{- end -}}
