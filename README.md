@@ -133,6 +133,8 @@ You can do this by activating the jobs migration. This will delete the "old" ENI
 ```
 migrations: jobs
 ```
+### From 2.x.x and lower to 4.x.x
+The migration from 2.x.x to 4.x.x is not possible. Please upgrade first from 2.x.x to 3.x.x as described above and afterwards without any migrations configuration from 3.x.x to 4.x.x
 
 ## Parameters
 
