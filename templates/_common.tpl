@@ -37,8 +37,6 @@ kubernetes.io/hostname
 {{- else if eq .Values.global.platform "caas" -}}
 {{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
 {{ tpl $securityContextTemplate (merge $ (dict "Values" $platformValues)) }}
-{{- else -}}
-{}
 {{- end }}
 {{- end }}
 {{- end -}}
