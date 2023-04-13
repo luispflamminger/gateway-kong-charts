@@ -51,11 +51,11 @@ global:
 #imagePullPolicy: IfNotPresent
 
 
-podSecurityContext:
-  fsGroup: 999
+#podSecurityContext:
+  #fsGroup: 999
   #supplementalGroups: 999
 
-containerSecurityContext: {}
+#containerSecurityContext: {}
 
 # database admin credentials
 #adminPassword: "changeme"

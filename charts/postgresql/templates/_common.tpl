@@ -20,7 +20,7 @@ imagePullSecrets:
 {{ $value }}
 {{- else if eq .Values.global.platform "caas" -}}
 {{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
-{{ tpl $template (merge $ (dict "Values" $platformValues)) }}
+{{ tpl $template (deepCopy $ | merge (dict "Values" $platformValues)) }}
 {{- end }}
 {{- end }}
 {{- end -}}

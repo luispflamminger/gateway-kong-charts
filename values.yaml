@@ -395,8 +395,6 @@ postgresql:
   #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
 
-  #containerSecurityContext: {}
-
   resources:
     limits:
       cpu: 100m

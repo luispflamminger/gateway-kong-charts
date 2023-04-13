@@ -15,6 +15,14 @@ StarGate requires a PostgreSQL database that will be preconfigured by StarGate's
 
 ## Configuration
 
+### Platform
+
+You can select a platform (e.g. caas) to use predefined settings (e.g. securityContext) specifically dedicated to the platform. \
+Note that you can overwrite platform specific values in the values.yaml. \
+To add a new platform specific values.yaml, add the required values as platforName.yaml to the platforms folder and add is as a selectable option in the platformSpecificValue function.
+
+**Note:** Setting platform specific values in for the sub-chart by the platform specific platformName.yaml of your main
+
 ### Database
 
 No detailed configuration is necessary. PostgreSQL will be deployed together with StarGate. You should change the default passwords!
