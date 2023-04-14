@@ -7,8 +7,10 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 
 ## 0.0.0
- - Platform dependet securityContexts
+ - Platform dependent securityContexts
  - Introduced caas as platform
+ - Set zone value fallback to platform 
+ - Set environment value fallback to global metadata (from Sapling)
 
 ## 4.1.0
  - Default Jumper image version set to 3.4.3

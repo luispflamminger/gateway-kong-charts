@@ -5,6 +5,8 @@ global:
   platform: kubernetes
   #storageClassName: gp2
   domain: ""
+  #environment: ""
+  #zone: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
