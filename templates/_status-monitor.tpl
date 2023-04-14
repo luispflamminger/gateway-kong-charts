@@ -7,7 +7,7 @@ tardis.telekom.de/environment: {{ include "status-monitor.environment" . }}
 {{- end -}}
 
 {{- define "status-monitor.environment" -}}
-{{ .Values.global.metadata.environment | default "default" | quote  }}
+{{ .Values.global.metadata.environment | default .Values.global.environment  | default "default" | quote  }}
 {{- end -}}
 
 {{- define "status-monitor.labels" -}}

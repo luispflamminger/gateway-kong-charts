@@ -2,6 +2,7 @@ global:
   metadata:
     pipeline: {}
 
+  # Available platforms: kubernetes (default), aws, caas. Setting any value with no specific platform values.yaml will result in fallback to kubernetes
   platform: kubernetes
   #storageClassName: gp2
   domain: ""
