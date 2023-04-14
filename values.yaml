@@ -162,7 +162,8 @@ disableUpstreamCache: false
 
 #podSecurityContext: {}
 #containerSecurityContext: {}
-#topologyKey:
+
+#topologyKey: kubernetes.io/hostname
 
 jobs: {}
   #containerSecurityContext: {}
