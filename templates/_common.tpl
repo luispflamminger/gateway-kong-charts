@@ -26,6 +26,9 @@ imagePullSecrets:
 {{- $value := tpl $template $ }}
 {{- if not (eq $value "null") -}}
 {{ $value }}
+{{- else if eq .Values.global.platform "aws" -}}
+{{- $platformValues := $.Files.Get "platforms/aws.yaml" | fromYaml -}}
+{{ tpl $template (deepCopy $ | merge (dict "Values" $platformValues)) }}
 {{- else if eq .Values.global.platform "caas" -}}
 {{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
 {{ tpl $template (deepCopy $ | merge (dict "Values" $platformValues)) }}
