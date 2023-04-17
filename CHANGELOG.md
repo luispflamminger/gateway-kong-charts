@@ -6,8 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 0.0.0
+## 4.2.0-RC.1
  - Platform dependent securityContexts
+ - Platform dependent topologyKey
  - Introduced caas as platform
  - Set zone value fallback to platform 
  - Set environment value fallback to global metadata (from Sapling)
