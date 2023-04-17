@@ -86,7 +86,7 @@ templateChangeTriggers: []
 #image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.4
 #imagePullPolicy: IfNotPresent
 
-# Determine the migrations behaviour (bootstrap, upgrade, job)
+# Determine the migrations behaviour (bootstrap, upgrade, jobs)
 # bootstrap: setting up a new deployments database
 # upgrade: utilizing Kongs upgrade task for e.g. database migrations
 # jobs: migrating from eni-plugins to ENI flavoured original plugins
