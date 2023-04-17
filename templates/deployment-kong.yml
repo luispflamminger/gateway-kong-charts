@@ -39,7 +39,7 @@ spec:
                   operator: In
                   values:
                   - {{ .Release.Name }}-kong
-              topologyKey: {{ include "platformSpecificValue" (list $ . ".Values.topologyKey" | default "kubernetes.io/hostname") }}
+              topologyKey: {{ include "platformSpecificValue" (list $ . ".Values.topologyKey") | default "kubernetes.io/hostname" }}
       securityContext: {{ include "platformSpecificValue" (list $ . ".Values.podSecurityContext") | default "{}" | nindent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
