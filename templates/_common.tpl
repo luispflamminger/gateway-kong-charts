@@ -20,18 +20,24 @@ imagePullSecrets:
 {{- end -}}
 
 {{- define "platformSpecificValue" -}}
-{{- $ := index . 0 }}
-{{- $template := printf "{{ %s | toYaml }}" (index . 2) }}
-{{- with index . 1 }}
-{{- $value := tpl $template $ }}
-{{- if not (eq $value "null") -}}
-{{ $value }}
-{{- else if eq .Values.global.platform "aws" -}}
+{{- $ := index . 0 -}}
+{{- $template := printf "{{ %s | toYaml }}" (index . 2) -}}
+{{- with index . 1 -}}
+{{- $value := tpl $template $ -}}
+
+{{- if and (eq $value "null") -}}
+{{- if eq .Values.global.platform "aws" -}}
 {{- $platformValues := $.Files.Get "platforms/aws.yaml" | fromYaml -}}
-{{ tpl $template (deepCopy $ | mergeOverwrite (dict "Values" $platformValues)) }}
+{{ $value = tpl $template (mergeOverwrite (dict "Values" $platformValues) $) }}
 {{- else if eq .Values.global.platform "caas" -}}
 {{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
-{{ tpl $template (deepCopy $ | mergeOverwrite (dict "Values" $platformValues)) }}
-{{- end }}
-{{- end }}
+{{ $value = tpl $template (mergeOverwrite (dict "Values" $platformValues) $) }}
+{{- end -}}
+{{- end -}}
+
+{{- if not (eq $value "null") -}}
+{{ $value }}
+{{- end -}}
+
+{{- end -}}
 {{- end -}}
