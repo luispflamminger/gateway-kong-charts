@@ -26,13 +26,9 @@ imagePullSecrets:
 {{- $value := tpl $template $ -}}
 
 {{- if and (eq $value "null") -}}
-{{- if eq .Values.global.platform "aws" -}}
-{{- $platformValues := $.Files.Get "platforms/aws.yaml" | fromYaml -}}
+{{- $selectedPlatformFile := printf "platforms/%s.yaml" .Values.global.platform -}}
+{{- $platformValues := $.Files.Get $selectedPlatformFile | fromYaml -}}
 {{ $value = tpl $template (mergeOverwrite (dict "Values" $platformValues) $) }}
-{{- else if eq .Values.global.platform "caas" -}}
-{{- $platformValues := $.Files.Get "platforms/caas.yaml" | fromYaml -}}
-{{ $value = tpl $template (mergeOverwrite (dict "Values" $platformValues) $) }}
-{{- end -}}
 {{- end -}}
 
 {{- if not (eq $value "null") -}}
