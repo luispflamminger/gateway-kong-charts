@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-kong-migrations-up
+  name: {{ include "kong.fullname" . }}-kong-migrations-up
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-upgrade

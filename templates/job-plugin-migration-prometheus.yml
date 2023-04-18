@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-plugin-migration-prometheus
+  name: {{ include "kong.fullname" . }}-plugin-migration-prometheus
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
@@ -22,7 +22,7 @@ spec:
         - name: X_TARDIS_GATEWAY_ADMIN_BASE64
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}
+              name: {{ include "kong.fullname" . }}
               key: gatewayAdminBase64
         command:        
           - /bin/bash
