@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 4.2.0-RC.2
+ - Allow overwrite of release name with fullname
+
 ## 4.2.0-RC.1
  - Platform dependent securityContexts
  - Platform dependent topologyKey
