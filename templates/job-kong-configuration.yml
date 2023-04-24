@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-kong-configuration
+  name: {{ include "kong.fullname" . }}-kong-configuration
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
@@ -18,14 +18,14 @@ spec:
       - name: kong-admin-route
         image: {{ include "job.image" $ }}
         imagePullPolicy: {{ .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.jobs.containerSecurityContext | toYaml | nindent 10 }}
+        securityContext: {{ include "platformSpecificValue" (list $ . ".Values.jobs.containerSecurityContext") | default "{}" | nindent 10 }}
         command: [ "/bin/sh" ]
         args: [ "-c", "/tmp/configuration.sh" ]
         env:
         - name: X_TARDIS_GATEWAY_ADMIN_BASE64
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}
+              name: {{ include "kong.fullname" . }}
               key: gatewayAdminBase64
         volumeMounts:
           {{- include "kong.configuration.volumeMounts" $ | indent 8 }}

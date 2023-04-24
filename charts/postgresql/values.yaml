@@ -2,6 +2,9 @@ global:
   metadata:
     pipeline: {}
 
+  platform: kubernetes
+  #storageClassName: gp2
+  
   passwordRules:
     enabled: false
     length: 12
@@ -37,6 +40,9 @@ global:
 
   failOnUnsetValues: true
 
+  nameOverride: ""
+  fullnameOverride: ""
+
 # You can force using a specific image here:
 #image:
   #repository: mtr.devops.telekom.de
@@ -48,11 +54,11 @@ global:
 #imagePullPolicy: IfNotPresent
 
 
-podSecurityContext:
-  fsGroup: 999
+#podSecurityContext:
+  #fsGroup: 999
   #supplementalGroups: 999
 
-containerSecurityContext: {}
+#containerSecurityContext: {}
 
 # database admin credentials
 #adminPassword: "changeme"
@@ -77,7 +83,7 @@ resources:
 
 persistence:
   keepOnDelete: false
-  storageClassName: gp2
+  #storageClassName: gp2
   resources:
     requests:
       storage: 1Gi

@@ -1,5 +1,5 @@
 {{- define "postgresql.pvcName" -}}
-{{- printf "%s-database-pvc" .Release.Name -}}
+{{- printf "%s-database-pvc"  (include "postgresql.fullname" .) -}}
 {{- end -}}
 
 

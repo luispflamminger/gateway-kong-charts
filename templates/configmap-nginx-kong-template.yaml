@@ -12,7 +12,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-nginx-kong-template
+  name: {{ include "kong.fullname" . }}-nginx-kong-template
   labels: {{ include "kong.labels" $ | nindent 4 }}
 data:
   nginx_kong.lua: |

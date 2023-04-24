@@ -6,13 +6,28 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 4.2.0-RC.3
+- Added sub-chart chart name to postgresql fullname
+
+## 4.2.0-RC.2
+ - Allow overwrite of release name with fullname
+
+## 4.2.0-RC.1
+ - Platform dependent securityContexts
+ - Platform dependent topologyKey
+ - Introduced caas as platform
+ - Set zone value fallback to platform 
+ - Set environment value fallback to global metadata (from Sapling)
+
 ## 4.1.0
  - Default Jumper image version set to 3.4.3
  - Default Kong image version set to 2.8.3.4
  - tracing adjusted
  - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
  - Removed platform condition from ingress
+ - Introduced caas as platform option
  - Caas platform specific topologyKey
+ - Set default storageClassName by platform (caas: nfs-storage)
 
 ## 4.0.0
  - Reworked database configuration

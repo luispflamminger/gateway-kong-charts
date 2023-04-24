@@ -2,9 +2,12 @@ global:
   metadata:
     pipeline: {}
 
+  # Available platforms: kubernetes (default), aws, caas. Setting any value with no specific platform values.yaml will result in fallback to kubernetes
   platform: kubernetes
-  storageClassName: gp2
+  #storageClassName: gp2
   domain: ""
+  #environment: ""
+  #zone: ""
   labels:
     # fluentd label
     tif.telekom.de/group: tif
@@ -63,6 +66,9 @@ global:
     sampleRatio: 1
 
   failOnUnsetValues: true
+
+  nameOverride: ""
+  fullnameOverride: ""
 
 # You can list files (in /templates) here that should cause a re-deployment of your application
 # when their contents change
@@ -157,12 +163,13 @@ ssl:
 
 disableUpstreamCache: false
 
-podSecurityContext: {}
-containerSecurityContext: {}
-#topologyKey:
+#podSecurityContext: {}
+#containerSecurityContext: {}
 
-jobs:
-  containerSecurityContext: {}
+#topologyKey: kubernetes.io/hostname
+
+jobs: {}
+  #containerSecurityContext: {}
 
 #memCacheSize: 128m
 #nginxWorkerProcesses: auto
@@ -209,7 +216,7 @@ setupJobs:
     requests:
       cpu: 50m
       memory: 200Mi
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
 plugins:
   enabled: []
@@ -311,7 +318,7 @@ jumper:
       initialDelay: 25
   #port: 8080
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -352,7 +359,7 @@ issuerService:
   jsonWebKey: changeme
   publicKey: changeme
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -375,7 +382,7 @@ circuitbreaker:
   #interval: 60s
   #count: 4
 
-  containerSecurityContext: {}
+  #containerSecurityContext: {}
 
   resources:
     limits:
@@ -394,8 +401,6 @@ postgresql:
   # Or use the flattened string form:
   #image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
   #imagePullPolicy: IfNotPresent
-
-  containerSecurityContext: {}
 
   resources:
     limits:
