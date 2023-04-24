@@ -1,5 +1,5 @@
 {{- define "postgresql.pvcName" -}}
-{{- printf "%s-database-pvc"  (include "postgresql.fullname" .) -}}
+{{- printf "%s-database-pvc"  (include "kong.fullname" .) -}}
 {{- end -}}
 
 
