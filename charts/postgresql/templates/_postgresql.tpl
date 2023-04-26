@@ -2,7 +2,7 @@
 app: {{ .Release.Name }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: postgresql
-app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
+{{ include "postgresql.selector" . }}
 app.kubernetes.io/component: database
 app.kubernetes.io/part-of: tif-runtime
 {{ .Values.global.labels | toYaml }}
@@ -78,3 +78,4 @@ app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- define "postgresql.serviceName" -}}
 {{- printf "%s-%s" .Release.Name .Chart.Name -}}
 {{- end -}}
+

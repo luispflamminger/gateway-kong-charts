@@ -15,6 +15,14 @@ StarGate requires a PostgreSQL database that will be preconfigured by StarGate's
 
 ## Configuration
 
+### Platform
+
+You can select a platform (e.g. caas) to use predefined settings (e.g. securityContext) specifically dedicated to the platform. \
+Note that you can overwrite platform specific values in the values.yaml. \
+To add a new platform specific values.yaml, add the required values as platforName.yaml to the platforms folder.
+
+**Note:** Setting platform specific values for the sub-chart by the platform specific platformName.yaml of your main-chart will not work, as the sub-chart platforms have precedence.
+
 ### Database
 
 No detailed configuration is necessary. PostgreSQL will be deployed together with StarGate. You should change the default passwords!
@@ -133,6 +141,8 @@ You can do this by activating the jobs migration. This will delete the "old" ENI
 ```
 migrations: jobs
 ```
+### From 2.x.x and lower to 4.x.x
+The migration from 2.x.x to 4.x.x is not possible. Please upgrade first from 2.x.x to 3.x.x as described above and afterwards without any migrations configuration from 3.x.x to 4.x.x
 
 ## Parameters
 
@@ -142,7 +152,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 |-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
 | `global`                                            | Common values for all DHEI-Helm-Charts                                                                                                    |                                       |
 | `global.platform`                                   | Determines where the chart will be deployed                                                                                               | `kubernetes`                          |
-| `global.storageclass`                               | Select storage class for the PVCs depending on your platform                                                                              | `gp2`                                 |
+| `global.storageClassName`                           | Overwrites the setting determined by the platform                                                                                         | `gp2`                                 |
 | `global.domain`                                     | URL for cluster external access set in Ingress/Route                                                                                      | `nil`                                 |
 | `global.labels`                                     | Define global labels                                                                                                                      | `tif.telekom.de/group`                |
 | `global.ingress.annotations`                        | Set annotations for all ingress, can be extended by ingress specific ones                                                                 | `nil`                                 |
