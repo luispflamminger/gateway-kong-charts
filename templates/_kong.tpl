@@ -1,28 +1,3 @@
-{{/*
-Expand the name of the chart.
-*/}}
-{{- define "kong.name" -}}
-{{- default .Chart.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
-*/}}
-{{- define "kong.fullname" -}}
-{{- if .Values.global.fullnameOverride }}
-  {{- .Values.global.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-  {{- $name := default .Values.global.nameOverride }}
-  {{- if contains $name .Release.Name }}
-    {{- .Release.Name | trunc 63 | trimSuffix "-" }}
-  {{- else }}
-    {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-  {{- end }}
-{{- end }}
-{{- end }}
-
 {{- define "kong.labels" -}}
 app: {{ .Release.Name }}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -34,7 +9,7 @@ app.kubernetes.io/part-of: tif-runtime
 {{- end -}}
 
 {{- define "kong.selector" -}}
-app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
+app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- end -}}
 
 {{- define "kong.image" -}}
@@ -187,12 +162,12 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 - name: ISSUER_CERT
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}-issuer-service
+      name: {{ .Release.Name }}-issuer-service
       key: jsonWebKey
 - name: ISSUER_PUBLIC_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}-issuer-service
+      name: {{ .Release.Name }}-issuer-service
       key: publicKey
 {{- end -}}
 
@@ -200,7 +175,7 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 - name: KONG_AUTH
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}
+      name: {{ .Release.Name }}
       key: gatewayAdminBase64
 - name: KONG_URL
   value: {{ include "kong.adminApi.localhost" $ }}
@@ -216,7 +191,7 @@ app.kubernetes.io/instance: {{ include "kong.fullname" . }}-kong
 {{ end -}}
 
 {{- define "kong.annotations" -}}
-ops.eni.telekom.de/pipeline-meta-ref: {{ include "kong.fullname" . }}-pipeline-metadata
+ops.eni.telekom.de/pipeline-meta-ref: {{ .Release.Name }}-pipeline-metadata
 {{- if eq (toString .Values.global.metadata.pipeline.forceRedeploy) "true" }}
 ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
 {{- end -}}
@@ -284,7 +259,7 @@ false
 {{- define "kong.configuration.volumes" }}
 - name: kong-configuration
   configMap:
-    name: {{ include "kong.fullname" . }}-configuration
+    name: {{ .Release.Name }}-configuration
     defaultMode: 0555
 {{- end -}}
 
@@ -303,7 +278,7 @@ false
 {{- if .Values.externalDatabase.sslVerify }}
 - name: lua-ssl-trusted-certificates
   secret:
-    secretName: {{ include "kong.fullname" . }}-trusted-ca-certificates
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
     items:
       - key: lua-ssl-trusted-certificates.pem
         path: 'init/lua-ssl-trusted-certificates.pem'
@@ -332,17 +307,17 @@ false
   emptyDir: {}
 - name: nginx-kong-template
   configMap:
-    name: {{ include "kong.fullname" . }}-nginx-kong-template
+    name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
-    secretName: {{ include "kong.fullname" . }}-htpasswd
+    secretName: {{ .Release.Name }}-htpasswd
 - name: nginx-servers
   configMap:
-    name: {{ include "kong.fullname" . }}-nginx-servers
+    name: {{ .Release.Name }}-nginx-servers
 {{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
 - name: trusted-ca-certificates
   secret:
-    secretName: {{ include "kong.fullname" . }}-trusted-ca-certificates
+    secretName: {{ .Release.Name }}-trusted-ca-certificates
 {{- end -}}
 {{- if .Values.defaultTlsSecret }}            
 - name: server-certificate
@@ -458,7 +433,7 @@ false
 - name: PGPASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}
+      name: {{ .Release.Name }}
       key: databasePassword
 {{- end -}}
 
@@ -469,7 +444,7 @@ false
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}
+      name: {{ .Release.Name }}
       key: databasePassword
 - name: KONG_PG_PORT
   value: '{{ .Values.global.database.port }}'
@@ -504,7 +479,7 @@ false
 - name: KONG_PG_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "kong.fullname" . }}
+      name: {{ .Release.Name }}
       key: databasePassword
 - name: KONG_PG_PORT
   value: '{{ .Values.global.database.port | default 5432 }}'
@@ -615,12 +590,12 @@ false
 {{- if not (empty .Values.adminApi.ingress.hostname) }}
 {{- .Values.adminApi.ingress.hostname -}}
 {{- else }}
-{{- printf "%s-admin-%s.%s" (include "kong.fullname" .) .Release.Namespace .Values.global.domain }}
+{{- printf "%s-admin-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
 {{- end -}}
 {{- end -}}
 
 {{- define "kong.adminApi.serviceHost" -}}
-{{- printf "%s-admin.%s" (include "kong.fullname" .) .Release.Namespace }}
+{{- printf "%s-admin.%s" .Release.Name .Release.Namespace }}
 {{- end -}}
 
 {{- define "kong.adminApi.name" -}}
@@ -657,7 +632,7 @@ admin-api
 {{- if not (empty .Values.proxy.ingress.hostname) }}
 {{- .Values.proxy.ingress.hostname -}}
 {{- else }}
-{{- printf "%s-%s.%s" (include "kong.fullname" .) .Release.Namespace .Values.global.domain }}
+{{- printf "%s-%s.%s" .Release.Name .Release.Namespace .Values.global.domain }}
 {{- end -}}
 {{- end -}}
 

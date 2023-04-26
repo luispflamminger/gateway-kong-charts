@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "kong.fullname" . }}-admin
+  name: {{ .Release.Name }}-admin
   labels: {{ include "kong.labels" $ | nindent 4 }}
 {{- include "kong.merged.adminApi.annotations" $ | nindent 2 }}
 spec:
@@ -14,7 +14,7 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: {{ include "kong.fullname" . }}-proxy
+              name: {{ .Release.Name }}-proxy
               port:
 {{- if .Values.proxy.tls.enabled }}
                 name: proxy-ssl

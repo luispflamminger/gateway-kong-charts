@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kong.fullname" . }}-zipkin-setup
+  name: {{ .Release.Name }}-zipkin-setup
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
@@ -21,7 +21,7 @@ spec:
         - name: X_TARDIS_GATEWAY_ADMIN_BASE64
           valueFrom:
             secretKeyRef:
-              name: {{ include "kong.fullname" . }}
+              name: {{ .Release.Name }}
               key: gatewayAdminBase64
         command:        
           - /bin/bash

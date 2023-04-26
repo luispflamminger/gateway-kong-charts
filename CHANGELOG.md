@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+
+## 0.0.0
+ - Removed all fullname functions due to cluster changes
+
 ## 4.2.0-RC.4
 - Corrected Postgresql pvc name
 

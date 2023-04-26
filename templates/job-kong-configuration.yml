@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kong.fullname" . }}-kong-configuration
+  name: {{ .Release.Name }}-kong-configuration
   labels: {{ include "kong.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
@@ -25,7 +25,7 @@ spec:
         - name: X_TARDIS_GATEWAY_ADMIN_BASE64
           valueFrom:
             secretKeyRef:
-              name: {{ include "kong.fullname" . }}
+              name: {{ .Release.Name }}
               key: gatewayAdminBase64
         volumeMounts:
           {{- include "kong.configuration.volumeMounts" $ | indent 8 }}

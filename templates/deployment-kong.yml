@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kong.fullname" . }}
+  name: {{ .Release.Name }}
   annotations:
   {{- include "kong.annotations" $ | nindent 4 }}
   {{- include "kong.checksums" $ | nindent 4 }}

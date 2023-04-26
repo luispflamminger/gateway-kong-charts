@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kong.fullname" . }}-kong-bootstrap
+  name: {{ .Release.Name }}-kong-bootstrap
   labels: {{ include "kong.labels" $ | nindent 4 }}
 spec:
   backoffLimit: {{ .Values.setupJobs.backoffLimit | default 15 }}
