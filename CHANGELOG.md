@@ -6,20 +6,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-
-## 0.0.0
- - Removed all fullname functions due to cluster changes
-
-## 4.2.0-RC.4
-- Corrected Postgresql pvc name
-
-## 4.2.0-RC.3
-- Added sub-chart chart name to postgresql fullname
-
-## 4.2.0-RC.2
- - Allow overwrite of release name with fullname
-
-## 4.2.0-RC.1
+## 4.2.0
  - Platform dependent securityContexts
  - Platform dependent topologyKey
  - Introduced caas as platform
