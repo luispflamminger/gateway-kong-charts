@@ -38,7 +38,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $BASE64ENCADMINKEY" \
+            -u "admin:$X_TARDIS_GATEWAY_ADMIN_BASE64" \
             -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.prometheus.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \
