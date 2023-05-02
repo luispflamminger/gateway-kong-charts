@@ -30,7 +30,7 @@ spec:
           - |-
             echo "Removing old Kong ENI flavoured Prometheus plugin via DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -u "admin:$X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -u "admin:DLHtz2IkGaDW0s0p9IqgnrSi" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -39,7 +39,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -u "admin:$X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -u "admin:DLHtz2IkGaDW0s0p9IqgnrSi" \
             -X DELETE {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.prometheus.pluginId }}`
 
             if [ "$CONFIG_CALL_HTTP_RETURN_CODE" != "204" ]; then
