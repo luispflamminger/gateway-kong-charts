@@ -29,7 +29,9 @@ spec:
           - |-
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            local BASE64ENCADMINKEY=`echo $X_TARDIS_GATEWAY_ADMIN_BASE64 | base64`
+
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $BASE64ENCADMINKEY" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -38,7 +40,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -H "Authorization:Basic $BASE64ENCADMINKEY" \
             -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.prometheus.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \
