@@ -99,6 +99,7 @@ migrations: none
 adminApi:
   enabled: true
   gatewayAdminApiKey: changeme
+  gatewayAdminApiKeyDub: changeme
   tls:
     enabled: false
 # Activate Admin API ingress and set a dedicated hostname
