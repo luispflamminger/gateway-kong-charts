@@ -21,9 +21,28 @@ spec:
 {{- else }}
                 name: proxy
 {{- end }}
+{{- if not (empty .Values.adminApi.ingress.altHostname) }}
+  - host: {{ .Values.adminApi.ingress.altHostname }}
+    http:
+      paths:
+        - path: {{ include "kong.adminApi.ingress.path" . }}
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}-proxy
+              port:
+{{- if .Values.proxy.tls.enabled }}
+                name: proxy-ssl
+{{- else }}
+                name: proxy
+{{- end }}
+{{- end }}
 {{- include "kong.adminApi.ingress.ingressClassName" . | nindent 2 }}
   tls:
   - hosts:
     - {{ include "kong.adminApi.host" . }}
+{{- if not (empty .Values.adminApi.ingress.altHostname) }}
+    secretName: {{ .Release.Namespace }}-tardis-wildcard
+{{- end }}
 {{- include "kong.adminApi.ingress.tlsSecret" . | nindent 4 -}}
 {{- end -}}
