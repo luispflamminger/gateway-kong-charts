@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 4.2.1
+- `adminApi.ingress.altHostname` and `proxy.ingress.altHostname` settings added
+
 ## 4.2.0
  - Platform dependent securityContexts
  - Platform dependent topologyKey
