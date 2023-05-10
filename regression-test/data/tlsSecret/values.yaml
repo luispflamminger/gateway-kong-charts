@@ -14,8 +14,8 @@ global:
 adminApi:
   gatewayAdminApiKey: someAdminPassword
   ingress:
-    altHostname: "stargate-admin-newzone.lab.tardis.telekom.de"
+    tlsSecret: lab-tardis-wildcard
 
 proxy:
   ingress:
-    altHostname: "stargate-newzone.lab.tardis.telekom.de"
+    tlsSecret: lab-tardis-wildcard

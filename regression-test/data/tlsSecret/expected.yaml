@@ -1342,21 +1342,11 @@ spec:
               name: stargate-proxy
               port:
                 name: proxy
-  - host: stargate-admin-newzone.lab.tardis.telekom.de
-    http:
-      paths:
-        - path: /admin-api
-          pathType: Prefix
-          backend:
-            service:
-              name: stargate-proxy
-              port:
-                name: proxy
   
   tls:
   - hosts:
     - stargate-admin-default.lab.tardis.telekom.de
-    secretName: default-tardis-wildcard
+    secretName: lab-tardis-wildcard
 ---
 # Source: stargate/templates/ingress-proxy.yml
 apiVersion: networking.k8s.io/v1
@@ -1384,21 +1374,11 @@ spec:
               name: stargate-proxy
               port:
                 name: proxy
-  - host: stargate-newzone.lab.tardis.telekom.de
-    http:
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: stargate-proxy
-              port:
-                name: proxy
   
   tls:
   - hosts:
     - stargate-default.lab.tardis.telekom.de
-    secretName: default-tardis-wildcard
+    secretName: lab-tardis-wildcard
 ---
 # Source: stargate/templates/servicemonitor-kong.yaml
 apiVersion: monitoring.coreos.com/v1
