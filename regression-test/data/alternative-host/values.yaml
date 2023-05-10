@@ -13,8 +13,9 @@ global:
 
 adminApi:
   gatewayAdminApiKey: someAdminPassword
+  ingress:
+    altHostname: "stargate-admin-newzone.lab.tardis.telekom.de"
 
-plugins:
-  jwtKeycloak:
-    allowedIss: 
-      - https://somehost.tardis.telekom.de/auth/realms/default
+proxy:
+  ingress:
+    altHostname: "stargate-newzone.lab.tardis.telekom.de"
