@@ -46,7 +46,7 @@ metadata:
     tif.telekom.de/group: tif
 type: Opaque
 data:
-  gatewayAdminBase64: "WVdSdGFXNDZZMmhoYm1kbGJXVT0="
+  gatewayAdminApiKey: "WVdSdGFXNDZZMmhoYm1kbGJXVT0="
   postgresPassword: "Y2hhbmdlbWU="
 ---
 # Source: stargate/templates/configmap-configuration.yaml
@@ -68,7 +68,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/services/admin-api \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "admin-api",
@@ -82,12 +82,12 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/services/admin-api/plugins/e9fb4272-0aff-4208-9efa-6bfec5d9df53 \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "request-transformer",
         "config": {
-          "replace": {"headers": ["'"Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64"'"]}
+          "replace": {"headers": ["'"Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64"'"]}
         }
       }'
 
@@ -96,7 +96,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/services/admin-api/routes/admin-api \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "admin-api",
@@ -114,7 +114,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/consumers/rover \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data '{"username" : "rover","custom_id": "rover"}'
 
     echo ""
@@ -123,7 +123,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/routes/admin-api/plugins/bc823d55-83b5-4184-b03f-ce63cd3b75c7 \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "acl",
@@ -138,7 +138,7 @@ data:
     curl --request POST \
       --url http://stargate-admin.default:8001/consumers/rover/acls \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data '{"group":"rover"}'
     echo ""
     echo "7) Setup plugin (jwt-keycloak)"
@@ -146,7 +146,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/routes/admin-api/plugins/b864d58b-7183-4889-8b32-0b92d6c4d513 \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "jwt-keycloak",
@@ -161,7 +161,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/services/user-login \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "user-login",
@@ -176,7 +176,7 @@ data:
     curl --request PUT \
       --url http://stargate-admin.default:8001/services/user-login/routes/user-login \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
       --data \
       '{
         "name": "user-login",
@@ -1452,11 +1452,11 @@ spec:
         command: [ "/bin/sh" ]
         args: [ "-c", "/tmp/configuration.sh" ]
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMINBASE64
           valueFrom:
             secretKeyRef:
               name: stargate
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         volumeMounts:        
         - name: kong-configuration
           mountPath: /tmp
@@ -1493,18 +1493,18 @@ spec:
         securityContext: 
           {}
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMINBASE64
           valueFrom:
             secretKeyRef:
               name: stargate
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         command:        
           - /bin/bash
           - -c
           - |-
             echo "Enabling Kong ENI flavoured Prometheus plugin via PUT http://stargate-admin.default:8001/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET http://stargate-admin.default:8001`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" -X GET http://stargate-admin.default:8001`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -1513,7 +1513,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
             -X PUT http://stargate-admin.default:8001/plugins/3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c \
             --header 'Content-Type: application/json' \
             --data \
@@ -1563,18 +1563,18 @@ spec:
         securityContext: 
           {}
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMINBASE64
           valueFrom:
             secretKeyRef:
               name: stargate
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         command:        
           - /bin/bash
           - -c
           - |- 
             echo "Enabling Kong request-rate-limiting plugin via PUT http://stargate-admin.default:8001/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET http://stargate-admin.default:8001`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" -X GET http://stargate-admin.default:8001`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -1583,7 +1583,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
             -X PUT http://stargate-admin.default:8001/plugins/1e199eee-f592-4afa-8371-6b61dcbd1904 \
             --header 'Content-Type: application/json' \
             --data \
@@ -1630,18 +1630,18 @@ spec:
         securityContext: 
           {}
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMINBASE64
           valueFrom:
             secretKeyRef:
               name: stargate
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         command:        
           - /bin/bash
           - -c
           - |- 
             echo "Enabling Kong ENI flavoured Zipkin plugin via PUT http://stargate-admin.default:8001/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET http://stargate-admin.default:8001`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" -X GET http://stargate-admin.default:8001`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
                 echo "Kong Admin-API unreachable"
                 exit 1
@@ -1650,7 +1650,7 @@ spec:
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMINBASE64" \
             -X PUT http://stargate-admin.default:8001/plugins/e8ff1211-816f-4d93-9011-a4b194586073 \
             --header 'Content-Type: application/json' \
             --data \
