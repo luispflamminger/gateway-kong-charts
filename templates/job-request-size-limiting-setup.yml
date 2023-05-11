@@ -18,27 +18,27 @@ spec:
         image: {{ include "job.image" $ }}
         securityContext: {{ include "platformSpecificValue" (list $ . ".Values.jobs.containerSecurityContext") | default "{}" | nindent 10 }}
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMIN
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         command:        
           - /bin/bash
           - -c
           - |- 
             echo "Enabling Kong request-rate-limiting plugin via PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins"
 
-            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
+            ADMIN_API_HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -u "admin:$X_TARDIS_GATEWAY_ADMIN" -X GET {{ include "kong.adminApi.serviceUrl" . }}`
             if [ "$ADMIN_API_HTTP_RETURN_CODE" != "200" ]; then
-                echo "Kong Admin-API unreachable"
+                echo "Kong Admin-API unreachable return: $ADMIN_API_HTTP_RETURN_CODE"
                 exit 1
             fi
 
             CONFIG_CALL_HTTP_RETURN_CODE=`curl \
             -o /dev/null \
             -w "%{http_code}" \
-            -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN_BASE64" \
+            -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
             -X PUT {{ include "kong.adminApi.serviceUrl" . }}/plugins/{{ .Values.plugins.requestSizeLimiting.pluginId }} \
             --header 'Content-Type: application/json' \
             --data \
