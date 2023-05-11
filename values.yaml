@@ -106,6 +106,8 @@ adminApi:
   ingress:
     enabled: true
     #hostname: ""
+    # alternative second host name in ingress
+    #altHostname: ""
     #tlsSecret: ""
     annotations: {}
   #accessLog: /dev/stdout
@@ -118,6 +120,8 @@ proxy:
   ingress:
     enabled: true
     #hostname: ""
+    # alternative second host name in ingress
+    #altHostname: ""
     #tlsSecret: ""
     annotations: {}
   #accessLog: /dev/stdout
