@@ -6,6 +6,11 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.0.0
+- Removed double base 64 encryption
+- Adjusted authorization process for jobs to -u user:password
+- removed generation of htpasswd (needs to be stored manually now)
+
 ## 4.2.3
 - global.adminApi.ingress.altHostname and global.proxy.ingress.altHostname settings added for second host name
 
