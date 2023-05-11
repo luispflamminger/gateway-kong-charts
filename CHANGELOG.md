@@ -10,6 +10,11 @@ Please also seek advice from the README regarding updates.
 - Removed double base 64 encryption
 - Adjusted authorization process for jobs to -u user:password
 - removed generation of htpasswd (needs to be stored manually now)
+## 4.2.2
+- version tested on cass t21-cluster
+
+## 4.2.1
+- (invalid version. don't use this tag)
 
 ## 4.2.0
  - Platform dependent securityContexts

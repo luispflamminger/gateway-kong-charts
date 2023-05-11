@@ -1,4 +1,21 @@
 ---
+# Source: stargate/charts/postgresql/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stargate-postgresql
+  labels: 
+    app: stargate
+    helm.sh/chart: postgresql-1.0.0
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+type: Opaque
+data:
+  databasePassword: "c29tZURiUGFzc3dvcmQ="
+---
 # Source: stargate/templates/secret-htpasswd.yaml
 apiVersion: v1
 kind: Secret
@@ -6,6 +23,7 @@ metadata:
   name: stargate-htpasswd
   labels:
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -22,6 +40,7 @@ metadata:
   name: stargate-issuer-service
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -39,6 +58,7 @@ metadata:
   name: stargate
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -46,8 +66,13 @@ metadata:
     tif.telekom.de/group: tif
 type: Opaque
 data:
+<<<<<<< HEAD
   gatewayAdminApiKey: "WVdSdGFXNDZZMmhoYm1kbGJXVT0="
   postgresPassword: "Y2hhbmdlbWU="
+=======
+  gatewayAdminBase64: "WVdSdGFXNDZjMjl0WlVGa2JXbHVVR0Z6YzNkdmNtUT0="
+  databasePassword: "c29tZURiUGFzc3dvcmQ="
+>>>>>>> origin/develop
 ---
 # Source: stargate/templates/configmap-configuration.yaml
 apiVersion: v1
@@ -56,6 +81,7 @@ metadata:
   name: stargate-configuration
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -102,7 +128,7 @@ data:
         "name": "admin-api",
         "protocols": ["http","https"],
         "hosts": [
-          "stargate-admin-default.lab.tif.telekom.de"
+          "stargate-admin-default.lab.tardis.telekom.de"
         ],
         "paths": [
           "/admin-api"
@@ -151,7 +177,7 @@ data:
       '{
         "name": "jwt-keycloak",
         "config": {
-          "allowed_iss" : ["https://changeme/auth/realms/default"],
+          "allowed_iss" : ["https://somehost.tardis.telekom.de/auth/realms/default"],
           "consumer_match" : true,
           "consumer_match_claim_custom_id" : true
         }
@@ -200,6 +226,7 @@ metadata:
   name: stargate-nginx-kong-template
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -761,6 +788,7 @@ metadata:
   name: stargate-nginx-servers
   labels:
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -795,6 +823,7 @@ metadata:
   name: stargate-pipeline-metadata
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -803,25 +832,49 @@ metadata:
 data:
   chart: stargate-0.0.0
 ---
-# Source: stargate/templates/pvc-postgresql.yml
+# Source: stargate/charts/postgresql/templates/pvc.yml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: stargate-database-pvc
   labels: 
     app: stargate
+    helm.sh/chart: postgresql-1.0.0
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/instance: stargate-postgresql
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: tif-runtime
     tif.telekom.de/group: tif
 spec:
-  accessModes:
-  - ReadWriteOnce
   storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
   resources: 
     requests:
       storage: 1Gi
+---
+# Source: stargate/charts/postgresql/templates/service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stargate-postgresql
+  labels: 
+    app: stargate
+    helm.sh/chart: postgresql-1.0.0
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  type: ClusterIP
+  selector: 
+    app.kubernetes.io/instance: stargate-postgresql
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
 ---
 # Source: stargate/templates/service-admin.yml
 apiVersion: v1
@@ -830,6 +883,7 @@ metadata:
   name: stargate-admin
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -851,6 +905,7 @@ metadata:
   name: stargate-metrics
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -875,27 +930,6 @@ spec:
     targetPort: jumper
     protocol: TCP
 ---
-# Source: stargate/templates/service-postgresql.yml
-apiVersion: v1
-kind: Service
-metadata:
-  name: stargate-postgres
-  labels: 
-    app: stargate
-    app.kubernetes.io/name: postgresql
-    app.kubernetes.io/instance: stargate-postgresql
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: tif-runtime
-    tif.telekom.de/group: tif
-spec:
-  selector: 
-    app.kubernetes.io/instance: stargate-postgresql
-  ports:
-  - name: postgresql
-    protocol: TCP
-    port: 5432
-    targetPort: 5432
----
 # Source: stargate/templates/service-proxy.yml
 apiVersion: v1
 kind: Service
@@ -903,6 +937,7 @@ metadata:
   name: stargate-proxy
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -917,6 +952,117 @@ spec:
     targetPort: 8000
     protocol: TCP
 ---
+# Source: stargate/charts/postgresql/templates/deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stargate-postgresql
+  labels: 
+    app: stargate
+    helm.sh/chart: postgresql-1.0.0
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: 
+      app.kubernetes.io/instance: stargate-postgresql
+  template:
+    metadata:
+      labels:
+        app: stargate
+        helm.sh/chart: postgresql-1.0.0
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/instance: stargate-postgresql
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: tif-runtime
+        tif.telekom.de/group: tif
+        tardis.telekom.de/cluster: "Default"
+        tardis.telekom.de/namespace: "default"
+        tardis.telekom.de/product: "stargate"
+        tardis.telekom.de/team: "io"
+        tardis.telekom.de/environment: "default"
+        tardis.telekom.de/subproduct: "stargate-database"
+    spec:      
+      securityContext: 
+        fsGroup: 999
+      containers:
+      - name: postgresql
+        resources: 
+          limits:
+            cpu: 100m
+            memory: 500Mi
+          requests:
+            cpu: 20m
+            memory: 200Mi
+        env:        
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_USER
+          value: kong
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate-postgresql
+              key: databasePassword
+        - name: POSTGRES_DB
+          value: kong
+        - name: POSTGRES_MAX_CONNECTIONS
+          value: "100"
+        - name: POSTGRES_SHARED_BUFFERS
+          value: 32MB
+        - name: POSTGRES_MAX_PREPARED_TRANSACTIONS
+          value: "0"
+        image: 'mtr.devops.telekom.de/tardis-common/postgres:12.3-debian'
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /tmp
+          name: stargate-postgresql-tmp
+        - mountPath: /var/run/postgresql
+          name: stargate-postgresql-run
+        - mountPath: /var/lib/postgresql/data
+          name: stargate-postgresql-data
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - pg_isready -U kong
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+      volumes:
+      - name: stargate-postgresql-run
+        emptyDir: {}
+      - name: stargate-postgresql-tmp
+        emptyDir: {}
+      - name: stargate-postgresql-data
+        persistentVolumeClaim:
+          claimName: stargate-database-pvc
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+      terminationGracePeriodSeconds: 30
+---
 # Source: stargate/templates/deployment-kong.yml
 apiVersion: apps/v1
 kind: Deployment
@@ -924,10 +1070,11 @@ metadata:
   name: stargate
   annotations:
     ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
-    checksum/secret-kong: bd185f9081a2e302ad44b28419ceeef27d06e93ad30a35a258dc199479abf841
-    checksum/secret-issuer-service: da62a251a3ed5607f7ebc6af113f05cf1f00c6e174270fb7e7ef6572ac4d1b32
+    checksum/secret-kong: f7343fcc3c6de2177f9bdca74b690607999f28f9f484910e8166193007e8dc7d
+    checksum/secret-issuer-service: f4ef6e618e9d657b97edc1c32592f83c6b695284c5a9c6965e8b3ae14a287b4d
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -942,13 +1089,14 @@ spec:
     metadata:
       annotations:
         ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
-        checksum/secret-kong: bd185f9081a2e302ad44b28419ceeef27d06e93ad30a35a258dc199479abf841
-        checksum/secret-issuer-service: da62a251a3ed5607f7ebc6af113f05cf1f00c6e174270fb7e7ef6572ac4d1b32
+        checksum/secret-kong: f7343fcc3c6de2177f9bdca74b690607999f28f9f484910e8166193007e8dc7d
+        checksum/secret-issuer-service: f4ef6e618e9d657b97edc1c32592f83c6b695284c5a9c6965e8b3ae14a287b4d
         prometheus.io/path: '/metrics'
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9542'
       labels:
         app: stargate
+        helm.sh/chart: stargate-0.0.0
         app.kubernetes.io/name: kong
         app.kubernetes.io/instance: stargate-kong
         app.kubernetes.io/component: api-gateway
@@ -972,10 +1120,12 @@ spec:
                   operator: In
                   values:
                   - stargate-kong
-              topologyKey: "kubernetes.io/hostname"
+              topologyKey: kubernetes.io/hostname
+      securityContext: 
+        {}
       containers:
       - name: jumper
-        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.4.3
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1011,7 +1161,7 @@ spec:
         - name: PUBLISH_EVENT_URL
           value: http://producer.integration:8080/v1/events
         - name: JUMPER_NAME
-          value: 
+          value: stargate
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
@@ -1065,7 +1215,7 @@ spec:
               name: stargate-issuer-service
               key: publicKey
       - name: kong
-        image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.3
+        image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.4
         imagePullPolicy: IfNotPresent
         securityContext: 
           {}
@@ -1090,11 +1240,11 @@ spec:
           valueFrom:
             secretKeyRef:
               name: stargate
-              key: postgresPassword
+              key: databasePassword
         - name: KONG_PG_PORT
           value: '5432'
         - name: KONG_PG_HOST
-          value: 'stargate-postgres.default'
+          value: 'stargate-postgresql'
         - name: KONG_PG_USER
           value: 'kong'
         - name: KONG_PG_DATABASE
@@ -1207,120 +1357,6 @@ spec:
       restartPolicy: Always
       terminationGracePeriodSeconds: 80
 ---
-# Source: stargate/templates/deployment-postgresql.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: stargate-postgresql
-  labels: 
-    app: stargate
-    app.kubernetes.io/name: postgresql
-    app.kubernetes.io/instance: stargate-postgresql
-    app.kubernetes.io/component: database
-    app.kubernetes.io/part-of: tif-runtime
-    tif.telekom.de/group: tif
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels: 
-      app.kubernetes.io/instance: stargate-postgresql
-  template:
-    metadata:
-      labels:
-        app: stargate
-        app.kubernetes.io/name: postgresql
-        app.kubernetes.io/instance: stargate-postgresql
-        app.kubernetes.io/component: database
-        app.kubernetes.io/part-of: tif-runtime
-        tif.telekom.de/group: tif
-        tardis.telekom.de/cluster: "Default"
-        tardis.telekom.de/namespace: "default"
-        tardis.telekom.de/product: "stargate"
-        tardis.telekom.de/team: "io"
-        tardis.telekom.de/environment: "default"
-        tardis.telekom.de/subproduct: "stargate-database"
-    spec:      
-      securityContext:
-        fsGroup: 999
-      containers:
-      - name: stargate-postgresql
-        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
-        imagePullPolicy: IfNotPresent
-        securityContext: 
-          {}
-        env:        
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        - name: POSTGRES_USER
-          value: kong
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: stargate
-              key: postgresPassword
-        - name: POSTGRES_DB
-          value: kong
-        # for centos and rhel we do have different environment variables
-        - name: POSTGRESQL_USER
-          value: kong
-        - name: POSTGRESQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: stargate
-              key: postgresPassword
-        - name: POSTGRESQL_DATABASE
-          value: kong
-        livenessProbe:
-          tcpSocket:
-            port:  5432
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        ports:
-        - containerPort: 5432
-          protocol: TCP
-        readinessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -c
-            - 'pg_isready -U kong'
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        resources:
-          limits:
-            cpu: 100m
-            memory: 500Mi
-          requests:
-            cpu: 20m
-            memory: 200Mi
-        terminationMessagePath: /dev/termination-log
-        volumeMounts:
-        - mountPath: /tmp
-          name: stargate-postgresql-tmp
-        - mountPath: /var/run/postgresql
-          name: stargate-postgresql-run
-        - mountPath: /var/lib/postgresql/data
-          name: stargate-postgresql-data
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
-      volumes:
-      - name: stargate-postgresql-run
-        emptyDir: {}
-      - name: stargate-postgresql-tmp
-        emptyDir: {}
-      - name: stargate-postgresql-data
-        persistentVolumeClaim:
-          claimName: stargate-database-pvc
----
 # Source: stargate/templates/ingress-admin.yml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -1328,6 +1364,7 @@ metadata:
   name: stargate-admin
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1336,7 +1373,7 @@ metadata:
   annotations: {}
 spec:
   rules:
-  - host: stargate-admin-default.lab.tif.telekom.de
+  - host: stargate-admin-default.lab.tardis.telekom.de
     http:
       paths:
         - path: /admin-api
@@ -1349,7 +1386,7 @@ spec:
   
   tls:
   - hosts:
-    - stargate-admin-default.lab.tif.telekom.de
+    - stargate-admin-default.lab.tardis.telekom.de
 ---
 # Source: stargate/templates/ingress-proxy.yml
 apiVersion: networking.k8s.io/v1
@@ -1358,6 +1395,7 @@ metadata:
   name: stargate-proxy
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1366,7 +1404,7 @@ metadata:
   annotations: {}
 spec:
   rules:
-  - host: stargate-default.lab.tif.telekom.de
+  - host: stargate-default.lab.tardis.telekom.de
     http:
       paths:
         - path: /
@@ -1379,7 +1417,7 @@ spec:
   
   tls:
   - hosts:
-    - stargate-default.lab.tif.telekom.de
+    - stargate-default.lab.tardis.telekom.de
 ---
 # Source: stargate/templates/servicemonitor-kong.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -1388,6 +1426,7 @@ metadata:
   name: stargate
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1429,6 +1468,7 @@ metadata:
   name: stargate-kong-configuration
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1474,6 +1514,7 @@ metadata:
   name: stargate-prometheus-setup
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1544,6 +1585,7 @@ metadata:
   name: stargate-request-rate-limiting-setup
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1611,6 +1653,7 @@ metadata:
   name: stargate-zipkin-setup
   labels: 
     app: stargate
+    helm.sh/chart: stargate-0.0.0
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1658,11 +1701,15 @@ spec:
               "name" : "zipkin",
               "tags" : ["tardis","zipkin","eni-zipkin"],
               "config" : {
-                "http_endpoint" : "http://jaeger-collector.default:9411/api/v2/spans",
-                "sample_ratio" : 0.001,
+                "http_endpoint" : "http://guardians-drax-collector.skoll:9411/api/v2/spans",
+                "sample_ratio" : 1,
                 "include_credential" : true,
                 "default_service_name" : "stargate",
-                "local_component_name" : "stargate"
+                "local_component_name" : "stargate",
+                "environment" : "default",
+                "zone" : "kubernetes",
+                "force_sample" : true,
+                "header_type" : "b3"
               }
             }'`
 
