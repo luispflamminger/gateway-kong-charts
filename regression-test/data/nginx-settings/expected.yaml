@@ -66,13 +66,8 @@ metadata:
     tif.telekom.de/group: tif
 type: Opaque
 data:
-<<<<<<< HEAD
   gatewayAdminApiKey: "WVdSdGFXNDZZMmhoYm1kbGJXVT0="
   postgresPassword: "Y2hhbmdlbWU="
-=======
-  gatewayAdminBase64: "WVdSdGFXNDZjMjl0WlVGa2JXbHVVR0Z6YzNkdmNtUT0="
-  databasePassword: "c29tZURiUGFzc3dvcmQ="
->>>>>>> origin/develop
 ---
 # Source: stargate/templates/configmap-configuration.yaml
 apiVersion: v1
