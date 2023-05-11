@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 4.2.3
+- global.adminApi.ingress.altHostname and global.proxy.ingress.altHostname settings added for second host name
+
 ## 4.2.2
 - version tested on cass t21-cluster
 
