@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.0.0
+- Removed double base 64 encryption
+- Adjusted authorization process for jobs to -u user:password
+- removed generation of htpasswd (needs to be stored manually now)
 ## 4.2.2
 - version tested on cass t21-cluster
 
