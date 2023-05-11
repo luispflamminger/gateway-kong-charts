@@ -1342,6 +1342,16 @@ spec:
               name: stargate-proxy
               port:
                 name: proxy
+  - host: stargate-admin-oldzone.lab.tardis.telekom.de
+    http:
+      paths:
+        - path: /admin-api
+          pathType: Prefix
+          backend:
+            service:
+              name: stargate-proxy
+              port:
+                name: proxy
   
   tls:
   - hosts:
@@ -1365,6 +1375,16 @@ metadata:
 spec:
   rules:
   - host: stargate-default.lab.tardis.telekom.de
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: stargate-proxy
+              port:
+                name: proxy
+  - host: stargate-oldzone.lab.tardis.telekom.de
     http:
       paths:
         - path: /
