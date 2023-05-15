@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.0.1
+- Corrected migrations jobs db-check container security context
+- Prometheus customer facing setting camelCase
+
 ## 5.0.0
 - Removed double base 64 encryption
 - Adjusted authorization process for jobs to -u user:password

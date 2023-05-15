@@ -61,3 +61,15 @@ jobs:
     capabilities:
       drop:
       - ALL
+
+postgresql:
+  containerSecurityContext:
+    runAsGroup: 999
+    runAsUser: 999
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    privileged: false
+    capabilities:
+      drop:
+      - ALL
