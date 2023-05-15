@@ -176,7 +176,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
   valueFrom:
     secretKeyRef:
       name: {{ .Release.Name }}
-      key: gatewayAdminBase64
+      key: gatewayAdminApiKey
 - name: KONG_URL
   value: {{ include "kong.adminApi.localhost" $ }}
 - name: INTERVAL

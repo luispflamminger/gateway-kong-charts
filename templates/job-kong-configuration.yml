@@ -22,11 +22,11 @@ spec:
         command: [ "/bin/sh" ]
         args: [ "-c", "/tmp/configuration.sh" ]
         env:
-        - name: X_TARDIS_GATEWAY_ADMIN_BASE64
+        - name: X_TARDIS_GATEWAY_ADMIN
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}
-              key: gatewayAdminBase64
+              key: gatewayAdminApiKey
         volumeMounts:
           {{- include "kong.configuration.volumeMounts" $ | indent 8 }}
       restartPolicy: OnFailure
