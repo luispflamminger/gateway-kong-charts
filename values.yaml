@@ -284,6 +284,7 @@ jumper:
   stargateUrl: https://stargate-integration.test.dhei.telekom.de
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
+  #maxHttpHeaderSize: 16KB
   applicationName: Stargate
   startup:
     livenessProbe:

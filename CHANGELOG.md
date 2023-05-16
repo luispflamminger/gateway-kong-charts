@@ -11,6 +11,7 @@ Please also seek advice from the README regarding updates.
  - Kong image 2.8.3.4
  - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
  - Zipkin sample ratio set to 1
+ - Fixed Jumper header size too small (set to 16KB)
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
