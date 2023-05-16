@@ -6,7 +6,7 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 
 ## 3.6.4
- - Overall Jumper latency fix
+ - Fixed: Jumper latency issue
  - Jumper image 3.5.0
  - Kong image 2.8.3.4
  - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
