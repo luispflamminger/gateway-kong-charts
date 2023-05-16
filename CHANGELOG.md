@@ -7,6 +7,9 @@ Please also seek advice from the README regarding updates.
 
 ## 3.7.0
  - Jumper image 3.5.0
+ - Kong image 2.8.3.4
+ - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
+ - Zipkin sample ratio set to 1
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users

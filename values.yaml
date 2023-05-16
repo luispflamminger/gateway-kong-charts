@@ -61,9 +61,9 @@ image:
   #repository: mtr.devops.telekom.de
   organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.3.2
+  #tag: 2.8.3.4
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.2
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.4
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, job)
@@ -238,7 +238,11 @@ plugins:
     enabled: true
     pluginId: e8ff1211-816f-4d93-9011-a4b194586073
     collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
-    #sampleRatio: 0.001
+    #sampleRatio: 1
+    #environment: null
+    #zone: null
+    #forceSample: true
+    #headerType: "b3"
     #includeCredential: "true"
     #defaultServiceName: "stargate"
     #luaSslTrustedCertificate: |
