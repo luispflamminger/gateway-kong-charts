@@ -237,7 +237,7 @@ plugins:
     pluginId: 3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c
     #port: 9542
     #path: /metrics
-    #customer_facing: false
+    #customerFacing: false
     serviceMonitor:   
       enabled: true
       #selector: "guardians-raccoon"
