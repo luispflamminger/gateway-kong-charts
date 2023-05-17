@@ -12,6 +12,7 @@ Please also seek advice from the README regarding updates.
  - zipkin config params: environment (not set for qa, physical env otherwise), zone (zone name), forceSample, headerType
  - Zipkin sample ratio set to 1
  - Fixed Jumper header size too small (set to 16KB)
+ - Topology setting for better stability in CaaS
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
