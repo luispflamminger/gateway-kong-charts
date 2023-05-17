@@ -9,6 +9,7 @@ Please also seek advice from the README regarding updates.
 ## 5.1.0
 - Fixed Jumper latency issue
 - Jumper image 3.5.0
+- Fixed Jumper header size too small (set to 16KB)
 
 ## 5.0.1
 - Corrected migrations jobs db-check container security context

@@ -561,6 +561,8 @@ false
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
   value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
+- name: SERVER_maxHttpHeaderSize
+  value: {{ .Values.jumper.maxHttpHeaderSize | default "16KB" }} 
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
