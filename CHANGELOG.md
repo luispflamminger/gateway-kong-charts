@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.1.0
+- Fixed Jumper latency issue
+- Jumper image 3.5.0
+
 ## 5.0.1
 - Corrected migrations jobs db-check container security context
 - Prometheus customer facing setting camelCase
