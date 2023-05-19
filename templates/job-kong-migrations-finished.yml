@@ -17,7 +17,7 @@ spec:
       - name: "check-database"
         image: '{{ include "postgresql.image" $ }}'
         imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ .Values.postgres.containerSecurityContext | toYaml | nindent 10 }}
         command: ['/bin/bash']
         args: ['-c', 'until pg_isready -U {{ .Values.postgres.user }}; do echo waiting for database; sleep 2; done;']
         env:
@@ -26,7 +26,7 @@ spec:
       - name: kong-upgrade-migrations
         image: {{ include "kong.image" $ }}
         imagePullPolicy: {{ .Values.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ default .Values.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ default .Values.containerSecurityContext | toYaml | nindent 10 }}
         env:
         {{- include "kong.migrations.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong migrations finish" ]

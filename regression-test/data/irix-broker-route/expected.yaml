@@ -186,7 +186,7 @@ data:
         "protocols": ["http","https"],
         "methods": ["GET","POST"],
         "hosts": [
-          "integration.spacegate.telekom.de
+          "integration.spacegate.telekom.de"
         ],
         "paths": [
           "/user-login"

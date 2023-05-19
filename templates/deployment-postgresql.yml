@@ -18,13 +18,12 @@ spec:
         {{- include "database.status-monitor.labels" $ | nindent 8 }}
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      securityContext:
-        fsGroup: {{ .Values.postgres.securityContext.fsGroup | default 999 }}
+      securityContext:{{ .Values.postgres.podSecurityContext | toYaml | nindent 8 }}
       containers:
       - name: {{ .Release.Name }}-postgresql
         image: {{ include "postgresql.image" $ }}
         imagePullPolicy: {{ .Values.postgres.imagePullPolicy | default .Values.global.imagePullPolicy }}
-        securityContext: {{ .Values.postgres.securityContext | toYaml | nindent 10 }}
+        securityContext: {{ .Values.postgres.containerSecurityContext | toYaml | nindent 10 }}
         env:
         {{- include "postgresql.env" $ | indent 8 }}
         livenessProbe:

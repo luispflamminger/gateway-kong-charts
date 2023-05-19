@@ -5,7 +5,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 3.6.4
+## 3.8.0
  - Fixed: Jumper latency issue
  - Jumper image 3.5.0
  - Kong image 2.8.3.4
@@ -13,6 +13,9 @@ Please also seek advice from the README regarding updates.
  - Zipkin sample ratio set to 1
  - Fixed Jumper header size too small (set to 16KB)
  - Topology setting for better stability in CaaS
+
+## 3.7.0
+ - securityContext divided into containerSecurityContext and podSecurityContext to satisfy CaaS cluster t21 policy
 
 ## 3.6.3
  - Added configurable Irix-Broker route to enable ZAM-login for external users
