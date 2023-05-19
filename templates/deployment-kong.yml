@@ -40,7 +40,7 @@ spec:
                   values:
                   - {{ .Release.Name }}-kong
               topologyKey: {{ .Values.topologyKey | default "kubernetes.io/hostname" }}
-      securityContext: {{ include "platformSpecificValue" (list $ . ".Values.podSecurityContext") | default "{}" | nindent 8 }}
+      securityContext: {{ .Values.podSecurityContext | toYaml | nindent 8 }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper
