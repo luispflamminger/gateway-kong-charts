@@ -39,7 +39,7 @@ spec:
                   operator: In
                   values:
                   - {{ .Release.Name }}-kong
-              topologyKey: "kubernetes.io/hostname"
+              topologyKey: {{ .Values.topologyKey | default "kubernetes.io/hostname" }}
       containers:
 {{- if eq .Values.jumper.enabled true }}
       - name: jumper

@@ -61,9 +61,9 @@ image:
   #repository: mtr.devops.telekom.de
   organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.3.2
+  #tag: 2.8.3.4
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.2
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.4
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, job)
@@ -142,6 +142,8 @@ disableUpstreamCache: false
 
 podSecurityContext: {}
 containerSecurityContext: {}
+
+#topologyKey: kubernetes.io/hostname
 
 jobs:
   containerSecurityContext: {}
@@ -239,7 +241,11 @@ plugins:
     enabled: true
     pluginId: e8ff1211-816f-4d93-9011-a4b194586073
     collectorUrl: "http://jaeger-collector.default:9411/api/v2/spans"
-    #sampleRatio: 0.001
+    #sampleRatio: 1
+    #environment: null
+    #zone: null
+    #forceSample: true
+    #headerType: "b3"
     #includeCredential: "true"
     #defaultServiceName: "stargate"
     #luaSslTrustedCertificate: |
@@ -272,15 +278,16 @@ jumper:
     #repository: mtr.devops.telekom.de
     #organization: tardis-internal/hyperion
     #name: jumper-sse
-    #tag: 3.2.9
+    #tag: 3.5.0
   # Or use the flattened string form:
-  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.2.9
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.5.0
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   tracingUrl: http://guardians-drax-collector.skoll:9411
   stargateUrl: https://stargate-integration.test.dhei.telekom.de
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
+  #maxHttpHeaderSize: 16KB
   applicationName: Stargate
   startup:
     livenessProbe:

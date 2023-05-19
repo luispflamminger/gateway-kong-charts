@@ -47,10 +47,14 @@ spec:
               "tags" : ["tardis","zipkin","eni-zipkin"],
               "config" : {
                 "http_endpoint" : "{{ .Values.plugins.zipkin.collectorUrl }}",
-                "sample_ratio" : {{ .Values.plugins.zipkin.sampleRatio | default 0.001 }},
+                "sample_ratio" : {{ .Values.plugins.zipkin.sampleRatio | default 1 }},
                 "include_credential" : {{ .Values.plugins.zipkin.includeCredential | default true }},
                 "default_service_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}",
-                "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}"
+                "local_component_name" : "{{ .Values.plugins.zipkin.defaultServiceName | default .Release.Name }}",
+                "environment" : "{{ .Values.plugins.zipkin.environment | default .Values.global.environment | default .Values.global.metadata.environment | default "default" }}",
+                "zone" : "{{ .Values.plugins.zipkin.zone | default .Values.global.zone | default .Values.global.platform  | default "unknown" }}",
+                "force_sample" : {{ .Values.plugins.zipkin.forceSample | default true }},
+                "header_type" : "{{ .Values.plugins.zipkin.headerType | default "b3" }}"
               }
             }'`
 
