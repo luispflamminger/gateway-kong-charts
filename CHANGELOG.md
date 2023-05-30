@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.1.1
+- Fixed CaaS security context
+
 ## 5.1.0
 - Fixed Jumper latency issue
 - Jumper image 3.5.0

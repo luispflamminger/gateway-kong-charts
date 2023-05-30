@@ -1,5 +1,8 @@
 podSecurityContext:
   runAsUser: 100
+  runAsGroup: 1000
+  fsGroup: 1000
+  supplementalGroups: [1000]
 
 containerSecurityContext:
   runAsUser: 100
