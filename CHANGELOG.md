@@ -8,6 +8,7 @@ Please also seek advice from the README regarding updates.
 
 ## 0.0.0
 - Fixed config job authentication
+- Fixed bootstrap job pod security context
 
 ## 5.1.1
 - Fixed CaaS security context
