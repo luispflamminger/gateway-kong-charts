@@ -11,7 +11,7 @@ spec:
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
-      securityContext: {{ include "platformSpecificValue" (list $ . ".Values.postgresql.containerSecurityContext") | default "fsGroup: 999" | nindent 8 }}
+      securityContext: {{ include "platformSpecificValue" (list $ . ".Values.postgresql.podSecurityContext") | default "fsGroup: 999" | nindent 8 }}
       initContainers:
       - name: "check-database"
         image: '{{ include "postgresql.dbCheck.image" $ }}'
