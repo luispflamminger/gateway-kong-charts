@@ -6,7 +6,7 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 5.1.2
+## 0.0.0
 - Fixed config job authentication
 
 ## 5.1.1
