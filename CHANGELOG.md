@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.1.2
+- Fixed config job authentication
+
 ## 5.1.1
 - Fixed CaaS security context
 
