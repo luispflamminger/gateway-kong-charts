@@ -15,7 +15,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "{{ include "kong.adminApi.name" . }}",
@@ -29,7 +29,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.plugins.requestTransformer.pluginId }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "request-transformer",
@@ -43,7 +43,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/routes/{{ include "kong.adminApi.name" . }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "{{ include "kong.adminApi.name" . }}",
@@ -65,7 +65,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/consumers/rover \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data '{"username" : "rover","custom_id": "rover"}'
 
     echo ""
@@ -74,7 +74,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.plugins.acl.pluginId }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "acl",
@@ -89,7 +89,7 @@ data:
     curl --request POST \
       --url {{ $apiUrl }}/consumers/rover/acls \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data '{"group":"rover"}'
 
     {{- if eq .Values.plugins.jwtKeycloak.enabled true }}
@@ -99,7 +99,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.plugins.jwtKeycloak.pluginId }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "jwt-keycloak",
@@ -115,7 +115,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ .Values.irixBrokerRoute.name }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "{{ .Values.irixBrokerRoute.name }}",
@@ -130,7 +130,7 @@ data:
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ .Values.irixBrokerRoute.name }}/routes/{{ .Values.irixBrokerRoute.name }} \
       --header 'Content-Type: application/json' \
-      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
       '{
         "name": "{{ .Values.irixBrokerRoute.name }}",
