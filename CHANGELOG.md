@@ -6,9 +6,12 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 0.0.0
+## 4.3.0
 - Allow ingressClassName setting
 - Introduced tdi as platform
+- Fixed Jumper latency issue
+- Jumper image 3.5.0
+- Fixed Jumper header size too small (set to 16KB)
 
 ## 4.2.4
 - Updated CaaS security context
