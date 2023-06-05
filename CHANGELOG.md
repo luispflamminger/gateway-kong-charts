@@ -6,6 +6,10 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 0.0.0
+- Allow ingressClassName setting
+- Introduced tdi as platform
+
 ## 4.2.4
 - Updated CaaS security context
 

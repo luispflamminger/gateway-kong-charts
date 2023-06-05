@@ -14,6 +14,7 @@ global:
   product: "stargate"
   ingress:
     #tlsSecret: ""
+    #ingressClassName: ""
     annotations: {}
       #external-dns.alpha.kubernetes.io/target: ""
       #kubernetes.io/ingress.class: ""
@@ -109,6 +110,7 @@ adminApi:
     # alternative second host name in ingress
     #altHostname: ""
     #tlsSecret: ""
+    #ingressClassName: ""
     annotations: {}
   #accessLog: /dev/stdout
   #errorLog: /dev/stderr
@@ -123,6 +125,7 @@ proxy:
     # alternative second host name in ingress
     #altHostname: ""
     #tlsSecret: ""
+    #ingressClassName: ""
     annotations: {}
   #accessLog: /dev/stdout
   #errorLog: /dev/stderr
