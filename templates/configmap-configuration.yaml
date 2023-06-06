@@ -26,6 +26,7 @@ data:
 
     echo ""
     echo "2) Create request transformer plugin for setting api key header"
+    local -r X_TARDIS_GATEWAY_ADMIN_BASE64=$(echo -n $X_TARDIS_GATEWAY_ADMIN | base64);
     curl --request PUT \
       --url {{ $apiUrl }}/services/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.plugins.requestTransformer.pluginId }} \
       --header 'Content-Type: application/json' \
@@ -34,7 +35,7 @@ data:
       '{
         "name": "request-transformer",
         "config": {
-          "replace": {"headers": ["'"Authorization:Basic $X_TARDIS_GATEWAY_ADMIN"'"]}
+          "replace": {"headers": ["'"Authorization:Basic X_TARDIS_GATEWAY_ADMIN_BASE64"'"]}
         }
       }'
 
