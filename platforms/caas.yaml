@@ -66,6 +66,10 @@ jobs:
       - ALL
 
 postgresql:
+  podSecurityContext:
+    fsGroup: 999
+    supplementalGroups: [999]    
+
   containerSecurityContext:
     runAsGroup: 999
     runAsUser: 999

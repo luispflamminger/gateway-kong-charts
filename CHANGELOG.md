@@ -6,8 +6,11 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 5.1.2
+## 5.2.0
+- Allow ingressClassName setting
+- Introduced tdi as platform
 - Fixed config job authentication
+- Fixed bootstrap job pod security context
 
 ## 5.1.1
 - Fixed CaaS security context
