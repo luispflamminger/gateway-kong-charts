@@ -144,6 +144,24 @@ migrations: jobs
 ### From 2.x.x and lower to 4.x.x
 The migration from 2.x.x to 4.x.x is not possible. Please upgrade first from 2.x.x to 3.x.x as described above and afterwards without any migrations configuration from 3.x.x to 4.x.x
 
+### To Version 5.x.x
+
+Starting from version 5 and above the htpasswd needs to be generated and set manually. \
+This is necessary as double encoded base64 secrets are not supported by Vault. \
+See chapter [htpasswd](#htpasswd).
+
+## htpasswd
+
+You can create the htpasswd for admin user with Apache htpasswd tool.
+
+**Prerequisit:** existing gatewayAdminApiKey for the deployment.
+
+1. Execute the following statement: ```htpasswd -cb htpasswd admin gatewayAdminApiKey```
+2. Look up the htpasswd file you've just created and copy its content into the desired secret. \
+   Make sure no spaces or line breaks are copied.
+3. Optional but recommended: check if htpasswd is valid: ```htpasswd -vb htpasswd admin gatewayAdminApiKey```
+4. Deploy and check if setup jobs can access the Kong admin-api and also if amin-api is accessible via the admin-api-route.
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.
@@ -164,7 +182,7 @@ This is a short overlook about important parameters in the `values.yaml`.
 | `global.database.port`                              | Port of the database                                                                                                                      | `5432`                                |
 | `global.database.database`                          | Name of the database                                                                                                                      | `kong`                                |
 | `global.database.schema`                            | Name of the schema                                                                                                                        | `public`                              |
-| `global.database.user`                              | Username for accessing the database                                                                                                       | `kong`                                |
+| `global.database.username`                          | Username for accessing the database                                                                                                       | `kong`                                |
 | `global.database.password`                          | The users password                                                                                                                        | `changeme`                            |
 | `global.tracing`                                    | Set generic tracing settings, will be used if not specified explicitly                                                                    | `Trace settings`                      |
 | `global.tracing.collectorUrl`| URL of the Zipkin-Collector (e.g. Jaeger-Collector), http(s) mandatory                                                                                           | `http://guardians-drax-collector.skoll:9411/api/v2/spans`|
