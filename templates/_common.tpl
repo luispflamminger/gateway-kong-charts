@@ -37,3 +37,18 @@ imagePullSecrets:
 
 {{- end -}}
 {{- end -}}
+
+{{- define "argo.pathToSecret" -}}
+{{- if .Values.global.pathToSecret -}}
+avp.kubernetes.io/path: {{ .Values.global.pathToSecret }}
+{{- end -}}
+{{- end -}}
+
+{{- define "argo.checksum" -}}
+{{- $value := index . 1 -}}
+{{- with index . 0 -}}
+{{- if .Values.global.pathToSecret -}}
+checksum/secret: <{{ printf "path:%s#%s" .Values.global.pathToSecret (trimAll "<>" $value) }} | sha256sum>
+{{- end -}}
+{{- end -}}
+{{- end -}}
