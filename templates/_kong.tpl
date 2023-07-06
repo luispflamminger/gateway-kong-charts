@@ -317,7 +317,7 @@ false
     name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
-    secretName: {{ .Release.Name }}-htpasswd
+    secretName: {{ .Release.Name }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
