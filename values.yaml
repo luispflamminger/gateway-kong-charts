@@ -4,7 +4,7 @@ global:
 
   # Available platforms: kubernetes (default), aws, caas. Setting any value with no specific platform values.yaml will result in fallback to kubernetes
   platform: kubernetes
-  #pathToSecret: "path/to/secret" 
+  pathToSecret: "path/to/secret" 
   #storageClassName: gp2
   domain: ""
   #environment: ""

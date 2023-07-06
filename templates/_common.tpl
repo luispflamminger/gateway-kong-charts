@@ -45,10 +45,13 @@ avp.kubernetes.io/path: {{ .Values.global.pathToSecret }}
 {{- end -}}
 
 {{- define "argo.checksum" -}}
-{{- $value := index . 1 -}}
-{{- with index . 0 -}}
+{{- $ := index . 0 -}}
+{{- $fullKey := index . 2 -}}
+{{- $value := tpl (printf "{{ %s }}" $fullKey) $ -}}
+{{- with index . 1 -}}
 {{- if .Values.global.pathToSecret -}}
-checksum/secret: <{{ printf "path:%s#%s" .Values.global.pathToSecret (trimAll "<>" $value) }} | sha256sum>
+{{- $key := splitList "." $fullKey | last -}}
+checksum/secret-{{ $key }}: <{{ printf "path:%s#%s" .Values.global.pathToSecret (trimAll "<>" $value) }} | sha256sum>
 {{- end -}}
 {{- end -}}
 {{- end -}}
