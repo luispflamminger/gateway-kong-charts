@@ -364,7 +364,7 @@ false
   emptyDir: {}
 - name: jumper-keys
   secret:
-    secretName: name: {{ .Release.Name }}-issuer-service
+    secretName: {{ .Release.Name }}-issuer-service
     items:
       - key: privateKey
         path: key.json
