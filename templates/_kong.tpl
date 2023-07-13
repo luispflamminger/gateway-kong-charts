@@ -199,11 +199,18 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 
 {{- define "kong.checksums" -}}
 checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.adminApi.htpasswd") }}
+{{ include "argo.checksum" (list $ . ".Values.adminApi.gatewayAdminApiKey") }}
+{{ include "argo.checksum" (list $ . ".Values.global.database.password") }}
 {{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.trustedCaCertificates") }}
+{{ include "argo.checksum" (list $ . ".Values.plugins.zipkin.luaSslTrustedCertificate") }}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
 checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.jsonWebKey") }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.publicKey") }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
@@ -310,7 +317,7 @@ false
     name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
-    secretName: {{ .Release.Name }}-htpasswd
+    secretName: {{ .Release.Name }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
