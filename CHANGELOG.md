@@ -6,6 +6,12 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.2.2
+
+## 5.2.1
+
+Skipped
+
 ## 5.2.0
 - Allow ingressClassName setting
 - Introduced tdi as platform
