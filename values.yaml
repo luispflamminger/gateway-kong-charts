@@ -180,6 +180,10 @@ jobs: {}
 #nginxWorkerProcesses: auto
 #nginxHttpLuaSharedDict: prometheus_metrics 15m
 #nginxLargeClientBuffers: 4 8k
+#workerConsistency: eventual
+#workerStateUpdateFrequency: 10
+#dbUpdateFrequency: 10
+#dbUpdatePropagation: 0
 
 replicas: 1
 

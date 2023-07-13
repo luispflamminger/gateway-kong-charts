@@ -7,6 +7,7 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 
 ## 5.2.2
+- added kong environment variables for worker consistency, state update frequency, database update frequency and propagation
 
 ## 5.2.1
 
