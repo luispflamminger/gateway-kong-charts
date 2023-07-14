@@ -402,7 +402,7 @@ false
 
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_WORKER_PROCESSES
-  value: '{{ .Values.nginxWorkerProcesses | default "auto" }}'
+  value: '{{ .Values.nginxWorkerProcesses | default "4" }}'
 - name: KONG_NGINX_HTTP_INCLUDE
   value: '/opt/kong/nginx/servers.conf'
 - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
@@ -492,6 +492,14 @@ false
 {{- define "kong.env" }}
 - name: KONG_MEM_CACHE_SIZE
   value: '{{ .Values.memCacheSize | default "128m" }}'
+- name: KONG_WORKER_CONSISTENCY
+  value: '{{ .Values.workerConsistency | default "eventual" }}'
+- name: KONG_WORKER_STATE_UPDATE_FREQUENCY
+  value: '{{ .Values.workerStateUpdateFrequency | default "10" }}'
+- name: KONG_DB_UPDATE_FREQUENCY
+  value: '{{ .Values.dbUpdateFrequency | default "10" }}'
+- name: KONG_DB_UPDATE_PROPAGATION
+  value: '{{ .Values.dbUpdatePropagation | default "0" }}'
 {{- template "kong.env.prefix" . }}
 - name: KONG_DATABASE
   value: postgres
