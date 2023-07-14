@@ -83,9 +83,9 @@ templateChangeTriggers: []
   #repository: mtr.devops.telekom.de
   #organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.3.4
+  #tag: 2.8.3.5
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.4
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.5
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, jobs)
@@ -311,9 +311,9 @@ jumper:
     #repository: mtr.devops.telekom.de
     #organization: tardis-internal/hyperion
     #name: jumper-sse
-    #tag: 3.5.0
+    #tag: 3.6.0
   # Or use the flattened string form:
-  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.5.0
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.6.0
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   #tracingUrl: http://guardians-drax-collector.skoll:9411
@@ -369,6 +369,7 @@ issuerService:
   #imagePullPolicy: IfNotPresent
   jsonWebKey: changeme
   publicKey: changeme
+  privateKey: changeme
 
   #containerSecurityContext: {}
 

@@ -14,7 +14,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.3.4" -}}
+{{- $imageTag := "2.8.3.5" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.5.0" -}}
+{{- $imageTag := "3.6.0" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -211,6 +211,7 @@ checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates
 checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
 {{ include "argo.checksum" (list $ . ".Values.issuerService.jsonWebKey") }}
 {{ include "argo.checksum" (list $ . ".Values.issuerService.publicKey") }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.privateKey") }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
@@ -361,11 +362,22 @@ false
 {{- define "kong.jumper.volumes" }}
 - name: kong-jumper-tmp
   emptyDir: {}
+- name: jumper-keys
+  secret:
+    secretName: {{ .Release.Name }}-issuer-service
+    items:
+      - key: privateKey
+        path: key.json
+    defaultMode: 420
+    optional: true
 {{- end -}}
 
 {{- define "kong.jumper.volumeMounts" }}
 - name: kong-jumper-tmp
   mountPath: /tmp
+- name: jumper-keys
+  mountPath: /usr/share/keypair
+  readOnly: true
 {{- end -}}
 
 {{- define "kong.issuerService.volumes" }}

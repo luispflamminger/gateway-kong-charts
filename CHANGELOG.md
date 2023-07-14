@@ -6,18 +6,15 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+
 ## 5.3.0-RC.2
- - Backported latency hotfix 
+ - added kong environment variables for worker consistency, state update frequency, database update frequency and propagation
+ - jumper 3.6.0
+ - jumper secret mount
+ - kong 2.8.3.5
 
 ## 5.3.0-RC.1
  - Added Argo CD secret redeploy trigger
-
-## 5.2.2
-- added kong environment variables for worker consistency, state update frequency, database update frequency and propagation
-
-## 5.2.1
-
-Skipped
 
 ## 5.2.0
 - Allow ingressClassName setting
