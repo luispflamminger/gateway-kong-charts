@@ -14,7 +14,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.3.4" -}}
+{{- $imageTag := "2.8.3.5" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.5.0" -}}
+{{- $imageTag := "3.6.0" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -199,11 +199,19 @@ ops.eni.telekom.de/pipeline-force-redeploy: '{{ now | date "2006-01-02T15:04:05Z
 
 {{- define "kong.checksums" -}}
 checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") . | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.adminApi.htpasswd") }}
+{{ include "argo.checksum" (list $ . ".Values.adminApi.gatewayAdminApiKey") }}
+{{ include "argo.checksum" (list $ . ".Values.global.database.password") }}
 {{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.trustedCaCertificates") }}
+{{ include "argo.checksum" (list $ . ".Values.plugins.zipkin.luaSslTrustedCertificate") }}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
 checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.jsonWebKey") }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.publicKey") }}
+{{ include "argo.checksum" (list $ . ".Values.issuerService.privateKey") }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
@@ -310,7 +318,7 @@ false
     name: {{ .Release.Name }}-nginx-kong-template
 - name: htpasswd
   secret:
-    secretName: {{ .Release.Name }}-htpasswd
+    secretName: {{ .Release.Name }}
 - name: nginx-servers
   configMap:
     name: {{ .Release.Name }}-nginx-servers
@@ -354,11 +362,22 @@ false
 {{- define "kong.jumper.volumes" }}
 - name: kong-jumper-tmp
   emptyDir: {}
+- name: jumper-keys
+  secret:
+    secretName: {{ .Release.Name }}-issuer-service
+    items:
+      - key: privateKey
+        path: key.json
+    defaultMode: 420
+    optional: true
 {{- end -}}
 
 {{- define "kong.jumper.volumeMounts" }}
 - name: kong-jumper-tmp
   mountPath: /tmp
+- name: jumper-keys
+  mountPath: /usr/share/keypair
+  readOnly: true
 {{- end -}}
 
 {{- define "kong.issuerService.volumes" }}
@@ -383,7 +402,7 @@ false
 
 {{- define "kong.nginx.directives" }}
 - name: KONG_NGINX_WORKER_PROCESSES
-  value: '{{ .Values.nginxWorkerProcesses | default "auto" }}'
+  value: '{{ .Values.nginxWorkerProcesses | default "4" }}'
 - name: KONG_NGINX_HTTP_INCLUDE
   value: '/opt/kong/nginx/servers.conf'
 - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
@@ -473,6 +492,14 @@ false
 {{- define "kong.env" }}
 - name: KONG_MEM_CACHE_SIZE
   value: '{{ .Values.memCacheSize | default "128m" }}'
+- name: KONG_WORKER_CONSISTENCY
+  value: '{{ .Values.workerConsistency | default "eventual" }}'
+- name: KONG_WORKER_STATE_UPDATE_FREQUENCY
+  value: '{{ .Values.workerStateUpdateFrequency | default "10" }}'
+- name: KONG_DB_UPDATE_FREQUENCY
+  value: '{{ .Values.dbUpdateFrequency | default "10" }}'
+- name: KONG_DB_UPDATE_PROPAGATION
+  value: '{{ .Values.dbUpdatePropagation | default "0" }}'
 {{- template "kong.env.prefix" . }}
 - name: KONG_DATABASE
   value: postgres
