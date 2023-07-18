@@ -7,13 +7,11 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 
 
-## 5.3.0-RC.2
+## 5.3.0
  - added kong environment variables for worker consistency, state update frequency, database update frequency and propagation
  - jumper 3.6.0
  - jumper secret mount
  - kong 2.8.3.5
-
-## 5.3.0-RC.1
  - Added Argo CD secret redeploy trigger
 
 ## 5.2.0
