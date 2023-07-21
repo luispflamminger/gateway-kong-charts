@@ -83,9 +83,9 @@ templateChangeTriggers: []
   #repository: mtr.devops.telekom.de
   #organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.3.5
+  #tag: 2.8.3.6
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.5
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.6
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, jobs)
