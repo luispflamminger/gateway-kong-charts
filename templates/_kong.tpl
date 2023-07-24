@@ -434,7 +434,7 @@ false
 
 {{- define "kong.luaSslTrustedCertificates" }}
 {{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
-{{ .Values.plugins.database.external.luaSslTrustedCertificate }}
+{{ .Values.externalDatabase.luaSslTrustedCertificate }}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}

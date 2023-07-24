@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 0.0.0
+ - Fixed external database cert path
+
 ## 5.3.1
  - Kong 2.8.3.6: Admin API version info fix
 
