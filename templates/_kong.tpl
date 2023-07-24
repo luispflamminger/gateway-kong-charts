@@ -202,10 +202,12 @@ checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") 
 {{ include "argo.checksum" (list $ . ".Values.adminApi.htpasswd") }}
 {{ include "argo.checksum" (list $ . ".Values.adminApi.gatewayAdminApiKey") }}
 {{ include "argo.checksum" (list $ . ".Values.global.database.password") }}
-{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
+{{- if eq .Values.sslVerify true }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{ include "argo.checksum" (list $ . ".Values.trustedCaCertificates") }}
+{{ if  .Values.plugins.zipkin.luaSslTrustedCertificate }}
 {{ include "argo.checksum" (list $ . ".Values.plugins.zipkin.luaSslTrustedCertificate") }}
+{{- end -}}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
 checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
