@@ -7,6 +7,8 @@ Please also seek advice from the README regarding updates.
 [[_TOC_]]
 
 ## 0.0.0
+ - Introduced cequence compapatibility (no image provided)
+ - Fixed failing Vault secret lookup for empty values
  - Fixed external database cert path
  - Jumper image 3.6.1
 
