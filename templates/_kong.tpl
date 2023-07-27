@@ -435,8 +435,12 @@ false
 {{- end -}}
 
 {{- define "kong.luaSslTrustedCertificates" }}
+{{- if .Values.plugins.zipkin.luaSslTrustedCertificate -}}
 {{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
+{{- end -}}
+{{- if .Values.externalDatabase.luaSslTrustedCertificate -}}
 {{ .Values.externalDatabase.luaSslTrustedCertificate }}
+{{- end -}}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}
@@ -566,11 +570,22 @@ false
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.errorLog | default "/dev/stderr" | quote }}
 {{- end }}
-{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
+{{- include "kong.kongLuaSslTrustedCertificatePath" . -}}
+{{- end }}
+
+{{- define "kong.kongLuaSslTrustedCertificatePath" -}}
+{{ $path := "" }}
+{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate (and .Values.externalDatabase.ssl .Values.externalDatabase.sslVerify) }}
+{{ $path = printf "%s,%s" $path "/opt/kong/tls/lua-ssl-trusted-certificates.pem" }}
+{{- end }}
+{{- if eq .Values.plugins.cequence.enabled true }}
+{{ $path = printf "%s,%s" $path "system" }}
+{{- end }}
+{{- if not (empty $path) -}}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-  value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
-{{- end }}
-{{- end }}
+  value: {{ $path | trimAll "," | quote }}
+{{- end -}}
+{{- end -}}
 
 {{- define "kong.jumper.collectorUrl" -}}
 {{ $url := .Values.jumper.tracingUrl | default .Values.global.tracing.collectorUrl -}}
@@ -597,7 +612,10 @@ false
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
 {{- range .Values.plugins.enabled -}}
-{{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins .  }}
+{{- end }}
+{{- if eq .Values.plugins.cequence.enabled true }}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins "cequence-ai-unified" }}
 {{- end }}
 - name: KONG_PLUGINS
   value: bundled,jwt-keycloak{{ $enabledPlugins }}

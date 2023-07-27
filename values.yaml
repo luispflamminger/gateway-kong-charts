@@ -233,6 +233,15 @@ plugins:
 
   acl:
     pluginId: bc823d55-83b5-4184-b03f-ce63cd3b75c7
+
+  cequence:
+    enabled: false
+    pluginId: f7b4e626-2987-4c04-98f1-cc316e8af9a5
+    #authDomain: auth.telekom.1.cequence.cloud
+    #edgeDomain: edge.telekom.1.cequence.cloud
+    #clientId: "kong-edge-client"
+    #realm: cequence
+    clientSecret: changeme
       
   jwtKeycloak:
     enabled: true
