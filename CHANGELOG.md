@@ -8,6 +8,7 @@ Please also seek advice from the README regarding updates.
 
 ## 0.0.0
  - Fixed external database cert path
+ - Jumper image 3.6.1
 
 ## 5.3.1
  - Kong 2.8.3.6: Admin API version info fix
