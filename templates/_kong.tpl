@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.6.0" -}}
+{{- $imageTag := "3.6.1" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -202,10 +202,12 @@ checksum/secret-kong: {{ include (print $.Template.BasePath "/secret-kong.yml") 
 {{ include "argo.checksum" (list $ . ".Values.adminApi.htpasswd") }}
 {{ include "argo.checksum" (list $ . ".Values.adminApi.gatewayAdminApiKey") }}
 {{ include "argo.checksum" (list $ . ".Values.global.database.password") }}
-{{- if or (eq .Values.sslVerify true) .Values.plugins.zipkin.luaSslTrustedCertificate }}
+{{- if eq .Values.sslVerify true }}
 checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates" $ | default "# Set trustedCaCertificates in values.yaml") | sha256sum }}
 {{ include "argo.checksum" (list $ . ".Values.trustedCaCertificates") }}
+{{ if  .Values.plugins.zipkin.luaSslTrustedCertificate }}
 {{ include "argo.checksum" (list $ . ".Values.plugins.zipkin.luaSslTrustedCertificate") }}
+{{- end -}}
 {{- end -}}
 {{- if .Values.issuerService.enabled }}
 checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
@@ -433,8 +435,12 @@ false
 {{- end -}}
 
 {{- define "kong.luaSslTrustedCertificates" }}
+{{- if .Values.plugins.zipkin.luaSslTrustedCertificate -}}
 {{ .Values.plugins.zipkin.luaSslTrustedCertificate }}
-{{ .Values.plugins.database.external.luaSslTrustedCertificate }}
+{{- end -}}
+{{- if .Values.externalDatabase.luaSslTrustedCertificate -}}
+{{ .Values.externalDatabase.luaSslTrustedCertificate }}
+{{- end -}}
 {{ end -}}
 
 {{- define "kong.env.prefix" }}
@@ -564,11 +570,22 @@ false
 - name: KONG_ADMIN_ERROR_LOG
   value: {{ .Values.adminApi.errorLog | default "/dev/stderr" | quote }}
 {{- end }}
-{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate .Values.externalDatabase.sslVerify }}
+{{- include "kong.kongLuaSslTrustedCertificatePath" . -}}
+{{- end }}
+
+{{- define "kong.kongLuaSslTrustedCertificatePath" -}}
+{{ $path := "" }}
+{{- if or .Values.plugins.zipkin.luaSslTrustedCertificate (and .Values.externalDatabase.ssl .Values.externalDatabase.sslVerify) }}
+{{ $path = printf "%s,%s" $path "/opt/kong/tls/lua-ssl-trusted-certificates.pem" }}
+{{- end }}
+{{- if eq .Values.plugins.cequence.enabled true }}
+{{ $path = printf "%s,%s" $path "system" }}
+{{- end }}
+{{- if not (empty $path) -}}
 - name: KONG_LUA_SSL_TRUSTED_CERTIFICATE
-  value: '/opt/kong/tls/lua-ssl-trusted-certificates.pem'
-{{- end }}
-{{- end }}
+  value: {{ $path | trimAll "," | quote }}
+{{- end -}}
+{{- end -}}
 
 {{- define "kong.jumper.collectorUrl" -}}
 {{ $url := .Values.jumper.tracingUrl | default .Values.global.tracing.collectorUrl -}}
@@ -595,7 +612,10 @@ false
 {{- define "kong.customPlugins.env" -}}
 {{ $enabledPlugins := "" }}
 {{- range .Values.plugins.enabled -}}
-{{ $enabledPlugins = printf "%s,%s" $enabledPlugins . }}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins .  }}
+{{- end }}
+{{- if eq .Values.plugins.cequence.enabled true }}
+{{ $enabledPlugins = printf "%s,%s" $enabledPlugins "cequence-ai-unified" }}
 {{- end }}
 - name: KONG_PLUGINS
   value: bundled,jwt-keycloak{{ $enabledPlugins }}
