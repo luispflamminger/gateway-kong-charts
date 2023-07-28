@@ -6,11 +6,12 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
-## 0.0.0
+## 5.4.0
  - Introduced cequence compapatibility (no image provided)
  - Fixed failing Vault secret lookup for empty values
  - Fixed external database cert path
  - Jumper image 3.6.1
+ - HPA kind autoscaling/v2
 
 ## 5.3.1
  - Kong 2.8.3.6: Admin API version info fix
