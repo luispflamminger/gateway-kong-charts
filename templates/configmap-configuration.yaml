@@ -154,7 +154,7 @@ data:
     echo $CEQUENCE_CLIENT_SECRET
     echo "10) Configure cequence-ai-unified plugin"
     curl --request PUT \
-      --url {{ $apiUrl }}/routes/{{ include "kong.adminApi.name" . }}/plugins/{{ .Values.plugins.cequence.pluginId }} \
+      --url {{ $apiUrl }}/plugins/{{ .Values.plugins.cequence.pluginId }} \
       --header 'Content-Type: application/json' \
       -u "admin:$X_TARDIS_GATEWAY_ADMIN" \
       --data \
