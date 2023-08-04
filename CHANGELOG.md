@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.4.1
+ - Fix: Global cequence plugins configuration
+
 ## 5.4.0
  - Introduced cequence compapatibility (no image provided)
  - Fixed failing Vault secret lookup for empty values
