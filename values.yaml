@@ -129,6 +129,12 @@ proxy:
     #tlsSecret: ""
     #ingressClassName: ""
     annotations: {}
+
+  legacyIngress: {}
+  #legacyIngress:
+  #  hostname: ""
+  #  tlsSecret: ""
+
   #accessLog: /dev/stdout
   #errorLog: /dev/stderr
 

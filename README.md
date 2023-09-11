@@ -162,6 +162,104 @@ You can create the htpasswd for admin user with Apache htpasswd tool.
 3. Optional but recommended: check if htpasswd is valid: ```htpasswd -vb htpasswd admin gatewayAdminApiKey```
 4. Deploy and check if setup jobs can access the Kong admin-api and also if amin-api is accessible via the admin-api-route.
 
+## Advanced Features
+
+During the operation of Stargate we discovered some issues that need some more advanced Kong or Kubernetes settings.
+The following paragraph explains which helm-chart settings are responsible, how to use them and what effects they have.
+
+### Autoscaling
+
+In some environments, especially in AWS "prod", we use the autoscaler to update workload ressources.
+
+The autoscaling ia documented [here](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+(Since chart version `5.4.0` we use kubernetes API `autoscaling/v2`)
+ 
+Following helm-chart variables controls the autoscaler properties for Stargate:
+
+| Helm-Chart variable                    | Kubernetes property (HorizontalPodAutoscaler)     | default value | documentation link |
+|----------------------------------------|---------------------------------------------------|---------------|--------------------|
+| `autoscaling.enabled`                  |                                                   | false         |                    |
+| `autoscaling.minReplicas`              | `spec.minReplicas`                                | 3             | [k8s_hpe_spec]     |
+| `autoscaling.maxReplicas`              | `spec.maxReplicas`                                | 10            | [k8s_hpe_spec]     |
+| `autoscaling.cpuUtilizationPercentage` | `spec.metrics.resource.target.averageUtilization` | 80            | [k8s_hpe_spec]     |
+
+[k8s_hpe_spec]: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/horizontal-pod-autoscaler-v2/#HorizontalPodAutoscalerSpec
+
+### PodAntiaffinity & TopologyKey
+
+In Kubernetes it is recommended to distribute the pods over several nodes. If a kubernetes node gets into problems, there are enough pods on other nodes to take on the load.
+For this reason we provide the `topologyKey` flag in our helm-chart.
+
+| Helm-Chart variable | Kubernetes property (Deployment,Pod)        | default value                        | documentation link |
+|---------------------|---------------------------------------------|--------------------------------------|--------------------|
+| `topologyKey`       | `spec.affinity.podAntiAffinity.topologyKey` | kubernetes.io/hostname **AWS**       | [topologyKey]      |
+| `topologyKey`       | `spec.affinity.podAntiAffinity.topologyKey` | topology.kubernetes.io/zone **CaaS** | [topologyKey]      |
+
+[topologyKey]: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+
+> Note: The default topologyKey for CaaS is different than for AWS and is specified in `platform/caas.yaml` (s. next paragraph)
+
+### Platform-specific values and SecurityContext
+
+CaaS platform has certain requirements regarding `securityContext` in deployments. 
+Some fields like `privileged: false` must be set, even though they correspond to the default values.
+This applies to both `pods.securityContext` and `container[].securityContext` and the absence of some values is difficult to detect, because CaaS refuses the deployment with a 503 http-code.
+
+For this reason, there is one single flags `global.platform: caas`, which imports values from file `platform/caas.yaml` and thus applies all required to the deployment.
+Individual values can be overwritten as usual.
+
+The same approach can be used to extend the helm-chart for other platforms.
+
+### readinessProbe & livenessProbe
+
+Stargate is fully operational only when both components Kong and Jumper are operational. This is especially important when deploying as "Rolling Update" in customer environments.
+For this reason, each container deployed in stargate pod has its own settings for `readinessProbe`, `livenessProbe` and configurable initial delays.
+
+The Probe-URLs are configured as follows:
+- `http://localhost:8100/status` as readiness probe for Kong
+- `http://localhost:8100/status` as liveness probe for Kong
+- `http://localhost:808x/actuator/health/readiness` as readiness probe for each Jumper pod ("jumper", "jegacyJumper")
+- `http://localhost:808x/actuator/health/liveness` as liveness probe for each Jumper pod ("jumper", "jegacyJumper")
+
+The details for readiness and liveness probes cen be tuned by following values:
+
+| Helm-Chart variable                        | Container    | Kubernetes setting                 | default value |
+|--------------------------------------------|--------------|------------------------------------|---------------|
+| startup.livenessProbe.initialDelay         | kong         | livenessProbe.initialDelaySeconds  | 5             |
+| startup.readinessProbe.initialDelay        | kong         | readinessProbe.initialDelaySeconds | 5             |
+| jumper.startup.readinessProbe.initialDelay | jumper       | livenessProbe.initialDelaySeconds  | 25            |
+| jumper.startup.readinessProbe.initialDelay | jumper       | readinessProbe.initialDelaySeconds | 25            |
+| jumper.startup.readinessProbe.initialDelay | legacyJumper | livenessProbe.initialDelaySeconds  | 25            |
+| jumper.startup.readinessProbe.initialDelay | legacyJumper | readinessProbe.initialDelaySeconds | 25            |
+|                                            |              |                                    |               |
+| *not configurable yet*                     | *all cont.*  | ...Probe.timeoutSeconds            | 5             |
+| *not configurable yet*                     | *all cont.*  | ...Probe.periodSeconds             | 10            |
+| *not configurable yet*                     | *all cont.*  | ...Probe.successThreshold          | 1             |
+| *not configurable yet*                     | kong         | ...Probe.failureThreshold          | 6             |
+| *not configurable yet*                     | *all jumper* | ...Probe.failureThreshold          | 3             |
+
+
+### Latency in Kong (chart 5.2.2)
+
+With the default setting, Kong has the following problem: while Rover is doing larger updates via the Admin-API (keyword "Reconciller"),unacceptable latencies arise in Stargate runtime.
+
+The problem is similar to the following already reported but still open [issue #7543](https://github.com/Kong/kong/issues/7543) in Github 
+
+The solution to the problem seems to be in asynchronous refresh or routes and tuning with the following Kong variables:
+
+| Helm-Chart variable        | Kong property                      | default value | documentation link              |
+|----------------------------|------------------------------------|---------------|---------------------------------|
+| nginxWorkerProcesses       | KONG_NGINX_WORKER_PROCESSES        | 4             |                                 |
+| workerConsistency          | KONG_WORKER_CONSISTENCY            | eventual      | [worker_consistency]            |
+| workerStateUpdateFrequency | KONG_DB_UPDATE_FREQUENCY           | 10            | [db_update_frequency]           |
+| dbUpdatePropagation        | KONG_DB_UPDATE_PROPAGATION         | 0             | [db_update_propagation]         |
+| dbUpdateFrequency          | KONG_WORKER_STATE_UPDATE_FREQUENCY | 10            | [worker_state_update_frequency] |
+
+[worker_consistency]: https://docs.konghq.com/gateway/2.8.x/reference/configuration/#worker_consistency
+[db_update_frequency]: https://docs.konghq.com/gateway/2.8.x/reference/configuration/#db_update_frequency
+[db_update_propagation]: https://docs.konghq.com/gateway/2.8.x/reference/configuration/#db_update_propagation
+[worker_state_update_frequency]: https://docs.konghq.com/gateway/2.8.x/reference/configuration/#worker_state_update_frequency
+
 ## Parameters
 
 This is a short overlook about important parameters in the `values.yaml`.

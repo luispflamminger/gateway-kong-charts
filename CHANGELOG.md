@@ -6,6 +6,9 @@ Please also seek advice from the README regarding updates.
 
 [[_TOC_]]
 
+## 5.4.2
+ - added legacyIngress to support old hostnames
+
 ## 5.4.1
  - Fix: Global cequence plugins configuration
 

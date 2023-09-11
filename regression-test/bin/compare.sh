@@ -52,7 +52,7 @@ function runTest() {
     if [ $lines -eq 0 ]; then
       printExpectedError "$test"
     elif [ $showDetails ]; then
-      printDiff "$test" "stderr.yaml" "expected-stderr.yaml"
+      printDiff "$test" "stderr.txt" "expected-stderr.txt"
     else
       printUnexpectedError "$test"
     fi
