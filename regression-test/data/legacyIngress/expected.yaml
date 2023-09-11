@@ -25,7 +25,7 @@ metadata:
   name: stargate-issuer-service
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -46,7 +46,7 @@ metadata:
   name: stargate
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -67,7 +67,7 @@ metadata:
   name: stargate-configuration
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -177,7 +177,7 @@ metadata:
   name: stargate-nginx-kong-template
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -739,7 +739,7 @@ metadata:
   name: stargate-nginx-servers
   labels:
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -774,14 +774,14 @@ metadata:
   name: stargate-pipeline-metadata
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
     app.kubernetes.io/part-of: tif-runtime
     tif.telekom.de/group: tif
 data:
-  chart: stargate-5.4.1
+  chart: stargate-5.4.2
 ---
 # Source: stargate/charts/postgresql/templates/pvc.yml
 apiVersion: v1
@@ -834,7 +834,7 @@ metadata:
   name: stargate-admin
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -856,7 +856,7 @@ metadata:
   name: stargate-metrics
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -888,7 +888,7 @@ metadata:
   name: stargate-proxy
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1021,17 +1021,17 @@ metadata:
   name: stargate
   annotations:
     ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
-    checksum/secret-kong: 0a048c3220f5c2f44e47d586b5ef67e732dce82986689f9133665e3ce8d7e0be
+    checksum/secret-kong: a7cd6cae3219641b652def76fca7d0b296c336c83010fe6d07f950b2bd2df5b5
     
     
     
-    checksum/secret-issuer-service: 80418704ade562f3a48cc7c7b765b844612563068709e5fe774d94e026e57cf5
+    checksum/secret-issuer-service: 315faf602c95bd89d52272752997a8259c78d0703c0af78df60017a62525f362
     
     
     
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1046,11 +1046,11 @@ spec:
     metadata:
       annotations:
         ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
-        checksum/secret-kong: 0a048c3220f5c2f44e47d586b5ef67e732dce82986689f9133665e3ce8d7e0be
+        checksum/secret-kong: a7cd6cae3219641b652def76fca7d0b296c336c83010fe6d07f950b2bd2df5b5
         
         
         
-        checksum/secret-issuer-service: 80418704ade562f3a48cc7c7b765b844612563068709e5fe774d94e026e57cf5
+        checksum/secret-issuer-service: 315faf602c95bd89d52272752997a8259c78d0703c0af78df60017a62525f362
         
         
         
@@ -1059,7 +1059,7 @@ spec:
         prometheus.io/port: '9542'
       labels:
         app: stargate
-        helm.sh/chart: stargate-5.4.1
+        helm.sh/chart: stargate-5.4.2
         app.kubernetes.io/name: kong
         app.kubernetes.io/instance: stargate-kong
         app.kubernetes.io/component: api-gateway
@@ -1352,7 +1352,7 @@ metadata:
   name: stargate-admin
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1383,7 +1383,7 @@ metadata:
   name: stargate-proxy
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1430,7 +1430,7 @@ metadata:
   name: stargate
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1472,7 +1472,7 @@ metadata:
   name: stargate-kong-configuration
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1518,7 +1518,7 @@ metadata:
   name: stargate-prometheus-setup
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1589,7 +1589,7 @@ metadata:
   name: stargate-request-rate-limiting-setup
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
@@ -1657,7 +1657,7 @@ metadata:
   name: stargate-zipkin-setup
   labels: 
     app: stargate
-    helm.sh/chart: stargate-5.4.1
+    helm.sh/chart: stargate-5.4.2
     app.kubernetes.io/name: kong
     app.kubernetes.io/instance: stargate-kong
     app.kubernetes.io/component: api-gateway
