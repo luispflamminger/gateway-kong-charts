@@ -191,6 +191,7 @@ jobs: {}
 #workerStateUpdateFrequency: 10
 #dbUpdateFrequency: 10
 #dbUpdatePropagation: 0
+#httpClientBodyBufferSize: 4m
 
 replicas: 1
 
