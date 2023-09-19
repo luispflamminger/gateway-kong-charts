@@ -506,6 +506,10 @@ false
   value: '{{ .Values.dbUpdateFrequency | default "10" }}'
 - name: KONG_DB_UPDATE_PROPAGATION
   value: '{{ .Values.dbUpdatePropagation | default "0" }}'
+- name: KONG_ANONYMOUS_REPORTS
+  value: 'false'
+- name: KONG_NGINX_HTTP_CLIENT_BODY_BUFFER_SIZE
+  value: '{{ .Values.httpClientBodyBufferSize | default "4m" }}'
 {{- template "kong.env.prefix" . }}
 - name: KONG_DATABASE
   value: postgres
