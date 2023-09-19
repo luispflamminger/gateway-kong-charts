@@ -46,13 +46,11 @@ spec:
               "name" : "prometheus",
               "tags" : ["tardis","prometheus","eni-prometheus"],
               "config" : {
-                "customer_facing" : "{{ .Values.plugins.prometheus.customerFacing | default false }}",
                 "status_code_metrics" : true,
                 "latency_metrics" : true,
                 "upstream_health_metrics" : true,
                 "bandwidth_metrics" : true,
-                "per_consumer" : true,
-                "eni_stat" : true
+                "per_consumer" : true
               }
             }'`
 
