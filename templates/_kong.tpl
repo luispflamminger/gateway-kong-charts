@@ -403,10 +403,6 @@ false
 {{- end -}}
 
 {{- define "kong.nginx.directives" }}
-- name: KONG_NGINX_PROXY_READ_TIMEOUT
-  value: 300
-- name: KONG_NGINX_PROXY_SEND_TIMEOUT
-  value: 300
 - name: KONG_NGINX_WORKER_PROCESSES
   value: '{{ .Values.nginxWorkerProcesses | default "4" }}'
 - name: KONG_NGINX_HTTP_INCLUDE
