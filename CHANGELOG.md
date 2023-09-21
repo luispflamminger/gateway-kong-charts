@@ -5,6 +5,9 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.3
+- Kong 2.8.3.8: zipkin fix
+- adjusted probes
 
 ## 5.4.2
  - added legacyIngress to support old hostnames
