@@ -216,11 +216,20 @@ resources:
 # Formats: debug, default, json
 logFormat: json
 
-startup:
-  livenessProbe:
-    initialDelay: 5
-  readinessProbe:
-    initialDelay: 5
+livenessProbe:
+  #timeoutSeconds: 5
+  #periodSeconds: 10
+  #failureThreshold: 3
+readinessProbe:
+  #timeoutSeconds: 1
+  #periodSeconds: 10
+  #successThreshold: 2
+  #failureThreshold: 3
+startupProbe:
+  #initialDelaySeconds: 5
+  #timeoutSeconds: 1
+  #periodSeconds: 5
+  #failureThreshold: 40
 
 setupJobs:
   #backoffLimit: 15
@@ -338,11 +347,20 @@ jumper:
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
   #maxHttpHeaderSize: 16KB
-  startup:
-    livenessProbe:
-      initialDelay: 25
-    readinessProbe:
-      initialDelay: 25
+  livenessProbe:
+    #timeoutSeconds: 5
+    #periodSeconds: 10
+    #failureThreshold: 6
+  readinessProbe:
+    #timeoutSeconds: 1
+    #periodSeconds: 10
+    #successThreshold: 2
+    #failureThreshold: 3
+  startupProbe:
+    #initialDelaySeconds: 15
+    #timeoutSeconds: 1
+    #periodSeconds: 5
+    #failureThreshold: 40
   #port: 8080
 
   #containerSecurityContext: {}
