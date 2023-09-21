@@ -216,16 +216,16 @@ resources:
 # Formats: debug, default, json
 logFormat: json
 
-livenessProbe:
+livenessProbe: {}
   #timeoutSeconds: 5
   #periodSeconds: 10
   #failureThreshold: 3
-readinessProbe:
+readinessProbe: {}
   #timeoutSeconds: 1
   #periodSeconds: 10
   #successThreshold: 2
   #failureThreshold: 3
-startupProbe:
+startupProbe: {}
   #initialDelaySeconds: 5
   #timeoutSeconds: 1
   #periodSeconds: 5
@@ -347,16 +347,16 @@ jumper:
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
   #maxHttpHeaderSize: 16KB
-  livenessProbe:
+  livenessProbe: {}
     #timeoutSeconds: 5
     #periodSeconds: 10
     #failureThreshold: 6
-  readinessProbe:
+  readinessProbe: {}
     #timeoutSeconds: 1
     #periodSeconds: 10
     #successThreshold: 2
     #failureThreshold: 3
-  startupProbe:
+  startupProbe: {}
     #initialDelaySeconds: 15
     #timeoutSeconds: 1
     #periodSeconds: 5
