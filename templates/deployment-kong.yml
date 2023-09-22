@@ -76,9 +76,10 @@ spec:
             path: /actuator/health/readiness
             port: jumper
             scheme: HTTP
+          initialDelaySeconds: 5
           timeoutSeconds: {{ .Values.jumper.readinessProbe.timeoutSeconds | default 1 }}
           periodSeconds: {{ .Values.jumper.readinessProbe.periodSeconds | default 10 }}
-          successThreshold: {{ .Values.jumper.readinessProbe.successThreshold | default 2 }}
+          successThreshold: {{ .Values.jumper.readinessProbe.successThreshold | default 1 }}
           failureThreshold: {{ .Values.jumper.readinessProbe.failureThreshold | default 3 }}
         startupProbe:
           httpGet:
@@ -215,9 +216,9 @@ spec:
             path: /status
             port: status
             scheme: HTTP
-          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 1 }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 2 }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds | default 10 }}
-          successThreshold: {{ .Values.readinessProbe.successThreshold | default 2 }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold | default 1 }}
           failureThreshold: {{ .Values.readinessProbe.failureThreshold | default 3 }}
         startupProbe:
           httpGet:

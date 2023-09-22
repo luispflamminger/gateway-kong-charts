@@ -204,8 +204,8 @@ autoscaling:
 
 resources:
   limits:
-    cpu: 3
-    memory: 3500Mi
+    cpu: 2500m
+    memory: 4Gi
   requests:
     cpu: 1
     memory: 2Gi
@@ -367,8 +367,8 @@ jumper:
 
   resources:
     limits:
-      cpu: 4
-      memory: 2Gi
+      cpu: 5
+      memory: 1500Mi
     requests:
       cpu: 2
       memory: 1Gi
@@ -409,7 +409,7 @@ issuerService:
 
   resources:
     limits:
-      cpu: 0.5
+      cpu: 150m
       memory: 500Mi
     requests:
       cpu: 50m
