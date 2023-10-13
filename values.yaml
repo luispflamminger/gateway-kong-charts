@@ -83,9 +83,9 @@ templateChangeTriggers: []
   #repository: mtr.devops.telekom.de
   #organization: tardis-internal/io
   #name: eni-kong
-  #tag: 2.8.3.6
+  #tag: 2.8.3.8
 # Or use the flattened string form:
-#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.6
+#image: mtr.devops.telekom.de/tardis-internal/io/eni-kong:2.8.3.8
 #imagePullPolicy: IfNotPresent
 
 # Determine the migrations behaviour (bootstrap, upgrade, jobs)
@@ -204,8 +204,8 @@ autoscaling:
 
 resources:
   limits:
-    cpu: 3
-    memory: 3500Mi
+    cpu: 2500m
+    memory: 4Gi
   requests:
     cpu: 1
     memory: 2Gi
@@ -216,11 +216,20 @@ resources:
 # Formats: debug, default, json
 logFormat: json
 
-startup:
-  livenessProbe:
-    initialDelay: 5
-  readinessProbe:
-    initialDelay: 5
+livenessProbe: {}
+  #timeoutSeconds: 5
+  #periodSeconds: 10
+  #failureThreshold: 3
+readinessProbe: {}
+  #timeoutSeconds: 1
+  #periodSeconds: 10
+  #successThreshold: 2
+  #failureThreshold: 3
+startupProbe: {}
+  #initialDelaySeconds: 5
+  #timeoutSeconds: 1
+  #periodSeconds: 5
+  #failureThreshold: 40
 
 setupJobs:
   #backoffLimit: 15
@@ -338,19 +347,28 @@ jumper:
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
   #maxHttpHeaderSize: 16KB
-  startup:
-    livenessProbe:
-      initialDelay: 25
-    readinessProbe:
-      initialDelay: 25
+  livenessProbe: {}
+    #timeoutSeconds: 5
+    #periodSeconds: 10
+    #failureThreshold: 6
+  readinessProbe: {}
+    #timeoutSeconds: 1
+    #periodSeconds: 10
+    #successThreshold: 2
+    #failureThreshold: 3
+  startupProbe: {}
+    #initialDelaySeconds: 15
+    #timeoutSeconds: 1
+    #periodSeconds: 5
+    #failureThreshold: 40
   #port: 8080
 
   #containerSecurityContext: {}
 
   resources:
     limits:
-      cpu: 4
-      memory: 2Gi
+      cpu: 5
+      memory: 1500Mi
     requests:
       cpu: 2
       memory: 1Gi
@@ -391,7 +409,7 @@ issuerService:
 
   resources:
     limits:
-      cpu: 0.5
+      cpu: 150m
       memory: 500Mi
     requests:
       cpu: 50m
