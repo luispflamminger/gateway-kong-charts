@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.6.1" -}}
+{{- $imageTag := "3.6.3" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -609,8 +609,10 @@ false
   value: {{ .Values.jumper.publishEventUrl }}
 - name: JUMPER_NAME
   value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
+{{- if .Values.jumper.maxHttpHeaderSize -}}
 - name: SERVER_maxHttpHeaderSize
-  value: {{ .Values.jumper.maxHttpHeaderSize | default "16KB" }} 
+  value: {{ .Values.jumper.maxHttpHeaderSize }}
+{{- end -}}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}

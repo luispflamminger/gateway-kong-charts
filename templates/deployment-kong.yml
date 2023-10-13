@@ -10,6 +10,11 @@ spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicas | default 1 }}
 {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.strategy.rollingUpdate.maxUnavailable | default "25%" }}
+      maxSurge: 25%
   selector: 
     matchLabels: {{ include "kong.selector" $ | nindent 6 }}
   template:

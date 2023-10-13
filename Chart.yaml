@@ -1,6 +1,6 @@
 apiVersion: v2
 name: stargate
-version: 5.4.3
+version: 5.4.4
 appVersion: 2.0.0
 description: Kong API gateway provided by DHEI
 dependencies:
@@ -13,3 +13,5 @@ maintainers:
   email: steinc@external.telekom.de
 - name: Christian Knott
   email: christian.knott@external.telekom.de
+- name: Tomas Bilek
+  email: tomas.bilek@t-mobile.cz
