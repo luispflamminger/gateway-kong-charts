@@ -347,6 +347,9 @@ jumper:
   publishEventUrl: http://producer.integration:8080/v1/events
   jvmOpts: "-XX:MaxRAMPercentage=80.0 -XshowSettings:vm"
   #maxHttpHeaderSize: 16KB
+  #fpaProxyHost
+  #fpaProxyPort
+  #fpaProxyHostsRegex
   livenessProbe: {}
     #timeoutSeconds: 5
     #periodSeconds: 10
