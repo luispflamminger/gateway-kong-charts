@@ -611,18 +611,18 @@ false
   value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
 - name: SERVER_maxHttpHeaderSize
   value: {{ .Values.jumper.maxHttpHeaderSize | default "16KB" }}
-{{- if not (empty .Values.jumper.fpaProxyHost) -}}
+{{- if not (empty .Values.jumper.fpaProxyHost) }}
 - name: FPA_PROXY_HOST
   value: {{ .Values.jumper.fpaProxyHost }}
-{{- end -}}
-{{- if not (empty .Values.jumper.fpaProxyPort) -}}
+{{- end }}
+{{- if not (empty .Values.jumper.fpaProxyPort) }}
 - name: FPA_PROXY_PORT
   value: {{ .Values.jumper.fpaProxyPort }}
-{{- end -}}
-{{- if not (empty .Values.jumper.fpaProxyHostsRegex) -}}
+{{- end }}
+{{- if not (empty .Values.jumper.fpaProxyHostsRegex) }}
 - name: FPA_NON_PROXY_HOSTS_REGEX
   value: {{ .Values.jumper.fpaProxyHostsRegex }}
-{{- end -}}
+{{- end }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}
