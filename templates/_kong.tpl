@@ -619,9 +619,9 @@ false
 - name: FPA_PROXY_PORT
   value: {{ .Values.jumper.fpaProxyPort | quote }}
 {{- end }}
-{{- if not (empty .Values.jumper.fpaProxyHostsRegex) }}
+{{- if not (empty .Values.jumper.fpaNonProxyHostsRegex) }}
 - name: FPA_NON_PROXY_HOSTS_REGEX
-  value: {{ .Values.jumper.fpaProxyHostsRegex }}
+  value: {{ .Values.jumper.fpaNonProxyHostsRegex }}
 {{- end }}
 {{- end -}}
 

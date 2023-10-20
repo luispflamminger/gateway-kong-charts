@@ -349,7 +349,7 @@ jumper:
   #maxHttpHeaderSize: 16KB
   #fpaProxyHost
   #fpaProxyPort
-  #fpaProxyHostsRegex
+  #fpaNonProxyHostsRegex
   livenessProbe: {}
     #timeoutSeconds: 5
     #periodSeconds: 10
