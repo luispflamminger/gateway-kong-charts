@@ -14,7 +14,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.image" -}}
 {{- $imageName := "eni-kong" -}}
-{{- $imageTag := "2.8.3.8" -}}
+{{- $imageTag := "2.8.3.9" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/io" -}}
 {{- if .Values.image -}}
@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.6.1" -}}
+{{- $imageTag := "3.8.0" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -610,7 +610,19 @@ false
 - name: JUMPER_NAME
   value: {{ .Values.jumper.defaultServiceName | default .Values.global.tracing.defaultServiceName  }}
 - name: SERVER_maxHttpHeaderSize
-  value: {{ .Values.jumper.maxHttpHeaderSize | default "16KB" }} 
+  value: {{ .Values.jumper.maxHttpHeaderSize | default "16KB" }}
+{{- if not (empty .Values.jumper.fpaProxyHost) }}
+- name: FPA_PROXY_HOST
+  value: {{ .Values.jumper.fpaProxyHost }}
+{{- end }}
+{{- if not (empty .Values.jumper.fpaProxyPort) }}
+- name: FPA_PROXY_PORT
+  value: {{ .Values.jumper.fpaProxyPort | quote }}
+{{- end }}
+{{- if not (empty .Values.jumper.fpaNonProxyHostsRegex) }}
+- name: FPA_NON_PROXY_HOSTS_REGEX
+  value: {{ .Values.jumper.fpaNonProxyHostsRegex }}
+{{- end }}
 {{- end -}}
 
 {{- define "kong.customPlugins.env" -}}

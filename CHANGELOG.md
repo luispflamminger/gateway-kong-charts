@@ -5,6 +5,11 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.4
+- added jumper environment variables for FPA Proxy Support
+- Jumper 3.8.0
+- Kong 2.8.3.9
+
 ## 5.4.3
 - Kong 2.8.3.8: zipkin fix
 - adjusted probes
