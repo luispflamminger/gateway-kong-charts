@@ -5,6 +5,10 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.5
+- added proxy.ingress.secondHostname variable for extended ingress
+- added proxy.ingress.secondTlsSecret variable for extended ingress
+
 ## 5.4.4
 - added jumper environment variables for FPA Proxy Support
 - Jumper 3.8.0
