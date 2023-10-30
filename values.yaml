@@ -127,6 +127,8 @@ proxy:
     # alternative second host name in ingress
     #altHostname: ""
     #tlsSecret: ""
+    #secondHostname: ""
+    #secondTlsSecret: ""
     #ingressClassName: ""
     annotations: {}
 
