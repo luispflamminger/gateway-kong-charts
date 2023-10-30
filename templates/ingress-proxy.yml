@@ -37,6 +37,22 @@ spec:
                 name: proxy
 {{- end }}
 {{- end }}
+{{- if not (empty .Values.proxy.ingress.secondHostname) }}
+  - host: {{ .Values.proxy.ingress.secondHostname }}
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}-proxy
+              port:
+{{- if .Values.proxy.tls.enabled }}
+                name: proxy-ssl
+{{- else }}
+                name: proxy
+{{- end }}
+{{- end }}
 {{- if and .Values.proxy.legacyIngress .Values.proxy.legacyIngress.hostname }}
 # An alternate ingress used eg for transition time during zone renaming
 # All settings except hostname and tlsSecret are the same as for proxy-ingress
@@ -60,6 +76,11 @@ spec:
   - hosts:
     - {{ include "kong.proxy.host" . }}
 {{- include "kong.proxy.ingress.tlsSecret" . | nindent 4 -}}
+{{- if and .Values.proxy.ingress.secondHostname .Values.proxy.ingress.secondTlsSecret }}
+  - hosts:
+    - {{ .Values.proxy.ingress.secondHostname }}
+    secretName: {{ .Values.proxy.ingress.secondTlsSecret }}
+{{- end -}}
 {{- if and .Values.proxy.legacyIngress .Values.proxy.legacyIngress.hostname .Values.proxy.legacyIngress.tlsSecret }}
   - hosts:
     - {{ .Values.proxy.legacyIngress.hostname }}
