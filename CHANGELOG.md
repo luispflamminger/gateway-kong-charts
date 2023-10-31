@@ -5,11 +5,14 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.5
+- added proxy.ingress.secondHostname variable for extended ingress
+- added proxy.ingress.secondTlsSecret variable for extended ingress
+
 ## 5.4.4
-- jumper image 3.6.3
-- kong image ...
-- SERVER_maxHttpHeaderSize optional
-- configurable maxUnavailable
+- added jumper environment variables for FPA Proxy Support
+- Jumper 3.8.0
+- Kong 2.8.3.9
 
 ## 5.4.3
 - Kong 2.8.3.8: zipkin fix
