@@ -5,6 +5,12 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.6
+- Kong 2.8.3.10
+- remove unused parameters from prometheus job
+- SERVER_maxHttpHeaderSize optional
+- configurable maxUnavailable
+
 ## 5.4.5
 - added proxy.ingress.secondHostname variable for extended ingress
 - added proxy.ingress.secondTlsSecret variable for extended ingress

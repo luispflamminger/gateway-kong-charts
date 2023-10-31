@@ -204,6 +204,10 @@ autoscaling:
   #maxReplicas: 10
   #cpuUtilizationPercentage: 80
 
+strategy: {}
+  #rollingUpdate:
+    #maxUnavailable: 25%
+
 resources:
   limits:
     cpu: 2500m
