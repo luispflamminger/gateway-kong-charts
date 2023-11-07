@@ -5,6 +5,14 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.7
+- remove checksum/secret-issuer-service
+- remove generic checksum
+- remove 2 unused params for is
+- issuer service to 1.10.0
+- mount issuer-keys
+- added privateJson for jumper
+
 ## 5.4.6
 - Kong 2.8.3.10
 - remove unused parameters from prometheus job

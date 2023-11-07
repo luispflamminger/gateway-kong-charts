@@ -110,7 +110,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.issuerService.image" -}}
 {{- $imageName := "issuer-service" -}}
-{{- $imageTag := "1.9.0" -}}
+{{- $imageTag := "1.10.0" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.issuerService.image -}}
@@ -159,16 +159,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 {{- define "kong.issuerService.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
-- name: ISSUER_CERT
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}-issuer-service
-      key: jsonWebKey
-- name: ISSUER_PUBLIC_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Release.Name }}-issuer-service
-      key: publicKey
 {{- end -}}
 
 {{- define "kong.circuitbreaker.env" }}
@@ -208,12 +198,6 @@ checksum/trusted-ca-certificates: {{ (include "kong.bundledTrustedCaCertificates
 {{ if  .Values.plugins.zipkin.luaSslTrustedCertificate }}
 {{ include "argo.checksum" (list $ . ".Values.plugins.zipkin.luaSslTrustedCertificate") }}
 {{- end -}}
-{{- end -}}
-{{- if .Values.issuerService.enabled }}
-checksum/secret-issuer-service: {{ include (print $.Template.BasePath "/secret-issuer-service.yml") . | sha256sum }}
-{{ include "argo.checksum" (list $ . ".Values.issuerService.jsonWebKey") }}
-{{ include "argo.checksum" (list $ . ".Values.issuerService.publicKey") }}
-{{ include "argo.checksum" (list $ . ".Values.issuerService.privateKey") }}
 {{- end -}}
 {{- range .Values.templateChangeTriggers }}
 checksum/{{ . }}: {{ include (print $.Template.BasePath "/" . ) $ | sha256sum }}
@@ -370,6 +354,8 @@ false
     items:
       - key: privateKey
         path: key.json
+      - key: privateJson
+        path: private.json
     defaultMode: 420
     optional: true
 {{- end -}}
@@ -385,11 +371,24 @@ false
 {{- define "kong.issuerService.volumes" }}
 - name: kong-issuer-tmp
   emptyDir: {}
+- name: issuer-keys
+  secret:
+    secretName: {{ .Release.Name }}-issuer-service
+    items:
+      - key: publicJson
+        path: public.json
+      - key: certsJson
+        path: certs.json
+    defaultMode: 420
+    optional: true
 {{- end -}}
 
 {{- define "kong.issuerService.volumeMounts" }}
 - name: kong-issuer-tmp
   mountPath: /tmp
+- name: issuer-keys
+  mountPath: /usr/share/keypair
+  readOnly: true
 {{- end -}}
 
 {{- define "kong.circuitbreaker.volumes" }}

@@ -413,6 +413,9 @@ issuerService:
   jsonWebKey: changeme
   publicKey: changeme
   privateKey: changeme
+  certsJson: changeme
+  publicJson: changeme
+  privateJson: changeme
 
   #containerSecurityContext: {}
 
