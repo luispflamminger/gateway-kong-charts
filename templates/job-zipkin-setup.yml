@@ -13,6 +13,7 @@ spec:
   template:
     spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
+      securityContext: {{ include "platformSpecificValue" (list $ . ".Values.podSecurityContext") | default "{}" | nindent 8 }}
       containers:
       - name: zipkin-setup
         image: {{ include "job.image" $ }}
