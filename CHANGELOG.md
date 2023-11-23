@@ -5,6 +5,10 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.8
+- jumper 3.9.0
+- pls note jumper 3.9.0 + is 1.10.0 needs new entries (certsJson, privateJson, publicJson) for runtime, old entries (jsonWebKey, privateKey, publicKey) should be removed with next release (including references)  
+
 ## 5.4.7
 - remove checksum/secret-issuer-service
 - remove generic checksum
