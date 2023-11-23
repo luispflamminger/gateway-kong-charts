@@ -410,9 +410,6 @@ issuerService:
   # Or use the flattened string form:
   #image: mtr.devops.telekom.de/tardis-internal/hyperion/issuer-service:1.9.0
   #imagePullPolicy: IfNotPresent
-  jsonWebKey: changeme
-  publicKey: changeme
-  privateKey: changeme
   certsJson: changeme
   publicJson: changeme
   privateJson: changeme
