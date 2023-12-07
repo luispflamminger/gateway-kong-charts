@@ -352,8 +352,6 @@ false
   secret:
     secretName: {{ .Release.Name }}-issuer-service
     items:
-      - key: privateKey
-        path: key.json
       - key: privateJson
         path: private.json
     defaultMode: 420
