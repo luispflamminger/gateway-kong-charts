@@ -1,0 +1,17 @@
+issuerService:
+  jsonWebKey: ignore
+  publicKey: ignore
+
+plugins:
+  jwtKeycloak:
+    allowedIss: 
+      - https://somehost.tardis.telekom.de/auth/realms/default
+
+global:
+  database:
+    password: someDbPassword
+
+adminApi:
+  gatewayAdminApiKey: someAdminPassword
+
+logFormat: default

@@ -1,0 +1,1595 @@
+---
+# Source: stargate/templates/secret-htpasswd.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stargate-htpasswd
+  labels:
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+type: Opaque
+data:
+  .htpasswd: ignoreThisValue...
+---
+# Source: stargate/templates/secret-issuer-service.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stargate-issuer-service
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+type: Opaque
+data:
+
+  jsonWebKey: "aWdub3Jl"
+
+  publicKey: "aWdub3Jl"
+---
+# Source: stargate/templates/secret-kong.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stargate
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+type: Opaque
+data:
+  license: ""
+  gatewayAdminApiKey: "WVdSdGFXNDZZMmhoYm1kbGJXVT0="
+  kongAdminPassword: "Y2hhbmdlbWU="
+  postgresPassword: "Y2hhbmdlbWU="
+---
+# Source: stargate/templates/configmap-configuration.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stargate-configuration
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+data:
+  configuration.sh: |
+    echo ""
+    echo "1) Create service (upstream:http://stargate-admin.default:8001)"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/admin-api \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data \
+      '{
+        "name": "admin-api",
+        "host": "localhost",
+        "protocol": "http",
+        "port": 8001
+      }'
+
+    echo ""
+    echo "2) Create request transformer plugin for setting api key header"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/admin-api/plugins/e9fb4272-0aff-4208-9efa-6bfec5d9df53 \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data \
+      '{
+        "name": "request-transformer",
+        "config": {
+          "replace": {"headers": ["'"Authorization:Basic $X_TARDIS_GATEWAY_ADMIN"'"]}
+        }
+      }'
+
+    echo ""
+    echo "3) Create route (/admin-api) variable: hosts"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/services/admin-api/routes/admin-api \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data \
+      '{
+        "name": "admin-api",
+        "protocols": ["http","https"],
+        "hosts": [
+          "stargate-admin-default.lab.tif.telekom.de"
+        ],
+        "paths": [
+          "/admin-api"
+        ]
+      }'
+
+    echo ""
+    echo "4) Create consumer (rover)"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/consumers/rover \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data '{"username" : "rover","custom_id": "rover"}'
+
+    echo ""
+    echo "5) Apply ACL plugin to route (/admin-api)"
+    echo "and allow group (rover)"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/routes/admin-api/plugins/bc823d55-83b5-4184-b03f-ce63cd3b75c7 \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data \
+      '{
+        "name": "acl",
+        "config": {
+          "allow":["rover"],
+          "hide_groups_header": true
+        }
+      }'
+
+    echo ""
+    echo "6) Add consumer (rover) to group (rover)"
+    curl --request POST \
+      --url http://stargate-admin.default:8001/consumers/rover/acls \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data '{"group":"rover"}'
+    echo ""
+    echo "7) Setup plugin (jwt-keycloak)"
+    echo "variable [allowed_iss]"
+    curl --request PUT \
+      --url http://stargate-admin.default:8001/routes/admin-api/plugins/b864d58b-7183-4889-8b32-0b92d6c4d513 \
+      --header 'Content-Type: application/json' \
+      --header "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+      --data \
+      '{
+        "name": "jwt-keycloak",
+        "config": {
+          "allowed_iss" : ["https://changeme/auth/realms/default"],
+          "consumer_match" : true,
+          "consumer_match_claim_custom_id" : true
+        }
+      }'
+---
+# Source: stargate/templates/configmap-nginx-kong-template.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stargate-nginx-kong-template
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+data:
+  nginx_kong.lua: |
+  
+    return [[
+    charset UTF-8;
+    server_tokens off;
+    
+    error_log ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
+    
+    lua_package_path       '${{LUA_PACKAGE_PATH}};;';
+    lua_package_cpath      '${{LUA_PACKAGE_CPATH}};;';
+    lua_socket_pool_size   ${{LUA_SOCKET_POOL_SIZE}};
+    lua_socket_log_errors  off;
+    lua_max_running_timers 4096;
+    lua_max_pending_timers 16384;
+    lua_ssl_verify_depth   ${{LUA_SSL_VERIFY_DEPTH}};
+    > if lua_ssl_trusted_certificate_combined then
+    lua_ssl_trusted_certificate '${{LUA_SSL_TRUSTED_CERTIFICATE_COMBINED}}';
+    > end
+    
+    lua_shared_dict kong                        5m;
+    lua_shared_dict kong_locks                  8m;
+    lua_shared_dict kong_healthchecks           5m;
+    lua_shared_dict kong_process_events         5m;
+    lua_shared_dict kong_cluster_events         5m;
+    lua_shared_dict kong_rate_limiting_counters 12m;
+    lua_shared_dict kong_core_db_cache          ${{MEM_CACHE_SIZE}};
+    lua_shared_dict kong_core_db_cache_miss     12m;
+    lua_shared_dict kong_db_cache               ${{MEM_CACHE_SIZE}};
+    lua_shared_dict kong_db_cache_miss          12m;
+    > if database == "off" then
+    lua_shared_dict kong_core_db_cache_2        ${{MEM_CACHE_SIZE}};
+    lua_shared_dict kong_core_db_cache_miss_2   12m;
+    lua_shared_dict kong_db_cache_2             ${{MEM_CACHE_SIZE}};
+    lua_shared_dict kong_db_cache_miss_2        12m;
+    > end
+    > if database == "cassandra" then
+    lua_shared_dict kong_cassandra              5m;
+    > end
+    
+    underscores_in_headers on;
+    > if ssl_ciphers then
+    ssl_ciphers ${{SSL_CIPHERS}};
+    > end
+    
+    # injected nginx_http_* directives
+    > for _, el in ipairs(nginx_http_directives) do
+    $(el.name) $(el.value);
+    > end
+    
+    init_by_lua_block {
+        Kong = require 'kong'
+        Kong.init()
+    }
+    
+    init_worker_by_lua_block {
+        Kong.init_worker()
+    }
+    
+    > if (role == "traditional" or role == "data_plane") and #proxy_listeners > 0 then
+    upstream kong_upstream {
+        server 0.0.0.1;
+    
+        # injected nginx_upstream_* directives
+    > for _, el in ipairs(nginx_upstream_directives) do
+        $(el.name) $(el.value);
+    > end
+    
+        balancer_by_lua_block {
+            Kong.balancer()
+        }
+    }
+    
+    server {
+        server_name kong;
+    > for _, entry in ipairs(proxy_listeners) do
+        listen $(entry.listener);
+    > end
+    
+        log_format log_proxy_json '{ "@timestamp": "$time_iso8601", '
+                     '"@service": "proxy", '
+                     '"@fields": { '
+                       '"source": "$http_x_real_ip", '
+                       '"status": "$status", '
+                       '"request_method": "$request_method", '
+                       '"request_path": "$uri", '
+                       '"hostname_ingress": "$host", '
+                       '"hostname_upstream": "$http_remote_api_url", '
+                       '"X-B3-TraceId": "$http_x_b3_traceid", '
+                       '"upstream_status": "$upstream_status", '
+                       '"sec_event_code": "$sec_event_code", '
+                       '"sec_event_details": "$sec_event_details", } }';
+    
+        log_format log_proxy_debug_json '{ "@timestamp": "$time_iso8601", '
+                     '"@service": "proxy", '
+                     '"@fields": { '
+                       '"source": "$http_x_real_ip", '
+                       '"status": "$status", '
+                       '"request_method": "$request_method", '
+                       '"request_path": "$uri", '
+                       '"request_time": "$request_time", '
+                       '"request_length": "$request_length", '
+                       '"response_body_length": "$body_bytes_sent", '
+                       '"connection_id": "$connection", '
+                       '"connection_requests": "$connection_requests", '
+                       '"hostname_ingress": "$host", '
+                       '"hostname_upstream": "$http_remote_api_url", '
+                       '"X-B3-TraceId": "$http_x_b3_traceid", '
+                       '"upstream_response_length": "$upstream_response_length", '
+                       '"upstream_response_time": "$upstream_response_time", '
+                       '"upstream_status": "$upstream_status", '
+                       '"sec_event_code": "$sec_event_code", '
+                       '"sec_event_details": "$sec_event_details", '
+                       '"http_user_agent": "$http_user_agent" } }';
+    
+        log_format log_admin_json '{ "@timestamp": "$time_iso8601", '
+                     '"@service": "admin", '
+                     '"@fields": { '
+                       '"source": "$http_x_real_ip", '
+                       '"remote_user": "$remote_user", '
+                       '"status": "$status", '
+                       '"request_method": "$request_method", '
+                       '"request_path": "$uri", '
+                       '"hostname_ingress": "$host", '
+                       '"sec_event_code": "$sec_event_code", '
+                       '"sec_event_details": "$sec_event_details", } }';
+    
+        log_format log_admin_debug_json '{ "@timestamp": "$time_iso8601", '
+                             '"@service": "admin", '
+                             '"@fields": { '
+                               '"source": "$http_x_real_ip", '
+                               '"remote_user": "$remote_user", '
+                               '"status": "$status", '
+                               '"request_method": "$request_method", '
+                               '"request_path": "$uri", '
+                               '"request_protocol": "$server_protocol", '
+                               '"request_time": "$request_time", '
+                               '"request_completion": "$request_completion", '
+                               '"request_length": "$request_length", '
+                               '"response_body_length": "$body_bytes_sent", '
+                               '"content_length": "$content_length", '
+                               '"content_type": "$content_type", '
+                               '"connection_id": "$connection", '
+                               '"connection_requests": "$connection_requests", '
+                               '"hostname_ingress": "$host", '
+                               '"hostname_pod": "$hostname", '
+                               '"sec_event_code": "$sec_event_code", '
+                               '"sec_event_details": "$sec_event_details", '
+                               '"http_user_agent": "$http_user_agent" } }';
+    
+        error_page 400 404 408 411 412 413 414 417 494 /kong_error_handler;
+        error_page 500 502 503 504                     /kong_error_handler;
+    
+        access_log ${{PROXY_ACCESS_LOG}} log_proxy_plain;
+        error_log  ${{PROXY_ERROR_LOG}} ${{LOG_LEVEL}};
+    
+    > if proxy_ssl_enabled then
+    > for i = 1, #ssl_cert do
+        ssl_certificate     $(ssl_cert[i]);
+        ssl_certificate_key $(ssl_cert_key[i]);
+    > end
+        ssl_session_cache   shared:SSL:10m;
+        ssl_certificate_by_lua_block {
+            Kong.ssl_certificate()
+        }
+    > end
+    
+        # injected nginx_proxy_* directives
+    > for _, el in ipairs(nginx_proxy_directives) do
+        $(el.name) $(el.value);
+    > end
+    > for _, ip in ipairs(trusted_ips) do
+        set_real_ip_from $(ip);
+    > end
+    
+        rewrite_by_lua_block {
+            Kong.rewrite()
+        }
+    
+        access_by_lua_block {
+            Kong.access()
+        }
+    
+        header_filter_by_lua_block {
+            Kong.header_filter()
+        }
+    
+        body_filter_by_lua_block {
+            Kong.body_filter()
+        }
+    
+        log_by_lua_block {
+            Kong.log()
+        }
+    
+        location / {
+            default_type                     '';
+    
+            set $ctx_ref                     '';
+            set $upstream_te                 '';
+            set $upstream_host               '';
+            set $upstream_upgrade            '';
+            set $upstream_connection         '';
+            set $upstream_scheme             '';
+            set $upstream_uri                '';
+            set $upstream_x_forwarded_for    '';
+            set $upstream_x_forwarded_proto  '';
+            set $upstream_x_forwarded_host   '';
+            set $upstream_x_forwarded_port   '';
+            set $upstream_x_forwarded_path   '';
+            set $upstream_x_forwarded_prefix '';
+            set $kong_proxy_mode             'http';
+    
+            proxy_http_version      1.1;
+            proxy_buffering          on;
+            proxy_request_buffering  on;
+    
+            proxy_set_header      TE                 $upstream_te;
+            proxy_set_header      Host               $upstream_host;
+            proxy_set_header      Upgrade            $upstream_upgrade;
+            proxy_set_header      Connection         $upstream_connection;
+            proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            proxy_set_header      X-Real-IP          $remote_addr;
+            proxy_pass_header     Server;
+            proxy_pass_header     Date;
+            proxy_ssl_name        $upstream_host;
+            proxy_ssl_server_name on;
+    > if client_ssl then
+            proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+            proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+        }
+    
+        location @unbuffered {
+            internal;
+            default_type         '';
+            set $kong_proxy_mode 'unbuffered';
+    
+            proxy_http_version      1.1;
+            proxy_buffering         off;
+            proxy_request_buffering off;
+    
+            proxy_set_header      TE                 $upstream_te;
+            proxy_set_header      Host               $upstream_host;
+            proxy_set_header      Upgrade            $upstream_upgrade;
+            proxy_set_header      Connection         $upstream_connection;
+            proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            proxy_set_header      X-Real-IP          $remote_addr;
+            proxy_pass_header     Server;
+            proxy_pass_header     Date;
+            proxy_ssl_name        $upstream_host;
+            proxy_ssl_server_name on;
+    > if client_ssl then
+            proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+            proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+        }
+    
+        location @unbuffered_request {
+            internal;
+            default_type         '';
+            set $kong_proxy_mode 'unbuffered';
+    
+            proxy_http_version      1.1;
+            proxy_buffering          on;
+            proxy_request_buffering off;
+    
+            proxy_set_header      TE                 $upstream_te;
+            proxy_set_header      Host               $upstream_host;
+            proxy_set_header      Upgrade            $upstream_upgrade;
+            proxy_set_header      Connection         $upstream_connection;
+            proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            proxy_set_header      X-Real-IP          $remote_addr;
+            proxy_pass_header     Server;
+            proxy_pass_header     Date;
+            proxy_ssl_name        $upstream_host;
+            proxy_ssl_server_name on;
+    > if client_ssl then
+            proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+            proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+        }
+    
+        location @unbuffered_response {
+            internal;
+            default_type         '';
+            set $kong_proxy_mode 'unbuffered';
+    
+            proxy_http_version      1.1;
+            proxy_buffering         off;
+            proxy_request_buffering  on;
+    
+            proxy_set_header      TE                 $upstream_te;
+            proxy_set_header      Host               $upstream_host;
+            proxy_set_header      Upgrade            $upstream_upgrade;
+            proxy_set_header      Connection         $upstream_connection;
+            proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            proxy_set_header      X-Real-IP          $remote_addr;
+            proxy_pass_header     Server;
+            proxy_pass_header     Date;
+            proxy_ssl_name        $upstream_host;
+            proxy_ssl_server_name on;
+    > if client_ssl then
+            proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+            proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+        }
+    
+        location @grpc {
+            internal;
+            default_type         '';
+            set $kong_proxy_mode 'grpc';
+    
+            grpc_set_header      TE                 $upstream_te;
+            grpc_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            grpc_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            grpc_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            grpc_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            grpc_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            grpc_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            grpc_set_header      X-Real-IP          $remote_addr;
+            grpc_pass_header     Server;
+            grpc_pass_header     Date;
+            grpc_ssl_name        $upstream_host;
+            grpc_ssl_server_name on;
+    > if client_ssl then
+            grpc_ssl_certificate ${{CLIENT_SSL_CERT}};
+            grpc_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            grpc_pass            $upstream_scheme://kong_upstream;
+        }
+    
+        location = /kong_buffered_http {
+            internal;
+            default_type         '';
+            set $kong_proxy_mode 'http';
+    
+            rewrite_by_lua_block       {;}
+            access_by_lua_block        {;}
+            header_filter_by_lua_block {;}
+            body_filter_by_lua_block   {;}
+            log_by_lua_block           {;}
+    
+            proxy_http_version 1.1;
+            proxy_set_header      TE                 $upstream_te;
+            proxy_set_header      Host               $upstream_host;
+            proxy_set_header      Upgrade            $upstream_upgrade;
+            proxy_set_header      Connection         $upstream_connection;
+            proxy_set_header      X-Forwarded-For    $upstream_x_forwarded_for;
+            proxy_set_header      X-Forwarded-Proto  $upstream_x_forwarded_proto;
+            proxy_set_header      X-Forwarded-Host   $upstream_x_forwarded_host;
+            proxy_set_header      X-Forwarded-Port   $upstream_x_forwarded_port;
+            proxy_set_header      X-Forwarded-Path   $upstream_x_forwarded_path;
+            proxy_set_header      X-Forwarded-Prefix $upstream_x_forwarded_prefix;
+            proxy_set_header      X-Real-IP          $remote_addr;
+            proxy_pass_header     Server;
+            proxy_pass_header     Date;
+            proxy_ssl_name        $upstream_host;
+            proxy_ssl_server_name on;
+    > if client_ssl then
+            proxy_ssl_certificate ${{CLIENT_SSL_CERT}};
+            proxy_ssl_certificate_key ${{CLIENT_SSL_CERT_KEY}};
+    > end
+            proxy_pass            $upstream_scheme://kong_upstream$upstream_uri;
+        }
+    
+        location = /kong_error_handler {
+            internal;
+            default_type                 '';
+    
+            uninitialized_variable_warn  off;
+    
+            rewrite_by_lua_block {;}
+            access_by_lua_block  {;}
+    
+            content_by_lua_block {
+                Kong.handle_error()
+            }
+        }
+    }
+    > end -- (role == "traditional" or role == "data_plane") and #proxy_listeners > 0
+    
+    > if (role == "control_plane" or role == "traditional") and #admin_listeners > 0 then
+    server {
+        server_name kong_admin;
+    > for _, entry in ipairs(admin_listeners) do
+        listen $(entry.listener);
+    > end
+    
+        access_log ${{ADMIN_ACCESS_LOG}} log_admin_plain;
+        error_log  ${{ADMIN_ERROR_LOG}} ${{LOG_LEVEL}};
+    
+    > if admin_ssl_enabled then
+    > for i = 1, #admin_ssl_cert do
+        ssl_certificate     $(admin_ssl_cert[i]);
+        ssl_certificate_key $(admin_ssl_cert_key[i]);
+    > end
+        ssl_session_cache   shared:AdminSSL:10m;
+    > end
+    
+        # injected nginx_admin_* directives
+    > for _, el in ipairs(nginx_admin_directives) do
+        $(el.name) $(el.value);
+    > end
+    
+        location / {
+            # added by Team Io
+            auth_basic "TARDIS Administrator’s Area";
+            auth_basic_user_file /opt/kong/.htpasswd;
+    
+            default_type application/json;
+            content_by_lua_block {
+                Kong.admin_content()
+            }
+            header_filter_by_lua_block {
+                Kong.admin_header_filter()
+            }
+        }
+    
+        location /nginx_status {
+            internal;
+            access_log off;
+            stub_status;
+        }
+    
+        location /robots.txt {
+            return 200 'User-agent: *\nDisallow: /';
+        }
+    }
+    > end -- (role == "control_plane" or role == "traditional") and #admin_listeners > 0
+    
+    > if #status_listeners > 0 then
+    server {
+        server_name kong_status;
+    > for _, entry in ipairs(status_listeners) do
+        listen $(entry.listener);
+    > end
+    
+        access_log ${{STATUS_ACCESS_LOG}};
+        error_log  ${{STATUS_ERROR_LOG}} ${{LOG_LEVEL}};
+    
+    > if status_ssl_enabled then
+    > for i = 1, #status_ssl_cert do
+        ssl_certificate     $(status_ssl_cert[i]);
+        ssl_certificate_key $(status_ssl_cert_key[i]);
+    > end
+        ssl_session_cache   shared:StatusSSL:1m;
+    > end
+    
+        # injected nginx_status_* directives
+    > for _, el in ipairs(nginx_status_directives) do
+        $(el.name) $(el.value);
+    > end
+    
+        location / {
+            default_type application/json;
+            content_by_lua_block {
+                Kong.status_content()
+            }
+            header_filter_by_lua_block {
+                Kong.status_header_filter()
+            }
+        }
+    
+        location /nginx_status {
+            internal;
+            access_log off;
+            stub_status;
+        }
+    
+        location /robots.txt {
+            return 200 'User-agent: *\nDisallow: /';
+        }
+    }
+    > end
+    
+    > if role == "control_plane" then
+    server {
+        server_name kong_cluster_listener;
+    > for _, entry in ipairs(cluster_listeners) do
+        listen $(entry.listener) ssl;
+    > end
+    
+        access_log ${{ADMIN_ACCESS_LOG}};
+    
+    > if cluster_mtls == "shared" then
+        ssl_verify_client   optional_no_ca;
+    > else
+        ssl_verify_client   on;
+        ssl_client_certificate ${{CLUSTER_CA_CERT}};
+        ssl_verify_depth     4;
+    > end
+        ssl_certificate     ${{CLUSTER_CERT}};
+        ssl_certificate_key ${{CLUSTER_CERT_KEY}};
+        ssl_session_cache   shared:ClusterSSL:10m;
+    
+        location = /v1/outlet {
+            content_by_lua_block {
+                Kong.serve_cluster_listener()
+            }
+        }
+    }
+    > end -- role == "control_plane"
+    ]]
+---
+# Source: stargate/templates/configmap-nginx-servers.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stargate-nginx-servers
+  labels:
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+data:
+  servers.conf: |
+      # Kong Prometheus Exporter
+      server {
+          server_name kong_prometheus_exporter;
+          listen 0.0.0.0:9542;
+          access_log off;
+
+          location /metrics {
+              default_type text/plain;
+              content_by_lua_block {
+                  local prometheus = require "kong.plugins.prometheus.exporter"
+                  prometheus:collect()
+              }
+          }
+
+          location /nginx_status {
+              internal;
+              stub_status;
+          }
+      }
+---
+# Source: stargate/templates/configmap-pipeline-metadata.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stargate-pipeline-metadata
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+data:
+  chart: stargate-0.0.0
+---
+# Source: stargate/templates/pvc-postgresql.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stargate-database-pvc
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: gp2
+  resources: 
+    requests:
+      storage: 1Gi
+---
+# Source: stargate/templates/service-admin.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stargate-admin
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  selector: 
+    app.kubernetes.io/instance: stargate-kong
+  ports:
+  - name: admin
+    port: 8001
+    targetPort: 8001
+    protocol: TCP
+---
+# Source: stargate/templates/service-metrics.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stargate-metrics
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+    tardis.telekom.de/cluster: "Default"
+    tardis.telekom.de/namespace: "default"
+    tardis.telekom.de/product: "stargate"
+    tardis.telekom.de/team: "io"
+    tardis.telekom.de/environment: "default"
+    tardis.telekom.de/subproduct: "stargate"
+spec:
+  selector: 
+    app.kubernetes.io/instance: stargate-kong
+  ports:
+  - name: metrics
+    port: 9542
+    targetPort: metrics
+    protocol: TCP
+  - name: jumper-metrics
+    port: 9544
+    targetPort: jumper
+    protocol: TCP
+---
+# Source: stargate/templates/service-postgresql.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stargate-postgres
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  selector: 
+    app.kubernetes.io/instance: stargate-postgresql
+  ports:
+  - name: postgresql
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+---
+# Source: stargate/templates/service-proxy.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: stargate-proxy
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  selector: 
+    app.kubernetes.io/instance: stargate-kong
+  ports:
+  - name: proxy
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+---
+# Source: stargate/templates/deployment-kong.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stargate
+  annotations:
+    ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
+    checksum/secret-kong: 3ba5c182641e1ae13c7d4504069c1078389215bac6f68b201b5dd325875c6b77
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app.kubernetes.io/instance: stargate-kong
+  template:
+    metadata:
+      annotations:
+        ops.eni.telekom.de/pipeline-meta-ref: stargate-pipeline-metadata
+        checksum/secret-kong: 3ba5c182641e1ae13c7d4504069c1078389215bac6f68b201b5dd325875c6b77
+        prometheus.io/path: '/metrics'
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9542'
+      labels:
+        app: stargate
+        app.kubernetes.io/name: kong
+        app.kubernetes.io/instance: stargate-kong
+        app.kubernetes.io/component: api-gateway
+        app.kubernetes.io/part-of: tif-runtime
+        tif.telekom.de/group: tif
+        tardis.telekom.de/cluster: "Default"
+        tardis.telekom.de/namespace: "default"
+        tardis.telekom.de/product: "stargate"
+        tardis.telekom.de/team: "io"
+        tardis.telekom.de/environment: "default"
+        tardis.telekom.de/subproduct: "stargate"
+    spec:      
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - stargate-kong
+              topologyKey: "kubernetes.io/hostname"
+      initContainers:
+      - name: kong-install-plugins
+        image: mtr.devops.telekom.de/tardis-common/kong-plugins:2.1.2
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        resources: 
+          limits:
+            cpu: 0.5
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 200Mi
+        command:
+        - /bin/sh
+        - -c
+        - |-
+          mkdir -p /tmp/plugins
+          cp -r /usr/local/kong/plugins/. /tmp/plugins
+          luarocks-admin make-manifest /tmp/plugins
+          luarocks --from=/tmp/plugins install --local kong-plugin-jwt-keycloak
+          luarocks --from=/tmp/plugins install --local kong-plugin-eni-zipkin
+          luarocks --from=/tmp/plugins install --local kong-plugin-eni-prometheus
+          luarocks --from=/tmp/plugins install --local luaossl OPENSSL_DIR=/usr/local/kong CRYPTO_DIR=/usr/local/kong
+        volumeMounts:        
+        - name: local-luarocks
+          mountPath: /home/kong/.luarocks
+        - name: kongplugins-tmp
+          mountPath: /tmp
+      containers:
+      - name: jumper
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:2.3.4.3
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        resources: 
+          limits:
+            cpu: 4
+            memory: 2Gi
+          requests:
+            cpu: 2
+            memory: 1Gi
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "65"]
+        ports:
+        - containerPort: 8080 
+          name: jumper
+          protocol: TCP
+        volumeMounts:        
+        - name: kong-jumper-tmp
+          mountPath: /tmp
+        env:
+        - name: JUMPER_PORT
+          value: "8080"        
+        - name: JUMPER_ISSUER_URL
+          value: https://localhost:443
+        - name: TRACING_URL
+          value: http://guardians-drax-collector.skoll:9411
+        - name: STARGATE_URL
+          value: https://stargate-integration.test.dhei.telekom.de
+        - name: JVM_OPTS
+          value: -XX:MaxRAMPercentage=80.0 -XshowSettings:vm
+        - name: PUBLISH_EVENT_URL
+          value: http://producer.integration:8080/v1/events
+        - name: JUMPER_NAME
+          value: 
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: jumper
+            scheme: HTTP
+          initialDelaySeconds: 25
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: jumper
+            scheme: HTTP
+          initialDelaySeconds: 25
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 6
+      - name: issuer-service
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/issuer-service:1.9.0
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        resources: 
+          limits:
+            cpu: 0.5
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 200Mi
+        ports:
+        - containerPort: 8081 
+          name: issuer-service
+          protocol: TCP
+        volumeMounts:        
+        - name: kong-issuer-tmp
+          mountPath: /tmp
+        env:        
+        - name: JUMPER_ISSUER_URL
+          value: https://localhost:443
+        - name: ISSUER_CERT
+          valueFrom:
+            secretKeyRef:
+              name: stargate-issuer-service
+              key: jsonWebKey
+        - name: ISSUER_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stargate-issuer-service
+              key: publicKey
+      - name: circuitbreaker
+        image: mtr.devops.telekom.de/tardis-internal/hyperion/gateway-circuitbreaker:1.0.3
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        resources: 
+          limits:
+            cpu: 0.5
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 200Mi
+        ports:
+        - name: circuitbreaker
+          containerPort: 8084 
+          protocol: TCP
+        volumeMounts:        
+        - name: kong-circuitbreaker-tmp
+          mountPath: /tmp
+        env:        
+        - name: KONG_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: gatewayAdminApiKey
+        - name: KONG_URL
+          value: http://localhost:8001
+        - name: INTERVAL
+          value: 60s
+        - name: COUNT
+          value: "4"
+      - name: kong
+        image: mtr.devops.telekom.de/tardis-common/kong:2.8.1-alpine
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        env:        
+        - name: KONG_NGINX_WORKER_PROCESSES
+          value: 'auto'
+        - name: KONG_NGINX_HTTP_INCLUDE
+          value: '/opt/kong/nginx/servers.conf'
+        - name: KONG_NGINX_HTTP_LUA_SHARED_DICT
+          value: 'prometheus_metrics 15m'        
+        - name: KONG_PLUGINS
+          value: bundled,eni-zipkin,jwt-keycloak,eni-prometheus
+        - name: KONG_LUA_PACKAGE_PATH
+          value: "/opt/?.lua;;"        
+        - name: KONG_MEM_CACHE_SIZE
+          value: '128m'
+        - name: KONG_PREFIX
+          value: /kong
+        - name: KONG_DATABASE
+          value: postgres
+        - name: KONG_PG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: postgresPassword
+        - name: KONG_PG_PORT
+          value: '5432'
+        - name: KONG_PG_HOST
+          value: 'stargate-postgres.default'
+        - name: KONG_PG_USER
+          value: 'kong'
+        - name: KONG_PG_DATABASE
+          value: 'kong'
+        - name: KONG_PG_SCHEMA
+          value: 'public'
+        - name: KONG_PROXY_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_PROXY_ERROR_LOG
+          value: "/dev/stderr"
+        - name: KONG_SSL_CIPHER_SUITE
+          value: custom
+        - name: KONG_SSL_CIPHERS
+          value: ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES256-SHA256:DHE-DSS-AES128-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384
+        - name: KONG_NGINX_HTTP_SSL_PROTOCOLS
+          value: "TLSv1.2 TLSv1.3"
+        - name: KONG_PROXY_LISTEN
+          value: '0.0.0.0:8000'
+        - name: KONG_ADMIN_LISTEN
+          value: '0.0.0.0:8001'
+        - name: KONG_STATUS_LISTEN
+          value: '0.0.0.0:8100'
+        - name: KONG_ADMIN_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_ADMIN_ERROR_LOG
+          value: "/dev/stderr"
+        command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
+        resources: 
+          limits:
+            cpu: 3
+            memory: 3500Mi
+          requests:
+            cpu: 1
+            memory: 2Gi
+        ports:
+        - name: proxy
+          containerPort: 8000
+          protocol: TCP
+        - name: metrics
+          containerPort: 9542
+          protocol: TCP
+        - name: admin
+          containerPort: 8001
+          protocol: TCP
+        - name: status
+          containerPort: 8100
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: status
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:        
+        - name: local-luarocks
+          mountPath: /home/kong/.luarocks
+        - name: kong-prefix-dir
+          mountPath: /kong
+        - name: kong-tmp
+          mountPath: /tmp
+        - name: nginx-kong-template
+          mountPath: /usr/local/share/lua/5.1/kong/templates/nginx_kong.lua
+          subPath: nginx_kong.lua
+        - name: htpasswd
+          mountPath: /opt/kong/.htpasswd
+          subPath: .htpasswd
+        - name: nginx-servers
+          mountPath: /opt/kong/nginx
+      volumes:      
+      - name: kongplugins-tmp
+        emptyDir: {}      
+      - name: local-luarocks
+        emptyDir: {}
+      - name: kong-prefix-dir
+        emptyDir: {}
+      - name: kong-tmp
+        emptyDir: {}
+      - name: nginx-kong-template
+        configMap:
+          name: stargate-nginx-kong-template
+      - name: htpasswd
+        secret:
+          secretName: stargate-htpasswd
+      - name: nginx-servers
+        configMap:
+          name: stargate-nginx-servers      
+      - name: kong-jumper-tmp
+        emptyDir: {}      
+      - name: kong-issuer-tmp
+        emptyDir: {}      
+      - name: kong-circuitbreaker-tmp
+        emptyDir: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 80
+---
+# Source: stargate/templates/deployment-postgresql.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stargate-postgresql
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: stargate-postgresql
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: 
+      app.kubernetes.io/instance: stargate-postgresql
+  template:
+    metadata:
+      labels:
+        app: stargate
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/instance: stargate-postgresql
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: tif-runtime
+        tif.telekom.de/group: tif
+        tardis.telekom.de/cluster: "Default"
+        tardis.telekom.de/namespace: "default"
+        tardis.telekom.de/product: "stargate"
+        tardis.telekom.de/team: "io"
+        tardis.telekom.de/environment: "default"
+        tardis.telekom.de/subproduct: "stargate-database"
+    spec:      
+      containers:
+      - name: stargate-postgresql
+        image: mtr.devops.telekom.de/tardis-common/postgres:12.3-debian
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        env:        
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        - name: POSTGRES_USER
+          value: kong
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: postgresPassword
+        - name: POSTGRES_DB
+          value: kong
+        # for centos and rhel we do have different environment variables
+        - name: POSTGRESQL_USER
+          value: kong
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: postgresPassword
+        - name: POSTGRESQL_DATABASE
+          value: kong
+        livenessProbe:
+          tcpSocket:
+            port:  5432
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - 'pg_isready -U kong'
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 100m
+            memory: 500Mi
+          requests:
+            cpu: 20m
+            memory: 200Mi
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /tmp
+          name: stargate-postgresql-tmp
+        - mountPath: /var/run/postgresql
+          name: stargate-postgresql-run
+        - mountPath: /var/lib/postgresql/data
+          name: stargate-postgresql-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: stargate-postgresql-run
+        emptyDir: {}
+      - name: stargate-postgresql-tmp
+        emptyDir: {}
+      - name: stargate-postgresql-data
+        persistentVolumeClaim:
+          claimName: stargate-database-pvc
+---
+# Source: stargate/templates/ingress-admin.yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: stargate-admin
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+  annotations: {}
+spec:
+  rules:
+  - host: stargate-admin-default.lab.tif.telekom.de
+    http:
+      paths:
+        - path: /admin-api
+          backend:
+            serviceName: stargate-proxy
+            servicePort: proxy
+  tls:
+  - hosts:
+    - stargate-admin-default.lab.tif.telekom.de
+---
+# Source: stargate/templates/ingress-proxy.yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: stargate-proxy
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+  annotations: {}
+spec:
+  rules:
+  - host: stargate-default.lab.tif.telekom.de
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: stargate-proxy
+            servicePort: proxy
+  tls:
+  - hosts:
+    - stargate-default.lab.tif.telekom.de
+---
+# Source: stargate/templates/servicemonitor-kong.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: stargate
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+    release: guardians-raccoon
+  namespace: default
+spec:
+  selector:
+    matchLabels: 
+      app.kubernetes.io/instance: stargate-kong
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: metrics
+      path: /metrics
+      metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: "kong_eni_(.+)"
+        action: drop
+    - port: jumper-metrics
+      path: '/actuator/prometheus'  
+  targetLabels:
+  - tardis.telekom.de/cluster
+  - tardis.telekom.de/product
+  - tardis.telekom.de/subproduct
+  - tardis.telekom.de/namespace
+  - tardis.telekom.de/team
+  - tardis.telekom.de/environment
+  - app
+  - type
+  - routeId
+---
+# Source: stargate/templates/job-kong-configuration.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stargate-kong-configuration
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "5"
+spec:
+  backoffLimit: 15
+  activeDeadlineSeconds: 3600
+  template:
+    spec:      
+      containers:
+      - name: stargate-kong-admin-route
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
+        imagePullPolicy: IfNotPresent
+        securityContext: 
+          {}
+        command: [ "/bin/sh" ]
+        args: [ "-c", "/tmp/configuration.sh" ]
+        env:
+        - name: X_TARDIS_GATEWAY_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: gatewayAdminApiKey
+        volumeMounts:        
+        - name: kong-configuration
+          mountPath: /tmp
+      restartPolicy: OnFailure
+      volumes:      
+      - name: kong-configuration
+        configMap:
+          name: stargate-configuration
+          defaultMode: 0555
+---
+# Source: stargate/templates/job-prometheus-setup.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stargate-prometheus-setup
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 15
+  activeDeadlineSeconds: 3600
+  template:
+    spec:      
+      containers:
+      - name: stargate-prometheus-setup
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
+        securityContext: 
+          {}
+        env:
+        - name: X_TARDIS_GATEWAY_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: gatewayAdminApiKey
+        - name: KONG_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: kongAdminPassword
+        command:        
+          - /bin/bash
+          - -c
+          - |-
+            echo "Enabling Kong plugin via PUT http://stargate-admin.default:8001/plugins"
+
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" -X GET http://stargate-admin.default:8001`
+            if [ "$HTTP_RETURN_CODE" == "200" ]; then
+              curl \
+              -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+              -X PUT http://stargate-admin.default:8001/plugins/3d232d3c-dc2b-4705-aa8d-4e07c4e0ff4c \
+              --header 'Content-Type: application/json' \
+              --data \
+              '{
+                "name" : "eni-prometheus",
+                "tags" : ["tardis","eni-prometheus"],
+                "config" : {
+                  "customer_facing" : "false",
+                  "eni_stat" : true
+                }
+              }'
+            else
+                echo "Kong Admin-API unreachable"
+                exit 1
+            fi
+      restartPolicy: OnFailure
+---
+# Source: stargate/templates/job-zipkin-setup.yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stargate-zipkin-setup
+  labels: 
+    app: stargate
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/instance: stargate-kong
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/part-of: tif-runtime
+    tif.telekom.de/group: tif
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 15
+  activeDeadlineSeconds: 3600
+  template:
+    spec:      
+      containers:
+      - name: tif-base-image
+        image: mtr.devops.telekom.de/tardis-common/tif-base-image:1.0.0
+        securityContext: 
+          {}
+        env:
+        - name: X_TARDIS_GATEWAY_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: gatewayAdminApiKey
+        - name: KONG_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stargate
+              key: kongAdminPassword
+        command:        
+          - /bin/bash
+          - -c
+          - |- 
+            echo "Enabling Kong eni-zipkin plugin via PUT http://stargate-admin.default:8001/plugins"
+
+            HTTP_RETURN_CODE=`curl -Is -o /dev/null -w "%{http_code}" -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" -X GET http://stargate-admin.default:8001`
+            if [ "$HTTP_RETURN_CODE" == "200" ]; then
+              curl \
+              -H "Authorization:Basic $X_TARDIS_GATEWAY_ADMIN" \
+              -H "Kong-Admin-Token:$KONG_ADMIN_PASSWORD" \
+              -X PUT http://stargate-admin.default:8001/plugins/e8ff1211-816f-4d93-9011-a4b194586073 \
+              --header 'Content-Type: application/json' \
+              --data \
+              '{
+                "name" : "eni-zipkin",
+                "tags" : ["tardis","eni-zipkin"],
+                "config" : {
+                  "http_endpoint" : "http://jaeger-collector.default:9411/api/v2/spans",
+                  "sample_ratio" : 0.001,
+                  "include_credential" : true,
+                  "default_service_name" : "stargate",
+                  "local_component_name" : "stargate"
+                }
+              }'
+            else
+                echo "Kong Admin-API unreachable"
+                exit 1
+            fi
+      restartPolicy: OnFailure

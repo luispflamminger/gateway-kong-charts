@@ -1,0 +1,23 @@
+issuerService:
+  jsonWebKey: ignore
+  publicKey: ignore
+
+plugins:
+  jwtKeycloak:
+    allowedIss: 
+      - https://somehost.tardis.telekom.de/auth/realms/default
+
+global:
+  database:
+    password: someDbPassword
+
+adminApi:
+  gatewayAdminApiKey: someAdminPassword
+  ingress:
+    tlsSecret: lab-tardis-wildcard
+    altHostname: stargate-admin-oldzone.lab.tardis.telekom.de
+
+proxy:
+  ingress:
+    tlsSecret: lab-tardis-wildcard
+    altHostname: stargate-oldzone.lab.tardis.telekom.de
