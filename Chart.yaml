@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Deutsche Telekom AG
+#
+# SPDX-License-Identifier: Apache-2.0
+
 apiVersion: v2
 name: stargate
 version: 5.4.10
@@ -7,11 +11,5 @@ dependencies:
 - name: postgresql
   version: 1.0.0
 maintainers:
-- name: Mike Herwig
-  email: Mike.Herwig@external.t-systems.com
-- name: Christian Stein
-  email: steinc@external.telekom.de
-- name: Christian Knott
-  email: christian.knott@external.telekom.de
-- name: Tomas Bilek
-  email: tomas.bilek@t-mobile.cz
+- name: Team Hyperion
+  email: DTIT_ENI_Hub_Team_Hyperion@telekom.de
