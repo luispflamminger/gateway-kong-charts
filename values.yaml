@@ -198,6 +198,9 @@ jobs: {}
 #dbUpdateFrequency: 10
 #dbUpdatePropagation: 0
 #httpClientBodyBufferSize: 4m
+#trustedIps: 100.70.0.0/16
+#realIpHeader: x-original-forwarded-for
+#realIpRecursive: OFF
 
 replicas: 1
 
