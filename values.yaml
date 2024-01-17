@@ -27,10 +27,10 @@ global:
   # change the values below to overwrite the repository globally
   # set "force: true" to perform string replacement in "image: repository/organization/name:tag" too
   # for example:
-  #image:
-  #   repository: harbor.das-schiff.telekom.de
-  #   organization: tardis
-  #  force: false
+  # image:
+  #   repository: mtr.devops.telekom.de
+  #   organization: tardis-common
+  #   force: false
   image:
     #repository: mtr.devops.telekom.de
     #organization: tardis-common
