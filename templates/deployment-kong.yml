@@ -55,10 +55,6 @@ spec:
         imagePullPolicy: {{ .Values.jumper.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ include "platformSpecificValue" (list $ . ".Values.jumper.containerSecurityContext") | default "{}" | nindent 10 }}
         resources: {{ .Values.jumper.resources | toYaml | nindent 10 }}
-        lifecycle:
-          preStop:
-            exec:
-              command: ["sleep", "65"]
         ports:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
@@ -275,4 +271,4 @@ spec:
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      terminationGracePeriodSeconds: 80
+      terminationGracePeriodSeconds: 65
