@@ -14,6 +14,7 @@ Please also seek advice from the README regarding updates.
 ## 5.4.13
 - jumper 3.11.0
 - graceful shutdown with smaller timeouts for kong, jumper. issuer-service
+- pod antiAffinity to required
 
 ## 5.4.12
 - jumper 3.10.0
