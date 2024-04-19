@@ -351,7 +351,7 @@ jumper:
     #name: jumper-sse
     #tag: 3.6.1
   # Or use the flattened string form:
-  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.10.0
+  #image: mtr.devops.telekom.de/tardis-internal/hyperion/jumper-sse:3.x.0
   #imagePullPolicy: IfNotPresent
   issuerUrl: https://localhost:443
   #tracingUrl: http://guardians-drax-collector.skoll:9411
