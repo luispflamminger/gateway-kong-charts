@@ -58,7 +58,7 @@ spec:
         lifecycle:
           preStop:
             exec:
-              command: ["sleep", "65"]
+              command: ["sleep", "6"]
         ports:
         - containerPort: {{ .Values.jumper.port | default 8080 }} 
           name: jumper
@@ -108,7 +108,7 @@ spec:
         lifecycle:
           preStop:
             exec:
-              command: ["sleep", "65"]
+              command: ["sleep", "6"]
         ports:
         - containerPort: {{ .Values.legacyJumper.port | default 8082 }} 
           name: legacy-jumper
@@ -146,6 +146,10 @@ spec:
         imagePullPolicy: {{ .Values.issuerService.imagePullPolicy | default .Values.global.imagePullPolicy }}
         securityContext: {{ include "platformSpecificValue" (list $ . ".Values.issuerService.containerSecurityContext") | default "{}" | nindent 10 }}
         resources: {{ .Values.issuerService.resources | toYaml | nindent 10 }}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "6"]
         ports:
         - containerPort: {{ .Values.issuerService.port | default 8081 }} 
           name: issuer-service
@@ -209,6 +213,10 @@ spec:
         {{- include "kong.env" $ | indent 8 }}
         command: [ "/bin/sh", "-c", "KONG_NGINX_DAEMON='off' kong start" ]
         resources: {{ .Values.resources | toYaml | nindent 10 }}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 5; kong quit --timeout 60"]
         ports:
 {{- if .Values.proxy.tls.enabled }}
         - name: proxy-ssl
@@ -275,4 +283,4 @@ spec:
       {{- include "kong.issuerService.volumes" $ | indent 6 }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      terminationGracePeriodSeconds: 80
+      terminationGracePeriodSeconds: 65
