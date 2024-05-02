@@ -615,8 +615,8 @@ false
 - name: ZONE_HEALTH_DATABASE_PASSWORD
   valueFrom:
    secretKeyRef:
-    name: redis
-    key: redis-password
+    name: {{ .Values.jumper.databaseSecretName }}
+    key: {{ .Values.jumper.databaseSecretKey }}
 - name: ZONE_HEALTH_KEY_CHANNEL
   value: {{ .Values.jumper.zoneHealthKeyChannel }}
 - name: ZONE_HEALTH_REQUEST_GET_RATE
