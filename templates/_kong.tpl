@@ -612,11 +612,13 @@ false
   value: {{ .Values.jumper.zoneHealthDatabaseHost }}
 - name: ZONE_HEALTH_DATABASE_PORT
   value: {{ .Values.jumper.zoneHealthDatabasePort }}
+{{- if and .Values.jumper.databaseSecretName .Values.jumper.databaseSecretKey }}
 - name: ZONE_HEALTH_DATABASE_PASSWORD
   valueFrom:
    secretKeyRef:
     name: {{ .Values.jumper.databaseSecretName }}
     key: {{ .Values.jumper.databaseSecretKey }}
+{{- end}}
 - name: ZONE_HEALTH_KEY_CHANNEL
   value: {{ .Values.jumper.zoneHealthKeyChannel }}
 - name: ZONE_HEALTH_REQUEST_GET_RATE
