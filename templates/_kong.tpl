@@ -608,6 +608,25 @@ false
   value: {{ include "kong.jumper.collectorUrl" . }}
 - name: STARGATE_URL
   value: {{ .Values.jumper.stargateUrl }}
+- name: ZONE_HEALTH_DATABASE_HOST
+  value: {{ .Values.jumper.zoneHealthDatabaseHost }}
+- name: ZONE_HEALTH_DATABASE_PORT
+  value: {{ .Values.jumper.zoneHealthDatabasePort }}
+- name: ZONE_HEALTH_DATABASE_PASSWORD
+  valueFrom:
+   secretKeyRef:
+    name: redis
+    key: redis-password
+- name: ZONE_HEALTH_KEY_CHANNEL
+  value: {{ .Values.jumper.zoneHealthKeyChannel }}
+- name: ZONE_HEALTH_REQUEST_GET_RATE
+  value: {{ .Values.jumper.zoneHealthRequestGetRate }}
+- name: ZONE_HEALTH_REQUEST_CHANNEL_INIT
+  value: {{ .Values.jumper.zoneHealthRequestChannelInit }}  
+- name: ZONE_HEALTH_CACHE_CLEAR_RATE
+  value: {{ .Values.jumper.zoneHealthCacheClearRate }}
+- name: ZONE_HEALTH_DEFAULT
+  value: {{ .Values.jumper.zoneHealthDefault }}
 - name: JVM_OPTS
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL
