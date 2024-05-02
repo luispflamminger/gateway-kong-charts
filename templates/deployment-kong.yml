@@ -37,25 +37,26 @@ spec:
       {{- include "image_pull_secrets" $ | indent 6 }}
       affinity:
         podAntiAffinity:
+{{- if and (eq .Values.global.podAntiAffinity.required true) (ne .Values.global.platform "caas") }}
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchExpressions:
               - key: app.kubernetes.io/instance
                 operator: In
                 values:
-                - {{ .Release.Name }}-kong
+                  - {{ .Release.Name }}-kong
             topologyKey: kubernetes.io/hostname
-{{- if eq .Values.global.platform "caas" }}
+{{- else }}
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/instance
-                    operator: In
-                    values:
-                      - {{ .Release.Name }}-kong
-              topologyKey: topology.kubernetes.io/zone
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/instance
+                      operator: In
+                      values:
+                        - {{ .Release.Name }}-kong
+                topologyKey: {{ include "platformSpecificValue" (list $ . ".Values.topologyKey") | default "kubernetes.io/hostname" }}
 {{- end }}
       securityContext: {{ include "platformSpecificValue" (list $ . ".Values.podSecurityContext") | default "{}" | nindent 8 }}
       containers:
@@ -70,7 +71,7 @@ spec:
             exec:
               command: ["sleep", "6"]
         ports:
-        - containerPort: {{ .Values.jumper.port | default 8080 }} 
+        - containerPort: {{ .Values.jumper.port | default 8080 }}
           name: jumper
           protocol: TCP
         volumeMounts:
@@ -105,9 +106,9 @@ spec:
             scheme: HTTP
           initialDelaySeconds: {{ .Values.jumper.startupProbe.initialDelaySeconds | default 15 }}
           timeoutSeconds: {{ .Values.jumper.startupProbe.timeoutSeconds | default 1 }}
-          periodSeconds: {{ .Values.jumper.startupProbe.periodSeconds | default 5 }}
+          periodSeconds: {{ .Values.jumper.startupProbe.periodSeconds | default 1 }}
           successThreshold: 1
-          failureThreshold: {{ .Values.jumper.startupProbe.failureThreshold | default 40 }}
+          failureThreshold: {{ .Values.jumper.startupProbe.failureThreshold | default 285 }}
 {{- end }}
 {{- if eq .Values.legacyJumper.enabled true }}
       - name: legacy-jumper
@@ -192,11 +193,11 @@ spec:
             path: /actuator/health
             port: issuer-service
             scheme: HTTP
-          initialDelaySeconds: {{ .Values.issuerService.startupProbe.initialDelaySeconds | default 10 }}
+          initialDelaySeconds: {{ .Values.issuerService.startupProbe.initialDelaySeconds | default 15 }}
           timeoutSeconds: {{ .Values.issuerService.startupProbe.timeoutSeconds | default 1 }}
-          periodSeconds: {{ .Values.issuerService.startupProbe.periodSeconds | default 5 }}
+          periodSeconds: {{ .Values.issuerService.startupProbe.periodSeconds | default 1 }}
           successThreshold: 1
-          failureThreshold: {{ .Values.issuerService.startupProbe.failureThreshold | default 40 }}
+          failureThreshold: {{ .Values.issuerService.startupProbe.failureThreshold | default 285 }}
 {{- end }}
 {{- if eq .Values.circuitbreaker.enabled true }}
       - name: circuitbreaker
@@ -281,9 +282,9 @@ spec:
             scheme: HTTP
           initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds | default 5 }}
           timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds | default 1 }}
-          periodSeconds: {{ .Values.startupProbe.periodSeconds | default 5 }}
+          periodSeconds: {{ .Values.startupProbe.periodSeconds | default 1 }}
           successThreshold: 1
-          failureThreshold: {{ .Values.startupProbe.failureThreshold | default 40 }}
+          failureThreshold: {{ .Values.startupProbe.failureThreshold | default 295 }}
         terminationMessagePath: /dev/termination-log
         volumeMounts:
         {{- include "kong.volumeMounts" $ | indent 8 }}
