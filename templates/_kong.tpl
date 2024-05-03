@@ -612,6 +612,8 @@ false
   value: {{ .Values.jumper.zoneHealthDatabaseHost }}
 - name: ZONE_HEALTH_DATABASE_PORT
   value: {{ .Values.jumper.zoneHealthDatabasePort }}
+- name: ZONE_HEALTH_DATABASE_INDEX
+  value: {{ .Values.jumper.zoneHealthDatabaseIndex }}
 {{- if and .Values.jumper.databaseSecretName .Values.jumper.databaseSecretKey }}
 - name: ZONE_HEALTH_DATABASE_PASSWORD
   valueFrom:
