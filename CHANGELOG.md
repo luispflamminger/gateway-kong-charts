@@ -11,6 +11,12 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]]
+## 5.4.14
+- jumper 3.12.0
+- pod antiAffinity preferred by default, optionally required
+- labels update + added zone
+- startup probe interval 1s
+
 ## 5.4.13
 - jumper 3.11.0
 - graceful shutdown with smaller timeouts for kong, jumper. issuer-service
