@@ -15,7 +15,7 @@ global:
   #zone: ""
   labels:
     # fluentd label
-    tif.telekom.de/group: tif
+    tardis.telekom.de/group: tardis
   product: "stargate"
   ingress:
     #tlsSecret: ""
@@ -70,6 +70,9 @@ global:
     collectorUrl: "http://guardians-drax-collector.skoll:9411/api/v2/spans"
     defaultServiceName: "stargate"
     sampleRatio: 1
+
+  podAntiAffinity:
+    required: false
 
   failOnUnsetValues: true
 
