@@ -626,11 +626,11 @@ false
 - name: ZONE_HEALTH_REQUEST_GET_RATE
   value: {{ .Values.jumper.zoneHealthRequestGetRate | quote }}
 - name: ZONE_HEALTH_REQUEST_CHANNEL_INIT
-  value: {{ .Values.jumper.zoneHealthRequestChannelInit }}  
+  value: {{ .Values.jumper.zoneHealthRequestChannelInit | quote }}  
 - name: ZONE_HEALTH_CACHE_CLEAR_RATE
   value: {{ .Values.jumper.zoneHealthCacheClearRate | quote }}
 - name: ZONE_HEALTH_DEFAULT
-  value: {{ .Values.jumper.zoneHealthDefault }}
+  value: {{ .Values.jumper.zoneHealthDefault | quote }}
 - name: JVM_OPTS
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL
