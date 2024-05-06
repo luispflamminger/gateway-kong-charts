@@ -4,7 +4,7 @@ helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/name: kong
 {{ include "kong.selector" . }}
 app.kubernetes.io/component: api-gateway
-app.kubernetes.io/part-of: tif-runtime
+app.kubernetes.io/part-of: tardis-runtime
 {{ .Values.global.labels | toYaml }}
 {{- end -}}
 
@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.10.0" -}}
+{{- $imageTag := "3.12.0" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
