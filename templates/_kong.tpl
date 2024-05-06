@@ -611,9 +611,9 @@ false
 - name: ZONE_HEALTH_DATABASE_HOST
   value: {{ .Values.jumper.zoneHealthDatabaseHost }}
 - name: ZONE_HEALTH_DATABASE_PORT
-  value: {{ .Values.jumper.zoneHealthDatabasePort }}
+  value: {{ .Values.jumper.zoneHealthDatabasePort | quote }}
 - name: ZONE_HEALTH_DATABASE_INDEX
-  value: {{ .Values.jumper.zoneHealthDatabaseIndex }}
+  value: {{ .Values.jumper.zoneHealthDatabaseIndex | quote }}
 {{- if and .Values.jumper.databaseSecretName .Values.jumper.databaseSecretKey }}
 - name: ZONE_HEALTH_DATABASE_PASSWORD
   valueFrom:
@@ -624,11 +624,11 @@ false
 - name: ZONE_HEALTH_KEY_CHANNEL
   value: {{ .Values.jumper.zoneHealthKeyChannel }}
 - name: ZONE_HEALTH_REQUEST_GET_RATE
-  value: {{ .Values.jumper.zoneHealthRequestGetRate }}
+  value: {{ .Values.jumper.zoneHealthRequestGetRate | quote }}
 - name: ZONE_HEALTH_REQUEST_CHANNEL_INIT
   value: {{ .Values.jumper.zoneHealthRequestChannelInit }}  
 - name: ZONE_HEALTH_CACHE_CLEAR_RATE
-  value: {{ .Values.jumper.zoneHealthCacheClearRate }}
+  value: {{ .Values.jumper.zoneHealthCacheClearRate | quote }}
 - name: ZONE_HEALTH_DEFAULT
   value: {{ .Values.jumper.zoneHealthDefault }}
 - name: JVM_OPTS
