@@ -609,28 +609,30 @@ false
 - name: STARGATE_URL
   value: {{ .Values.jumper.stargateUrl }}
 - name: ZONE_HEALTH_DATABASE_HOST
-  value: {{ .Values.jumper.zoneHealthDatabaseHost }}
+  value: {{ .Values.jumper.zoneHealth.databaseHost }}
 - name: ZONE_HEALTH_DATABASE_PORT
-  value: {{ .Values.jumper.zoneHealthDatabasePort | quote }}
+  value: {{ .Values.jumper.zoneHealth.databasePort | quote }}
 - name: ZONE_HEALTH_DATABASE_INDEX
-  value: {{ .Values.jumper.zoneHealthDatabaseIndex | quote }}
-{{- if and .Values.jumper.databaseSecretName .Values.jumper.databaseSecretKey }}
+  value: {{ .Values.jumper.zoneHealth.databaseIndex | quote }}
+{{- if and .Values.jumper.zoneHealth.databaseSecretName .Values.jumper.zoneHealth.databaseSecretKey }}
 - name: ZONE_HEALTH_DATABASE_PASSWORD
   valueFrom:
    secretKeyRef:
-    name: {{ .Values.jumper.databaseSecretName }}
-    key: {{ .Values.jumper.databaseSecretKey }}
+    name: {{ .Values.jumper.zoneHealth.databaseSecretName }}
+    key: {{ .Values.jumper.zoneHealth.databaseSecretKey }}
 {{- end}}
 - name: ZONE_HEALTH_KEY_CHANNEL
-  value: {{ .Values.jumper.zoneHealthKeyChannel }}
+  value: {{ .Values.jumper.zoneHealth.keyChannel }}
+- name: ZONE_HEALTH_KEY_GET
+  value: {{ .Values.jumper.zoneHealth.keyGet }}
 - name: ZONE_HEALTH_REQUEST_GET_RATE
-  value: {{ .Values.jumper.zoneHealthRequestGetRate | quote }}
+  value: {{ .Values.jumper.zoneHealth.requestGetRate | quote }}
 - name: ZONE_HEALTH_REQUEST_CHANNEL_INIT
-  value: {{ .Values.jumper.zoneHealthRequestChannelInit | quote }}  
+  value: {{ .Values.jumper.zoneHealth.requestChannelInit | quote }}  
 - name: ZONE_HEALTH_CACHE_CLEAR_RATE
-  value: {{ .Values.jumper.zoneHealthCacheClearRate | quote }}
+  value: {{ .Values.jumper.zoneHealth.cacheClearRate | quote }}
 - name: ZONE_HEALTH_DEFAULT
-  value: {{ .Values.jumper.zoneHealthDefault | quote }}
+  value: {{ .Values.jumper.zoneHealth.defaultHealth | quote }}
 - name: JVM_OPTS
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL

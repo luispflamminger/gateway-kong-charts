@@ -383,6 +383,19 @@ jumper:
   #port: 8080
 
   #containerSecurityContext: {}
+  zoneHealth:
+    defaultHealth: true
+    #databaseHost: redis-master.integration.svc.cluster.local
+    databasePort: 6379
+    databaseIndex: 2
+    keyChannel: stargate-zone-status
+    keyGet: status-of-*
+    requestGetRate: 10000
+    requestChannelInit: true
+    cacheClearRate: 60000
+    databaseSecretName: redis
+    databaseSecretKey: redis-password
+
 
   resources:
     limits:
