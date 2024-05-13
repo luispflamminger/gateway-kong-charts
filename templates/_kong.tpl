@@ -604,6 +604,8 @@ false
 {{- define "kong.jumper.env" }}
 - name: JUMPER_ISSUER_URL
   value: {{ .Values.jumper.issuerUrl }}
+- name: JUMPER_ZONE_NAME
+  value: {{ .Values.global.zone }}
 - name: TRACING_URL
   value: {{ include "kong.jumper.collectorUrl" . }}
 - name: STARGATE_URL
