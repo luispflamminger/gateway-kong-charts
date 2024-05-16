@@ -610,6 +610,11 @@ false
   value: {{ include "kong.jumper.collectorUrl" . }}
 - name: STARGATE_URL
   value: {{ .Values.jumper.stargateUrl }}
+{{- if .Values.jumper.zoneHealth.enabled }}
+- name: ZONE_HEALTH_DATABASE_CONNECTTIMEOUT
+  value: {{ .Values.jumper.zoneHealth.databaseConnectionTimeout | quote }}
+- name: ZONE_HEALTH_DATABASE_TIMEOUT
+  value: {{ .Values.jumper.zoneHealth.databaseTimeout | quote }}
 - name: ZONE_HEALTH_DATABASE_HOST
   value: {{ .Values.jumper.zoneHealth.databaseHost }}
 - name: ZONE_HEALTH_DATABASE_PORT
@@ -625,16 +630,13 @@ false
 {{- end}}
 - name: ZONE_HEALTH_KEY_CHANNEL
   value: {{ .Values.jumper.zoneHealth.keyChannel }}
-- name: ZONE_HEALTH_KEY_GET
-  value: {{ .Values.jumper.zoneHealth.keyGet }}
-- name: ZONE_HEALTH_REQUEST_GET_RATE
-  value: {{ .Values.jumper.zoneHealth.requestGetRate | quote }}
-- name: ZONE_HEALTH_REQUEST_CHANNEL_INIT
-  value: {{ .Values.jumper.zoneHealth.requestChannelInit | quote }}  
-- name: ZONE_HEALTH_CACHE_CLEAR_RATE
-  value: {{ .Values.jumper.zoneHealth.cacheClearRate | quote }}
+- name: ZONE_HEALTH_REQUEST_RATE
+  value: {{ .Values.jumper.zoneHealth.requestRate | quote }}
 - name: ZONE_HEALTH_DEFAULT
   value: {{ .Values.jumper.zoneHealth.defaultHealth | quote }}
+- name: ZONE_HEALTH_ENABLED
+  value: {{ .Values.jumper.zoneHealth.enabled | quote }}
+{{- end}}
 - name: JVM_OPTS
   value: {{ .Values.jumper.jvmOpts }}
 - name: PUBLISH_EVENT_URL

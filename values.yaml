@@ -385,16 +385,16 @@ jumper:
   #containerSecurityContext: {}
   zoneHealth:
     defaultHealth: true
-    #databaseHost: redis-master.integration.svc.cluster.local
+    databaseHost: localhost
+    databaseConnectionTimeout: 500
+    databaseTimeout: 500
     databasePort: 6379
     databaseIndex: 2
     keyChannel: stargate-zone-status
-    keyGet: status-of-*
-    requestGetRate: 10000
-    requestChannelInit: true
-    cacheClearRate: 60000
+    requestRate: 10000
     databaseSecretName: redis
     databaseSecretKey: redis-password
+    enabled: true
 
 
   resources:
