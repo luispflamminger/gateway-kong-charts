@@ -394,7 +394,7 @@ jumper:
     requestRate: 10000
     databaseSecretName: redis
     databaseSecretKey: redis-password
-    enabled: true
+    enabled: false
 
 
   resources:
