@@ -12,7 +12,7 @@ global:
   #storageClassName: gp2
   domain: ""
   #environment: ""
-  #zone: ""
+  zone: "zoneName"
   labels:
     # fluentd label
     tardis.telekom.de/group: tardis
