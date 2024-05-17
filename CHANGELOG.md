@@ -10,7 +10,11 @@ This document show changes done to the chart.
 Please also seek advice from the README regarding updates.
 
 
-[[_TOC_]]
+[[_TOC_]
+## 5.4.15
+- jumper 3.13.0
+- add envs for redis configuration for fail over feature
+
 ## 5.4.14
 - jumper 3.12.0
 - pod antiAffinity preferred by default, optionally required
