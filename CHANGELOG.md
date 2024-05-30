@@ -11,6 +11,10 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.16
+- pg ssl enabled by default for external
+- jumper 3.14.3
+
 ## 5.4.15
 - jumper 3.13.0
 - add envs for redis configuration for fail over feature

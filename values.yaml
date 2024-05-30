@@ -506,7 +506,7 @@ postgresql:
 externalDatabase: 
   # Set host if you use an external database or service name is not sufficient
   #host: 'some-external-postgresql-database.example.com'
-  ssl: false
+  ssl: true
   sslVerify: false
   #luaSslTrustedCertificate: |
   #  -----BEGIN CERTIFICATE-----
