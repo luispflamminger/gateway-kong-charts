@@ -11,6 +11,11 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.17
+- kong liveness probe to 1min
+- configurable pre stop sleep with default 30s
+- adjust jumper to 3.14.4
+
 ## 5.4.16
 - pg ssl enabled by default for external
 - jumper 3.14.3
