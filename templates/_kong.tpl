@@ -62,7 +62,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-kong
 
 {{- define "kong.jumper.image" -}}
 {{- $imageName := "jumper-sse" -}}
-{{- $imageTag := "3.13.0" -}}
+{{- $imageTag := "3.14.3" -}}
 {{- $imageRepository := "mtr.devops.telekom.de" -}}
 {{- $imageOrganization := "tardis-internal/hyperion" -}}
 {{- if .Values.jumper.image -}}
@@ -479,7 +479,7 @@ false
 - name: KONG_PG_SCHEMA
   value: '{{ .Values.global.database.schema }}'
 {{- if eq .Values.global.database.location "external" }}
-{{- if .Values.externalDatabase.ssl }}
+{{- if ne .Values.externalDatabase.ssl false }}
 - name: KONG_PG_SSL
   value: 'on'
 {{- if .Values.externalDatabase.sslVerify }}
@@ -538,7 +538,7 @@ false
 - name: KONG_PROXY_ERROR_LOG
   value: {{ .Values.proxy.errorLog | default "/dev/stderr" | quote }}
 {{- if eq .Values.global.database.location "external" }}
-{{- if .Values.externalDatabase.ssl }}
+{{- if ne .Values.externalDatabase.ssl false }}
 - name: KONG_PG_SSL
   value: 'on'
 {{- if .Values.externalDatabase.sslVerify }}
