@@ -11,6 +11,11 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.18
+- jumper 3.15.2
+- improved responses from external IDPs in jumper in case of errors
+- added logic to handle default-key in jc-oauth-config
+
 ## 5.4.17
 - kong liveness probe to 1min
 - configurable pre stop sleep with default 30s
