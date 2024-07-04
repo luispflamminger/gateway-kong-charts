@@ -11,6 +11,13 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.19
+- jumper 3.16.0
+  - loadbalancing support
+  - pass spectre info as event headers
+- kong 2.8.3.11
+  - rfc 6750 support within jwt-keycloak + acl plugins
+
 ## 5.4.18
 - jumper 3.15.2
 - improved responses from external IDPs in jumper in case of errors
