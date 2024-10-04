@@ -11,6 +11,12 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.20
+- jumper 3.17.0
+  - external idp 
+- kong 2.8.3.12
+  - rate-limiting-merged plugin 
+
 ## 5.4.19
 - jumper 3.16.0
   - loadbalancing support

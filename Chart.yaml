@@ -4,7 +4,7 @@
 
 apiVersion: v2
 name: stargate
-version: 5.4.19
+version: 5.4.20.rc
 appVersion: 2.0.0
 description: Kong API gateway provided by DHEI
 dependencies:
