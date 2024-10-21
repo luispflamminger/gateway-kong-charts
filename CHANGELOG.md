@@ -11,6 +11,11 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.21
+- jumper 3.18.0
+  - header removal feature
+  - filter query params list 
+
 ## 5.4.20
 - jumper 3.17.0
   - external idp 
