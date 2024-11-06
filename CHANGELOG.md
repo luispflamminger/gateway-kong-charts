@@ -11,6 +11,34 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.4.21
+- jumper 3.18.0
+  - header removal feature
+  - filter query params list 
+
+## 5.4.20
+- jumper 3.17.0
+  - external idp 
+- kong 2.8.3.12
+  - rate-limiting-merged plugin 
+
+## 5.4.19
+- jumper 3.16.0
+  - loadbalancing support
+  - pass spectre info as event headers
+- kong 2.8.3.11
+  - rfc 6750 support within jwt-keycloak + acl plugins
+
+## 5.4.18
+- jumper 3.15.2
+- improved responses from external IDPs in jumper in case of errors
+- added logic to handle default-key in jc-oauth-config
+
+## 5.4.17
+- kong liveness probe to 1min
+- configurable pre stop sleep with default 30s
+- adjust jumper to 3.14.4
+
 ## 5.4.16
 - pg ssl enabled by default for external
 - jumper 3.14.3
