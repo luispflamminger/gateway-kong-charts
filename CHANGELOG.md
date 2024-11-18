@@ -11,6 +11,9 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.5.0
+- Increased RequestSizeLimit to 10MB
+
 ## 5.4.21
 - jumper 3.18.0
   - header removal feature
