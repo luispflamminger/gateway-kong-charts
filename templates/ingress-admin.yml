@@ -6,9 +6,6 @@ metadata:
   labels: {{ include "kong.labels" $ | nindent 4 }}
 {{- include "kong.merged.adminApi.annotations" $ | nindent 2 }}
 spec:
-{{ if eq .Values.global.platform "aws" -}}
-  ingressClassName: triton-ingress
-{{ end -}}
   rules:
   - host: {{ include "kong.adminApi.host" . }}
     http:
