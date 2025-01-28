@@ -11,6 +11,9 @@ Please also seek advice from the README regarding updates.
 
 
 [[_TOC_]
+## 5.5.1
+- Change from Ingress Class Annotation to ingressClassName field (aws only)
+
 ## 5.5.0
 - Increased RequestSizeLimit to 10MB
 
