@@ -385,6 +385,10 @@ jumper:
     #failureThreshold: 40
   #port: 8080
 
+  environment: []
+    #- name: foo
+    #  value: bar
+
   #containerSecurityContext: {}
   zoneHealth:
     defaultHealth: true
