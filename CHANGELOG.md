@@ -1,3 +1,16 @@
+# 1.0.0 (2025-07-21)
+
+
+### Bug Fixes
+
+* semantic release ([9d06954](https://github.com/luispflamminger/gateway-kong-charts/commit/9d0695416e67bff8c8903412085451f14239cbc4))
+* value names for logging ([#5](https://github.com/luispflamminger/gateway-kong-charts/issues/5)) ([08c78ca](https://github.com/luispflamminger/gateway-kong-charts/commit/08c78ca6f10ddd1fe305158b772cf95be86ec858))
+
+
+### Features
+
+* create pre-licensed empty .gitignore ([0665f2c](https://github.com/luispflamminger/gateway-kong-charts/commit/0665f2c17d2b36481faffe55b1d2b7b3847b01c0))
+
 <!--
 SPDX-FileCopyrightText: 2023 Deutsche Telekom AG
 
@@ -535,4 +548,3 @@ Please also seek advice from the README regarding updates.
 - DHEI-1136: Added option to enable and configure Zipkin-Plugin
 - DHEI-967: Added option to configure mTLS Proxy to present a server cert
 - DHEI-1135: Added option to enable a metrics service that can be found scraped by Prometheus
-
