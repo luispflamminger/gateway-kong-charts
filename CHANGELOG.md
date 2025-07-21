@@ -1,3 +1,15 @@
+# Changelog
+
+Please refer to the README for additional upgrade instructions.
+
+
+## [7.3.2](https://github.com/luispflamminger/gateway-kong-charts/compare/7.3.1...7.3.2) (2025-07-21)
+
+
+### Bug Fixes
+
+* semantic release ([9d06954](https://github.com/luispflamminger/gateway-kong-charts/commit/9d0695416e67bff8c8903412085451f14239cbc4))
+
 ## 7.3.1
 - fix: correct pdb label selector
 
