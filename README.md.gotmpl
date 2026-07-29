@@ -23,10 +23,10 @@ Each file contains copyright and license information, and license texts can be f
 
 ### Via OCI Registry
 
-The chart is published to GitHub Container Registry and can be installed directly:
+The chart is published to GitHub Container Registry and can be installed directly. Pick a version from the [releases](https://github.com/telekom/gateway-kong-charts/releases) and pin it explicitly:
 
 ```bash
-helm install my-gateway oci://ghcr.io/telekom/o28m-charts/stargate --version 9.0.0 -f my-values.yaml
+helm install my-gateway oci://ghcr.io/telekom/o28m-charts/stargate --version <version> -f my-values.yaml
 ```
 
 ### Via Git Repository
@@ -704,3 +704,32 @@ nginx: configuration file /opt/kong/nginx.conf test failed
 This error occurs when `sslVerify` is set to `true` but no valid certificates are provided. Either:
 - Set `trustedCaCertificates` with valid CA certificates in PEM format
 - Set `sslVerify: false` if SSL verification is not required
+
+## Development
+
+### Releases
+
+Releases are automatic. Every push to a release branch is validated, and if the commits since the last release warrant one, a version is published without any manual trigger — so merging a pull request is a release decision. Versions are calculated from [Conventional Commits](https://www.conventionalcommits.org/), and every accepted type releases something, so a docs-only or dependency-only merge still publishes a patch version.
+
+Publication is driven by the resulting GitHub release and packages the release tag rather than the branch. A published version is never overwritten, and re-running the publish workflow completes an interrupted publish without moving the tag.
+
+#### Branch roles
+
+| Branch | Publishes | Example version |
+| --- | --- | --- |
+| `main` | Stable versions | `9.13.1` |
+| `next` | Release candidates, on the `next` channel | `10.0.0-rc.1` |
+
+`main` is the default branch and the stable channel. `next` is the release-candidate channel: it exists whenever a change requires validation in a customer-facing environment before it is promoted to stable. Once that version is promoted into `main`, `next` is deleted, and it is recreated from `main` when a future prerelease channel is needed. Only these two branches publish; pull request builds validate but never publish.
+
+A change that belongs in both channels goes into `main` first and is forward-ported to `next` afterwards. This keeps the stable channel complete by construction: a fix can never exist only on the prerelease channel. Merge `main` into `next` after a stable release rather than letting the branches drift; that merge publishes a release candidate containing the fix. A change that applies to only one channel stays on that channel.
+
+#### Generated release commits
+
+The chart version is embedded in `Chart.yaml` as well as in the Git tag, so each release writes the new version into `Chart.yaml` and pushes a `chore(release): X.Y.Z` commit to the release branch. Expect to see these commits, and to pull before pushing further work.
+
+Such a commit carries `[skip release]`, which keeps it out of the next version calculation — without it, a `chore` would release a patch and every release would trigger another. It deliberately does not carry `[skip ci]`, because downstream consumers mirror this repository and build their own images from source, and they need the commit to trigger their pipelines.
+
+#### Jumper version bumps
+
+The default Jumper image tag in `values.yaml` is maintained by hand — there is no Renovate or Dependabot in this repository. Bump it in a normal pull request; because the change ships a different gateway runtime, choose the commit type that reflects its impact rather than defaulting to `chore`.

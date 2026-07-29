@@ -1,8 +1,16 @@
-# Copyright 2025 Deutsche Telekom IT GmbH
+# SPDX-FileCopyrightText: 2025 Deutsche Telekom AG
 #
 # SPDX-License-Identifier: Apache-2.0
 
 name: Publish to OCI Registry
+
+# Packages the chart for a published GitHub release and pushes it to GHCR. The source is
+# the release tag, not the default branch, so a re-run cannot pick up later commits.
+#
+# A published version is never overwritten. The registry does not enforce that, so this
+# workflow does: an existing version is accepted only if it records this same source
+# commit, meaning an earlier attempt already pushed it. That lets a re-run complete
+# OCI publishing if a previous workflow run was interrupted.
 
 on:
   release:
@@ -12,25 +20,140 @@ permissions:
   contents: read
   packages: write
 
+env:
+  HELM_OPTIONS: "--set global.failOnUnsetValues=false --set keyRotation.enabled=true"
+  HELM_DOCS_VERSION: "1.11.0"
+
 jobs:
   publish-oci:
+    name: Package and publish chart
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Check out the release tag
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Set up Helm
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 #v5.0.0
 
-      - name: Login to GHCR
+      - name: Resolve chart identity
+        id: chart
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+          set -euo pipefail
+          metadata="$(helm show chart .)"
+          # Anchored to the start of the line: `helm show chart` also emits a nested
+          # `name:` under `maintainers:`, and it sorts before the chart's own `name:`.
+          name="$(printf '%s\n' "${metadata}" | awk '/^name:/ { print $2; exit }')"
+          version="$(printf '%s\n' "${metadata}" | awk '/^version:/ { print $2; exit }')"
 
-      - name: Package Chart
-        run: |
-          helm package .
+          # The tag names a version; the chart embeds one. If they disagree, the artifact
+          # would claim to be a release it was not built from.
+          if [ "${version}" != "${RELEASE_TAG}" ]; then
+            printf 'publish: Chart.yaml version %s does not match release tag %s\n' \
+              "${version}" "${RELEASE_TAG}" >&2
+            exit 1
+          fi
 
-      - name: Push Chart to GHCR
+          # GHCR namespaces are lowercase, GitHub owner names need not be.
+          owner="$(printf '%s' "${REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          {
+            echo "name=${name}"
+            echo "version=${version}"
+            echo "revision=$(git rev-parse HEAD)"
+            echo "registry=oci://ghcr.io/${owner}/o28m-charts"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Lint and render chart
+        # Linting runs here rather than being inferred from the validation run on the
+        # release branch, so that what is published is what was checked.
         run: |
-          CHART_VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
-          helm push gateway-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}/o28m-charts
+          helm lint . ${HELM_OPTIONS}
+          helm template . ${HELM_OPTIONS} > /dev/null
+
+      - name: Install helm-docs
+        run: |
+          set -euo pipefail
+          wget -q "https://github.com/norwoodj/helm-docs/releases/download/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz" -O - | tar -xzf - helm-docs
+          chmod +x ./helm-docs
+          sudo mv ./helm-docs /usr/local/bin/helm-docs
+
+      - name: Check generated README
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          helm-docs
+          if ! git diff --exit-code README.md; then
+            printf '\npublish: README.md at %s is out of date with the chart values.\n' \
+              "${RELEASE_TAG}" >&2
+            exit 1
+          fi
+
+      - name: Log in to GHCR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+        run: printf '%s' "${GITHUB_TOKEN}" | helm registry login ghcr.io -u "${ACTOR}" --password-stdin
+
+      - name: Look up the published version
+        id: published
+        env:
+          CHART_REF: ${{ steps.chart.outputs.registry }}/${{ steps.chart.outputs.name }}
+          VERSION: ${{ steps.chart.outputs.version }}
+          REVISION: ${{ steps.chart.outputs.revision }}
+        run: |
+          set -uo pipefail
+          if ! metadata="$(helm show chart "${CHART_REF}" --version "${VERSION}" 2>&1)"; then
+            # Only a genuine absence may be treated as "not published yet". GHCR answers
+            # an unknown repository with `403 denied` rather than a 404, so a refusal
+            # counts as absence too.
+            case "${metadata}" in
+              *"not found"*|*NAME_UNKNOWN*|*MANIFEST_UNKNOWN*|*denied*|*unauthorized*)
+                printf 'publish: %s:%s is not published yet\n' "${CHART_REF}" "${VERSION}"
+                echo "exists=false" >> "${GITHUB_OUTPUT}"
+                exit 0
+                ;;
+            esac
+            printf 'publish: could not determine whether %s:%s exists\n%s\n' \
+              "${CHART_REF}" "${VERSION}" "${metadata}" >&2
+            exit 1
+          fi
+
+          # Existence is based on the recorded source commit, not the version alone: only
+          # that distinguishes our own interrupted publish from someone else's chart.
+          revision="$(printf '%s\n' "${metadata}" |
+            awk '$1 == "org.opencontainers.image.revision:" { gsub(/"/, "", $2); print $2; exit }')"
+          if [ "${revision}" != "${REVISION}" ]; then
+            printf 'publish: %s:%s already exists and was published from %s, not from %s\n' \
+              "${CHART_REF}" "${VERSION}" "${revision:-an unknown commit}" "${REVISION}" >&2
+            exit 1
+          fi
+
+          printf 'publish: %s:%s was already published from this commit; nothing to do\n' \
+            "${CHART_REF}" "${VERSION}"
+          echo "exists=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Package and push chart
+        if: steps.published.outputs.exists == 'false'
+        env:
+          REGISTRY: ${{ steps.chart.outputs.registry }}
+          REVISION: ${{ steps.chart.outputs.revision }}
+        run: |
+          set -euo pipefail
+          # Helm copies Chart.yaml annotations onto the OCI manifest, so recording the
+          # source commit here is what lets a re-run recognise its own artifact.
+          yq -i '.annotations."org.opencontainers.image.revision" = strenv(REVISION)' Chart.yaml
+
+          # Package into an empty directory and push from there. The file name is derived
+          # from the chart name, so this keeps working if the chart is renamed.
+          rm -rf dist && mkdir dist
+          helm package . --destination dist
+          count="$(find dist -maxdepth 1 -name '*.tgz' | wc -l)"
+          if [ "${count}" -ne 1 ]; then
+            printf 'publish: expected exactly one package in dist, found %s\n' "${count}" >&2
+            exit 1
+          fi
+          helm push "$(find dist -maxdepth 1 -name '*.tgz')" "${REGISTRY}"
