@@ -73,3 +73,5 @@ imagePullSecrets:
 avp.kubernetes.io/path: {{ .Values.global.pathToSecret }}
 {{- end -}}
 {{- end -}}
+
+{{/* fork validation marker: case B */}}
