@@ -75,3 +75,5 @@ avp.kubernetes.io/path: {{ .Values.global.pathToSecret }}
 {{- end -}}
 
 {{/* fork validation marker: case B */}}
+
+{{/* fork validation marker: case D */}}
