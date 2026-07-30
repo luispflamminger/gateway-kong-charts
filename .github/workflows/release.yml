@@ -65,7 +65,6 @@ jobs:
       - name: Run semantic-release
         # Configuration lives in the committed release.config.js, so a release can be
         # reproduced from the source tree alone.
-        id: semantic-release
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 #v6.0.0
         with:
           extra_plugins: |
@@ -77,18 +76,19 @@ jobs:
 
       - name: Resolve the tag to publish
         id: tag
-        env:
-          NEW_TAG: ${{ steps.semantic-release.outputs.new_release_git_tag }}
-          LAST_TAG: ${{ steps.semantic-release.outputs.last_release_git_tag }}
         run: |
-          set -euo pipefail
-          # Publication is deliberately not conditional on a new release having been
-          # produced. A re-run of an interrupted release computes no new version, because
-          # the tag it created already exists, yet the chart behind that tag may never
-          # have been pushed. Falling back to the last tag lets a plain re-run of this
-          # workflow finish the job: publish-oci recognises its own artifact and reports
-          # that there is nothing to do, or completes the push that was interrupted.
-          tag="${NEW_TAG:-${LAST_TAG}}"
+          set -uo pipefail
+          # The tag to publish is whichever release this branch currently points at.
+          # semantic-release tags locally before pushing, so if it just released, that is
+          # the tag; if it released nothing, this is the release already on the branch and
+          # publication may still be owed for it, because a run can be interrupted between
+          # tagging and pushing the chart. Deriving it from git rather than from
+          # semantic-release's outputs keeps both cases on one code path, so the path that
+          # completes an interrupted publish is the same one every release exercises.
+          #
+          # Publishing an already-published tag is a no-op: publish-oci recognises its own
+          # artifact and reports that there is nothing to do.
+          tag="$(git describe --tags --abbrev=0 HEAD 2>/dev/null || true)"
           if [ -z "${tag}" ]; then
             printf 'release: no release exists on this branch yet; nothing to publish\n'
           else
