@@ -7,8 +7,13 @@ name: Release
 # Releases the exact commit that passed validation in validate.yml.
 #
 # semantic-release writes the new version into Chart.yaml, commits it to the release
-# branch, tags it, and publishes a GitHub release. That release event triggers
-# publish-oci.yml, which packages and pushes the chart.
+# branch, tags it, and publishes a GitHub release. This workflow then calls
+# publish-oci.yml with that tag, which packages and pushes the chart.
+#
+# publish-oci.yml is called rather than left to its own `release: published` trigger.
+# semantic-release authenticates as GITHUB_TOKEN, and GitHub does not start workflow
+# runs from events raised by GITHUB_TOKEN, so that trigger never fires for an automatic
+# release. It remains in place for a release published by hand.
 
 on:
   workflow_call:
@@ -29,6 +34,8 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - name: Check out the validated commit
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
@@ -58,6 +65,7 @@ jobs:
       - name: Run semantic-release
         # Configuration lives in the committed release.config.js, so a release can be
         # reproduced from the source tree alone.
+        id: semantic-release
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 #v6.0.0
         with:
           extra_plugins: |
@@ -66,3 +74,35 @@ jobs:
             conventional-changelog-conventionalcommits@9.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve the tag to publish
+        id: tag
+        env:
+          NEW_TAG: ${{ steps.semantic-release.outputs.new_release_git_tag }}
+          LAST_TAG: ${{ steps.semantic-release.outputs.last_release_git_tag }}
+        run: |
+          set -euo pipefail
+          # Publication is deliberately not conditional on a new release having been
+          # produced. A re-run of an interrupted release computes no new version, because
+          # the tag it created already exists, yet the chart behind that tag may never
+          # have been pushed. Falling back to the last tag lets a plain re-run of this
+          # workflow finish the job: publish-oci recognises its own artifact and reports
+          # that there is nothing to do, or completes the push that was interrupted.
+          tag="${NEW_TAG:-${LAST_TAG}}"
+          if [ -z "${tag}" ]; then
+            printf 'release: no release exists on this branch yet; nothing to publish\n'
+          else
+            printf 'release: publishing %s\n' "${tag}"
+          fi
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+
+  publish:
+    name: Publish
+    needs: [release]
+    if: needs.release.outputs.tag != ''
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/publish-oci.yml
+    with:
+      tag: ${{ needs.release.outputs.tag }}

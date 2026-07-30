@@ -7,6 +7,11 @@ name: Publish to OCI Registry
 # Packages the chart for a published GitHub release and pushes it to GHCR. The source is
 # the release tag, not the default branch, so a re-run cannot pick up later commits.
 #
+# An automatic release calls this workflow directly from release.yml. The `release`
+# trigger below cannot serve it: semantic-release authenticates as GITHUB_TOKEN, and
+# GitHub does not start workflow runs from events raised by GITHUB_TOKEN. The trigger is
+# kept for a release published by hand, which does raise a run.
+#
 # A published version is never overwritten. The registry does not enforce that, so this
 # workflow does: an existing version is accepted only if it records this same source
 # commit, meaning an earlier attempt already pushed it. That lets a re-run complete
@@ -15,6 +20,12 @@ name: Publish to OCI Registry
 on:
   release:
     types: [published]
+  workflow_call:
+    inputs:
+      tag:
+        description: The release tag to package and publish.
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -23,6 +34,8 @@ permissions:
 env:
   HELM_OPTIONS: "--set global.failOnUnsetValues=false --set keyRotation.enabled=true"
   HELM_DOCS_VERSION: "1.11.0"
+  # `inputs` is empty for a `release` event, so this resolves to whichever trigger fired.
+  RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
 
 jobs:
   publish-oci:
@@ -32,7 +45,7 @@ jobs:
       - name: Check out the release tag
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
 
       - name: Set up Helm
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 #v5.0.0
@@ -40,7 +53,6 @@ jobs:
       - name: Resolve chart identity
         id: chart
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
@@ -82,8 +94,6 @@ jobs:
           sudo mv ./helm-docs /usr/local/bin/helm-docs
 
       - name: Check generated README
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           helm-docs
           if ! git diff --exit-code README.md; then
