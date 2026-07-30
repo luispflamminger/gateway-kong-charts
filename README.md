@@ -1018,3 +1018,7 @@ A change that belongs in both channels goes into `main` first and is forward-por
 The chart version is embedded in `Chart.yaml` as well as in the Git tag, so each release writes the new version into `Chart.yaml` and pushes a `chore(release): X.Y.Z` commit to the release branch. Expect to see these commits, and to pull before pushing further work.
 
 Such a commit carries `[skip release]`, which keeps it out of the next version calculation — without it, a `chore` would release a patch and every release would trigger another. It deliberately does not carry `[skip ci]`, because downstream consumers mirror this repository and build their own images from source, and they need the commit to trigger their pipelines.
+
+#### Jumper version bumps
+
+The default Jumper image tag in `values.yaml` is maintained by hand — there is no Renovate or Dependabot in this repository. Bump it in a normal pull request; because the change ships a different gateway runtime, choose the commit type that reflects its impact rather than defaulting to `chore`.
