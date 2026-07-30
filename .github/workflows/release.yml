@@ -76,21 +76,26 @@ jobs:
 
       - name: Resolve the tag to publish
         id: tag
+        env:
+          BRANCH: ${{ github.ref_name }}
         run: |
           set -uo pipefail
-          # The tag to publish is whichever release this branch currently points at.
-          # semantic-release tags locally before pushing, so if it just released, that is
-          # the tag; if it released nothing, this is the release already on the branch and
-          # publication may still be owed for it, because a run can be interrupted between
-          # tagging and pushing the chart. Deriving it from git rather than from
-          # semantic-release's outputs keeps both cases on one code path, so the path that
-          # completes an interrupted publish is the same one every release exercises.
+          # The tag to publish is the release the branch points at on the remote, once
+          # semantic-release has run.
           #
-          # Publishing an already-published tag is a no-op: publish-oci recognises its own
-          # artifact and reports that there is nothing to do.
-          tag="$(git describe --tags --abbrev=0 HEAD 2>/dev/null || true)"
+          # It cannot be derived from the validated commit. semantic-release puts the
+          # release commit, and the tag, on a *child* of that commit, so a re-run that
+          # releases nothing would not see the tag it is being asked to finish
+          # publishing, and would silently resolve some older ancestor instead.
+          #
+          # Reading the remote branch tip covers both cases on one code path: the release
+          # just made, and a release whose chart was never pushed because an earlier run
+          # was interrupted. Publishing an already-published tag is a no-op, so the path
+          # that completes an interrupted publish is the one every release exercises.
+          git fetch --force --tags origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
+          tag="$(git describe --tags --abbrev=0 "refs/remotes/origin/${BRANCH}" 2>/dev/null || true)"
           if [ -z "${tag}" ]; then
-            printf 'release: no release exists on this branch yet; nothing to publish\n'
+            printf 'release: no release exists on %s yet; nothing to publish\n' "${BRANCH}"
           else
             printf 'release: publishing %s\n' "${tag}"
           fi
